@@ -53,6 +53,16 @@ public class SystrayService implements Bootable
     final BeanService bs = loader.getBootable(BeanService.class);
     this.systray = bs.get(SysTray.class);
   }
+  
+  /**
+   * Legt fest, ob das Symbol neue Aktivität anzeigen soll.
+   * @param b true, wenn neue Aktivität angezeigt werden soll.
+   */
+  public void setNewActivity(boolean b)
+  {
+    if (this.systray != null)
+      this.systray.setNewActivity(b);
+  }
 
   /**
    * @see de.willuhn.boot.Bootable#shutdown()
@@ -62,21 +72,52 @@ public class SystrayService implements Bootable
   }
 
   /**
+   * Liefert true, wenn das Systray aktiviert werden soll.
+   * @return true, wenn das Systray aktiviert werden soll.
+   */
+  public boolean isEnabled()
+  {
+    return settings.getBoolean("enabled",false);
+  }
+
+
+  /**
+   * Liefert true, wenn das Systray aktiviert werden soll.
+   * @param enabled true, wenn das Systray aktiviert werden soll.
+   */
+  public void setEnabled(boolean enabled)
+  {
+    settings.setAttribute("enabled",enabled);
+    this.update();
+  }
+
+  /**
    * Liefert true, wenn die Anwendung in das System-Tray minimiert werden soll.
    * @return true, wenn die Anwendung in das System-Tray minimiert werden soll.
    */
-  public boolean getEnabled()
+  public boolean isMinimizeToSystray()
   {
-    return settings.getBoolean("enabled",false);
+    return settings.getBoolean("minimize",false);
   }
   
   /**
    * Legt fest, ob die Anwendung in das System-Tray minimiert werden soll.
    * @param enabled wenn die Anwendung in das System-Tray minimiert werden soll.
    */
-  public void setEnabled(boolean enabled)
+  public void setMinimizeToSystray(boolean enabled)
   {
-    settings.setAttribute("enabled",enabled);
+    settings.setAttribute("minimize",enabled);
+  }
+  
+  /**
+   * Aktualisiert den Systray-Status.
+   */
+  public void update()
+  {
+    if (this.isEnabled())
+      systray.start();
+    else
+      systray.stop();
   }
   
   /**
@@ -84,8 +125,7 @@ public class SystrayService implements Bootable
    */
   private void init()
   {
-    // Wir registrieren den Listener auch dann, wenn die Option in den Einstellungen deaktiviert ist.
-    // Dann können wir die Funktion auch ohne Neustart anbieten, sobald der Benutzer es aktiviert.
+    this.update();
     GUI.getShell().addShellListener(new ShellAdapter() {
       /**
        * @see org.eclipse.swt.events.ShellAdapter#shellIconified(org.eclipse.swt.events.ShellEvent)
@@ -93,19 +133,11 @@ public class SystrayService implements Bootable
       @Override
       public void shellIconified(ShellEvent e)
       {
-        if (!getEnabled())
-          return;
-
-        systray.start();
-      }
-      
-      /**
-       * @see org.eclipse.swt.events.ShellAdapter#shellDeiconified(org.eclipse.swt.events.ShellEvent)
-       */
-      @Override
-      public void shellDeiconified(ShellEvent e)
-      {
-        systray.stop();
+        if (isEnabled() && isMinimizeToSystray())
+        {
+          GUI.getShell().setMinimized(true);
+          GUI.getShell().setVisible(false);
+        }
       }
     });
   }

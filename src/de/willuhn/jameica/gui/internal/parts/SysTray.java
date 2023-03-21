@@ -34,6 +34,7 @@ import de.willuhn.util.I18N;
 public class SysTray
 {
   private TrayItem item = null;
+  private boolean activity = false;
 
   /**
    * Startet das Systray.
@@ -42,13 +43,12 @@ public class SysTray
   {
     if (this.item != null)
       return;
-    
-    Tray sysTray = GUI.getDisplay().getSystemTray();
+
+    final Tray sysTray = GUI.getDisplay().getSystemTray();
     if (sysTray == null)
       return;
     
     this.item = new TrayItem(sysTray,SWT.NONE);
-    this.item.setText("Jameica");
 
     // Menu aufklappen bei Klick mit der rechten Maustaste
     this.item.addListener (SWT.MenuDetect, new Listener()
@@ -69,21 +69,29 @@ public class SysTray
     });
 
     this.refresh();
-
-    GUI.getShell().setMinimized(true);
-    GUI.getShell().setVisible(false);
   }
   
+  /**
+   * Legt fest, ob das Symbol neue Aktivität anzeigen soll.
+   * @param b true, wenn neue Aktivität angezeigt werden soll.
+   */
+  public void setNewActivity(boolean b)
+  {
+    this.activity = b;
+    this.refresh();
+  }
+  
+  /**
+   * Stellt das Anwendungsfenster wieder her.
+   */
   private void restore()
   {
     try
     {
+      // Wiederherstellen der GUI können wir immer machen
+      // Auch dann, wenn wir nicht in's Systray minimiert wurden
       GUI.getShell().setMinimized(false);
       GUI.getShell().setVisible(true);
-    }
-    catch (OperationCanceledException oce)
-    {
-      // ignore
     }
     catch (Exception e2)
     {
@@ -196,9 +204,17 @@ public class SysTray
       
       public void run()
       {
+        if (item == null || item.isDisposed())
+          return;
+        
         try
         {
-          item.setImage(SWTUtil.getImage("jameica-icon.png"));
+          String s = "Jameica";
+          if (activity)
+            s += (":" + Application.getI18n().tr("Neue Aktivität"));
+          
+          item.setToolTipText(s);
+          item.setImage(SWTUtil.getImage(activity ? "jameica-icon-notify.png" : "jameica-icon.png"));
         }
         catch (Exception e)
         {

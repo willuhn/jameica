@@ -46,6 +46,7 @@
     <consumer queue="jameica.boot"                 class="de.willuhn.jameica.messaging.BootMessageConsumer" />
     <consumer queue="jameica.scripting.add"        class="de.willuhn.jameica.messaging.AddScriptMessageConsumer" />
     <consumer queue="jameica.scripting.remove"     class="de.willuhn.jameica.messaging.RemoveScriptMessageConsumer" />
+    <consumer queue="jameica.activity"             class="de.willuhn.jameica.messaging.ActivityMessageConsumer" />
   </messaging>
 
 </system>

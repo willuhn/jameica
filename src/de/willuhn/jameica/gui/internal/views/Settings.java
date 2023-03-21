@@ -123,12 +123,12 @@ public class Settings extends AbstractView implements Extendable
     lnfGroup.addLabelPair(i18n.tr("Textfarbe von Fehler- und Warnmeldungen"),control.getColorError());
     lnfGroup.addLabelPair(i18n.tr("Textfarbe von Erfolgsmeldungen"),control.getColorSuccess());
 
-    lnfGroup.addSeparator();
-
     File f = new File("lib/splash.jar");
     if (f.exists() && f.isFile() && f.canRead())
       lnfGroup.addCheckbox(control.getRandomSplash(),i18n.tr("Zufallsbild in Splashscreen anzeigen"));
-    
+
+    lnfGroup.addHeadline(i18n.tr("System-Tray Symbol"));
+    lnfGroup.addInput(control.getSystray());
     lnfGroup.addInput(control.getMinimizeToSystray());
 
     //

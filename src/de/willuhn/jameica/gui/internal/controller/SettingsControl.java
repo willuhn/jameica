@@ -77,6 +77,7 @@ public class SettingsControl extends AbstractControl
   private Input colorMandatoryBG;
   private CheckboxInput mandatoryLabel;
   private CheckboxInput randomSplash;
+  private CheckboxInput systray;
   private CheckboxInput minimizeToSystray;
 	
   /**
@@ -333,10 +334,37 @@ public class SettingsControl extends AbstractControl
 	    return this.minimizeToSystray;
 	  
 	  final SystrayService service = Application.getBootLoader().getBootable(SystrayService.class);
-	  this.minimizeToSystray = new CheckboxInput(service.getEnabled());
+	  this.minimizeToSystray = new CheckboxInput(service.isMinimizeToSystray());
 	  this.minimizeToSystray.setName(i18n.tr("Fenster beim Minimieren in System-Tray verschieben"));
 	  return this.minimizeToSystray;
 	}
+  
+  /**
+   * Liefert eine Checkbox, mit der eingestellt werden kann, ob das Systray-Symbol angezeigt werden soll.
+   * @return eine Checkbox, mit der eingestellt werden kann, ob das Systray-Symbol angezeigt werden soll.
+   */
+  public Input getSystray()
+  {
+    if (this.systray != null)
+      return this.systray;
+    
+    final SystrayService service = Application.getBootLoader().getBootable(SystrayService.class);
+    this.systray = new CheckboxInput(service.isEnabled());
+    this.systray.setName(i18n.tr("Symbol im System-Tray anzeigen"));
+    
+    final Listener l = new Listener() {
+      
+      @Override
+      public void handleEvent(Event event)
+      {
+        final boolean enabled = ((Boolean)systray.getValue()).booleanValue();
+        getMinimizeToSystray().setEnabled(enabled);
+      }
+    };
+    this.systray.addListener(l);
+    l.handleEvent(null);
+    return this.systray;
+  }
 	
   /**
    * Liefert eine Checkbox, mit der konfiguriert werden kann, ob auch die Labels vor Pflichtfeldern rot gefaerbt werden.
@@ -411,8 +439,9 @@ public class SettingsControl extends AbstractControl
       Color.MANDATORY_BG.setSWTColor((org.eclipse.swt.graphics.Color)getColorMandatoryBG().getValue());
       
       final SystrayService systray = Application.getBootLoader().getBootable(SystrayService.class);
-      systray.setEnabled(((Boolean)getMinimizeToSystray().getValue()).booleanValue());
-
+      systray.setEnabled(((Boolean)getSystray().getValue()).booleanValue());
+      systray.setMinimizeToSystray(((Boolean)getMinimizeToSystray().getValue()).booleanValue());
+      
       Application.getMessagingFactory().sendSyncMessage(new SettingsChangedMessage());
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Einstellungen gespeichert."),StatusBarMessage.TYPE_SUCCESS));
 
