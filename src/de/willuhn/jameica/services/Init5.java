@@ -45,7 +45,8 @@ public class Init5 implements Bootable
       SearchService.class,
       ReminderService.class,
       ScriptingService.class,
-      UpdateService.class
+      UpdateService.class,
+      SystrayService.class
     };
   }
 

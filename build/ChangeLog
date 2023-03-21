@@ -1,5 +1,6 @@
 HEAD 2.11 (nightly)
 
+  * NEW: 0169 Neue Option, um die Anwendung in das System-Tray zu minimieren
   * NEW: 0168 Support für Java 15+ (Jameica liefert jetzt JavaScript Engine Rhino mit)
   * NEW: 0167 Update auf SWT 4.26 für linux64, linux-arm64, win64, macos64, macos64-aarch64 sowie Update von JFace auf 3.28
   * NEW: 0166 F5 als Shortcut zum Reload einer View

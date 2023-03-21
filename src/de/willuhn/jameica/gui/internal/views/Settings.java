@@ -128,6 +128,8 @@ public class Settings extends AbstractView implements Extendable
     File f = new File("lib/splash.jar");
     if (f.exists() && f.isFile() && f.canRead())
       lnfGroup.addCheckbox(control.getRandomSplash(),i18n.tr("Zufallsbild in Splashscreen anzeigen"));
+    
+    lnfGroup.addInput(control.getMinimizeToSystray());
 
     //
 		/////////////////////////////////////////////////////////////////
