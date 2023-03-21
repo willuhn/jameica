@@ -34,6 +34,7 @@ import de.willuhn.jameica.gui.extension.ExtensionRegistry;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.messaging.StatusBarMessage;
+import de.willuhn.jameica.services.SystrayService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Customizing;
 import de.willuhn.jameica.system.Settings;
@@ -313,6 +314,8 @@ public class Navigation implements Part
       title = current;
     }
     
+    ti.setData("unread",unread > 0 ? Boolean.TRUE : null);
+    
     if (unread > 0)
     {
       ti.setFont(Font.BOLD.getSWTFont());
@@ -323,6 +326,26 @@ public class Navigation implements Part
       ti.setFont(Font.DEFAULT.getSWTFont());
       ti.setText(title);
     }
+    
+    
+    //////////////////////////////////////////////////////////
+    // Wenn das Systray aktiv ist, dann Aktivität anzeigen, sobald irgendwo ungelesene Elemente sind
+    final SystrayService systray = Application.getBootLoader().getBootable(SystrayService.class);
+    if (!systray.isEnabled())
+      return;
+
+    boolean found = false;
+    for (TreeItem i:this.itemLookup.values())
+    {
+      if (i.getData("unread") != null)
+      {
+        found = true;
+        break;
+      }
+    }
+    systray.setNewActivity(found);
+    // 
+    //////////////////////////////////////////////////////////
   }
 
   /**
