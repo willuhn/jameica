@@ -13,8 +13,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Stack;
 
 import org.apache.commons.lang.StringUtils;
@@ -31,6 +33,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.forms.widgets.FormText;
 
 import de.willuhn.datasource.BeanUtil;
 import de.willuhn.jameica.gui.extension.Extendable;
@@ -933,6 +936,22 @@ public class GUI implements ApplicationController
       try
       {
         if (!display.readAndDispatch()) display.sleep();
+      }
+      catch (IllegalArgumentException e)
+      {
+        // Kann unter Windows manchmal beim Resizen des Fensters passieren.
+        // Kommt aus Image.init (von SWT) getriggert von FormText.repaint -> ignorieren
+        final StackTraceElement[] stack = e.getStackTrace();
+        final boolean b = Arrays.asList(stack).stream().filter(s -> Objects.equals(s.getClassName(),FormText.class.getName()) && Objects.equals(s.getMethodName(),"repaint")).findAny().isPresent();
+        if (b)
+        {
+          Logger.warn("repaint error in FormText - SWT windows bug - ignoring");
+        }
+        else
+        {
+          Logger.error("main loop crashed, retry", e);
+          retry++;
+        }
       }
       catch (OperationCanceledException oce)
       {
