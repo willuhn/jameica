@@ -68,7 +68,7 @@ public class RepositoryList extends TablePart
       {
         try
         {
-          UrlObject u = (UrlObject) item.getData();
+          RepositoryEntry u = (RepositoryEntry) item.getData();
           if (u == null)
             return;
           
@@ -116,11 +116,11 @@ public class RepositoryList extends TablePart
    */
   private static List init() throws Exception
   {
-    List<UrlObject> urls = new ArrayList<UrlObject>();
+    List<RepositoryEntry> urls = new ArrayList<RepositoryEntry>();
     List<URL> l = repoService.getRepositories(true);
 
     for (URL u:l)
-      urls.add(new UrlObject(u));
+      urls.add(new RepositoryEntry(u));
 
     return urls;
   }
@@ -128,7 +128,7 @@ public class RepositoryList extends TablePart
   /**
    * Hilfsobjekt zum formatierten Anzeigen der URLs.
    */
-  public static class UrlObject
+  public static class RepositoryEntry
   {
     private URL url = null;
     private boolean enabled = true;
@@ -137,7 +137,7 @@ public class RepositoryList extends TablePart
      * ct.
      * @param url
      */
-    private UrlObject(URL url)
+    private RepositoryEntry(URL url)
     {
       this.url = url;
       this.enabled = repoService.isEnabled(url);
@@ -209,8 +209,8 @@ public class RepositoryList extends TablePart
             if (url== null)
               return;
             
-            List<UrlObject> items = RepositoryList.this.getItems();
-            for (UrlObject u:items)
+            List<RepositoryEntry> items = RepositoryList.this.getItems();
+            for (RepositoryEntry u:items)
             {
               if (u.url.toString().equals(url.toString()))
                 RepositoryList.this.removeItem(u);
@@ -265,7 +265,7 @@ public class RepositoryList extends TablePart
             if (url== null)
               return;
 
-            RepositoryList.this.addItem(new UrlObject(url));
+            RepositoryList.this.addItem(new RepositoryEntry(url));
           }
           catch (Exception e)
           {
@@ -319,8 +319,8 @@ public class RepositoryList extends TablePart
             if (url== null)
               return;
             
-            List<UrlObject> items = RepositoryList.this.getItems();
-            for (UrlObject u:items)
+            List<RepositoryEntry> items = RepositoryList.this.getItems();
+            for (RepositoryEntry u:items)
             {
               if (u.url.toString().equals(url.toString()))
               {

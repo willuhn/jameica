@@ -1,6 +1,6 @@
 /**********************************************************************
  *
- * Copyright (c) 2004 Olaf Willuhn
+ * Copyright (c) 2023 Olaf Willuhn
  * All rights reserved.
  * 
  * This software is copyrighted work licensed under the terms of the
@@ -9,8 +9,11 @@
  **********************************************************************/
 package de.willuhn.jameica.gui.input;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Widget;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Color;
@@ -155,6 +158,16 @@ public class CheckboxInput extends AbstractInput
     if (button != null && !button.isDisposed())
       button.setEnabled(enabled);
   }
+  
+  /**
+   * @see de.willuhn.jameica.gui.input.AbstractInput#addListener(org.eclipse.swt.widgets.Widget, org.eclipse.swt.widgets.Listener)
+   */
+  @Override
+  protected void addListener(Widget w, Listener l)
+  {
+    // Bei Checkboxen reagieren wir nicht auf die Focus-Events
+    w.addListener(SWT.Selection,l);
+  }
 
   /**
    * Leer ueberschrieben, weil wir hier keine Farbaenderungen wollen
@@ -163,95 +176,4 @@ public class CheckboxInput extends AbstractInput
   protected void update() throws OperationCanceledException
   {
   }
-  
-  
 }
-
-/*********************************************************************
- * $Log: CheckboxInput.java,v $
- * Revision 1.18  2011/08/31 08:38:59  willuhn
- * @B diverse Bugs (u.a. lieferte isEnabled bisher immer den Wert von "button.getSelection" statt "button.getEnabled")
- *
- * Revision 1.17  2011-08-08 10:45:05  willuhn
- * @C AbstractInput#update() ist jetzt "protected" (war package-private)
- *
- * Revision 1.16  2011-05-11 08:42:07  willuhn
- * @N setData(String,Object) und getData(String) in Input. Damit koennen generische Nutzdaten im Eingabefeld gespeichert werden (siehe SWT-Widget)
- *
- * Revision 1.15  2011-05-03 10:13:11  willuhn
- * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
- *
- * Revision 1.14  2011-01-11 22:43:50  willuhn
- * @B hasChanged() funktionierte nicht beim ersten Aufruf, weil da "oldValue" noch den Wert von "PLACEHOLDER" in AbstractObject hatte. Das explizite "hasChanged()" aendert "oldValue" auf den aktuellen Wert
- *
- * Revision 1.13  2010-10-10 21:20:34  willuhn
- * @N BUGZILLA 924
- *
- * Revision 1.12  2007/07/17 14:34:23  willuhn
- * @B Updates nichts bei Buttons und Checkboxen durchfuehren
- *
- * Revision 1.11  2006/06/19 10:54:24  willuhn
- * @N neue Methode setEnabled(boolean) in Input
- * @N neue de_willuhn_util lib
- *
- * Revision 1.10  2006/03/20 23:37:04  web0
- * @B misc widget updates
- *
- * Revision 1.9  2005/08/29 15:25:25  web0
- * @B bugfixing
- *
- * Revision 1.8  2005/08/25 21:18:24  web0
- * @C changes accoring to findbugs eclipse plugin
- *
- * Revision 1.7  2005/08/22 13:31:52  web0
- * *** empty log message ***
- *
- * Revision 1.6  2004/07/20 22:52:49  willuhn
- * @C Refactoring
- *
- * Revision 1.5  2004/07/09 00:12:47  willuhn
- * @C Redesign
- *
- * Revision 1.4  2004/05/23 15:30:52  willuhn
- * @N new color/font management
- * @N new styleFactory
- *
- * Revision 1.3  2004/04/27 00:04:44  willuhn
- * @D javadoc
- *
- * Revision 1.2  2004/04/24 19:05:05  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2004/04/12 19:15:58  willuhn
- * @C refactoring
- * @N forms
- *
- * Revision 1.5  2004/03/11 08:56:55  willuhn
- * @C some refactoring
- *
- * Revision 1.4  2004/03/06 18:24:23  willuhn
- * @D javadoc
- *
- * Revision 1.3  2004/03/04 00:35:14  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2004/02/18 01:40:30  willuhn
- * @N new white style
- *
- * Revision 1.1  2004/01/28 20:51:24  willuhn
- * @C gui.views.parts moved to gui.parts
- * @C gui.views.util moved to gui.util
- *
- * Revision 1.4  2004/01/23 00:29:03  willuhn
- * *** empty log message ***
- *
- * Revision 1.3  2003/12/29 16:29:47  willuhn
- * @N javadoc
- *
- * Revision 1.2  2003/12/25 18:27:49  willuhn
- * @N added checkBox
- *
- * Revision 1.1  2003/12/25 18:21:54  willuhn
- * @N added checkBox
- *
- **********************************************************************/
