@@ -98,8 +98,12 @@ public class SysTray
       // nochmal zusätzlich aus, damit das Boolean-Flag in der Shell gesetzt ist
       // Zusätzlich setzen wir ein "data"-Flag, damit der SystrayService weiss, dass
       // er auf dieses minimize-Event im iconify-Listener nicht reagieren muss.
-      shell.setData(KEY_SYSTRAY_DATA, Boolean.TRUE);
-      shell.setMinimized(true);
+      // Workaound aber nur anwenden, wenn die Shell behauptet, dass sie nicht minimiert ist
+      if (!shell.getMinimized())
+      {
+        shell.setData(KEY_SYSTRAY_DATA, Boolean.TRUE);
+        shell.setMinimized(true);
+      }
 
       // Jetzt können wir die Shell wieder sichtbar machen
       shell.setMinimized(false);
