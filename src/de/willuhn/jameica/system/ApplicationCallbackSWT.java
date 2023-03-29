@@ -376,7 +376,7 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
           }
         },null,false,"process-stop.png");
         g.addButtonArea(buttons);
-        getShell().setMinimumSize(400,200);
+        getShell().setMinimumSize(400,SWT.DEFAULT);
         getShell().setSize(getShell().computeSize(400,SWT.DEFAULT));
       }
     };
