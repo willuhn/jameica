@@ -18,6 +18,7 @@ import java.text.MessageFormat;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -376,8 +377,8 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
           }
         },null,false,"process-stop.png");
         g.addButtonArea(buttons);
-        getShell().setMinimumSize(400,SWT.DEFAULT);
-        getShell().setSize(getShell().computeSize(400,SWT.DEFAULT));
+        final Point p = getShell().computeSize(450,SWT.DEFAULT);
+        this.setSize(p.x,p.y);
       }
     };
     d.setTitle(Application.getI18n().tr("Frage"));
