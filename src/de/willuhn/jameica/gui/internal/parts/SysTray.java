@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tray;
 import org.eclipse.swt.widgets.TrayItem;
 
@@ -33,6 +34,8 @@ import de.willuhn.util.I18N;
 @Lifecycle(Type.CONTEXT)
 public class SysTray
 {
+  public final static String KEY_SYSTRAY_DATA = "__systray-minimize";
+  
   private TrayItem item = null;
   private boolean activity = false;
 
@@ -88,10 +91,19 @@ public class SysTray
   {
     try
     {
-      // Wiederherstellen der GUI können wir immer machen
-      // Auch dann, wenn wir nicht in's Systray minimiert wurden
-      GUI.getShell().setMinimized(false);
-      GUI.getShell().setVisible(true);
+      final Shell shell = GUI.getShell();
+      
+      // Unter Linux (zumindest KDE Plasma) behauptete die Shell, nicht minimiert zu sein.
+      // Daher klappte dort das Restore nicht. Wir führen das "setMinimized" daher hier
+      // nochmal zusätzlich aus, damit das Boolean-Flag in der Shell gesetzt ist
+      // Zusätzlich setzen wir ein "data"-Flag, damit der SystrayService weiss, dass
+      // er auf dieses minimize-Event im iconify-Listener nicht reagieren muss.
+      shell.setData(KEY_SYSTRAY_DATA, Boolean.TRUE);
+      shell.setMinimized(true);
+
+      // Jetzt können wir die Shell wieder sichtbar machen
+      shell.setMinimized(false);
+      shell.setVisible(true);
     }
     catch (Exception e2)
     {

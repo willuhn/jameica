@@ -12,6 +12,7 @@ package de.willuhn.jameica.services;
 
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.widgets.Shell;
 
 import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
@@ -127,16 +128,30 @@ public class SystrayService implements Bootable
   {
     this.update();
     GUI.getShell().addShellListener(new ShellAdapter() {
+      
       /**
        * @see org.eclipse.swt.events.ShellAdapter#shellIconified(org.eclipse.swt.events.ShellEvent)
        */
       @Override
       public void shellIconified(ShellEvent e)
       {
-        if (isEnabled() && isMinimizeToSystray())
+        final Shell shell = GUI.getShell();
+        if (shell == null || shell.isDisposed())
+          return;
+
+        if (!shell.isVisible())
+          return;
+        
+        if (!isEnabled() || !isMinimizeToSystray())
+          return;
+        
+        if (shell.getData(SysTray.KEY_SYSTRAY_DATA) != null)
         {
-          GUI.getShell().setVisible(false);
+          shell.setData(SysTray.KEY_SYSTRAY_DATA,null);
+          return;
         }
+        
+        shell.setVisible(false);
       }
     });
   }
