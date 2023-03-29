@@ -135,7 +135,6 @@ public class SystrayService implements Bootable
       {
         if (isEnabled() && isMinimizeToSystray())
         {
-          GUI.getShell().setMinimized(true);
           GUI.getShell().setVisible(false);
         }
       }
