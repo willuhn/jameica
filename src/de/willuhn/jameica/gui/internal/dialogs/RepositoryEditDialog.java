@@ -37,7 +37,6 @@ public class RepositoryEditDialog extends AbstractDialog<Void>
   {
     super(position);
     this.setTitle(i18n.tr("Plugin-Repositories"));
-    this.setSize(600,500);
   }
 
   /**
@@ -76,6 +75,7 @@ public class RepositoryEditDialog extends AbstractDialog<Void>
       }
     },null,false,"window-close.png");
     container.addButtonArea(buttons);
+    this.setSize(700,500);
   }
 
   /**
