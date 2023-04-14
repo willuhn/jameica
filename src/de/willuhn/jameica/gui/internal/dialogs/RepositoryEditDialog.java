@@ -15,7 +15,11 @@ import org.eclipse.swt.widgets.Composite;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.dialogs.AbstractDialog;
 import de.willuhn.jameica.gui.internal.action.RepositoryAdd;
+import de.willuhn.jameica.gui.internal.action.RepositoryDisable;
+import de.willuhn.jameica.gui.internal.action.RepositoryEnable;
 import de.willuhn.jameica.gui.internal.parts.RepositoryList;
+import de.willuhn.jameica.gui.internal.parts.RepositoryList.RepositoryEntry;
+import de.willuhn.jameica.gui.parts.Button;
 import de.willuhn.jameica.gui.parts.ButtonArea;
 import de.willuhn.jameica.gui.util.SimpleContainer;
 import de.willuhn.util.ApplicationException;
@@ -33,7 +37,6 @@ public class RepositoryEditDialog extends AbstractDialog<Void>
   {
     super(position);
     this.setTitle(i18n.tr("Plugin-Repositories"));
-    this.setSize(460,500);
   }
 
   /**
@@ -47,9 +50,22 @@ public class RepositoryEditDialog extends AbstractDialog<Void>
                               "bzw. \"Deaktivieren...\" wählen."),true);
     
     final RepositoryList list = new RepositoryList();
+    
+    final Button disable = new Button(i18n.tr("Deaktivieren..."),e -> new RepositoryDisable().handleAction(list.getSelection()),null,false,"network-offline.png");
+    disable.setEnabled(false);
+    final Button enable = new Button(i18n.tr("Aktivieren..."),e -> new RepositoryEnable().handleAction(list.getSelection()),null,false,"network-transmit-receive.png");
+    enable.setEnabled(false);
+    
+    list.addSelectionListener(e -> {
+      final RepositoryEntry entry = (RepositoryEntry) e.data;
+      disable.setEnabled(entry.isEnabled());
+      enable.setEnabled(!entry.isEnabled());
+    });
     container.addPart(list);
     
     ButtonArea buttons = new ButtonArea();
+    buttons.addButton(enable);
+    buttons.addButton(disable);
     buttons.addButton(i18n.tr("Neues Repository hinzufügen..."),new RepositoryAdd(),null,false,"document-new.png");
     buttons.addButton(i18n.tr("Schließen"), new Action()
     {
@@ -59,6 +75,7 @@ public class RepositoryEditDialog extends AbstractDialog<Void>
       }
     },null,false,"window-close.png");
     container.addButtonArea(buttons);
+    this.setSize(700,500);
   }
 
   /**

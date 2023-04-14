@@ -88,9 +88,12 @@ public class NotificationPanel implements Part, MessageConsumer
   
   static
   {
-    TYPEMAP.put(StatusBarMessage.TYPE_ERROR,  Type.ERROR);
-    TYPEMAP.put(StatusBarMessage.TYPE_SUCCESS,Type.SUCCESS);
-    TYPEMAP.put(StatusBarMessage.TYPE_INFO,   Type.INFO);
+    if (!Application.inServerMode())
+    {
+      TYPEMAP.put(StatusBarMessage.TYPE_ERROR,  Type.ERROR);
+      TYPEMAP.put(StatusBarMessage.TYPE_SUCCESS,Type.SUCCESS);
+      TYPEMAP.put(StatusBarMessage.TYPE_INFO,   Type.INFO);
+    }
   }
 
   private boolean receiveMessages = false;

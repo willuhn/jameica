@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.GUI;
-import de.willuhn.jameica.gui.input.Input;
 import de.willuhn.jameica.gui.util.Color;
 
 /**

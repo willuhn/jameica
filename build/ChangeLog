@@ -1,4 +1,15 @@
-HEAD 2.11 (nightly)
+2023-04-14 Version 2.10.4
+
+  * NEW: 0171 Update auf SWT 4.27 für linux64, linux-arm64, win64, macos64, macos64-aarch64
+  * NEW: 0170 Hinweisbox, wenn Repositories von Drittanbietern aktiviert sind
+  * NEW: 0169 Neue Option, um die Anwendung in das System-Tray zu minimieren
+  * NEW: 0168 Support für Java 15+ (Jameica liefert jetzt JavaScript Engine Rhino mit)
+  * NEW: 0167 Update auf SWT 4.26 für linux64, linux-arm64, win64, macos64, macos64-aarch64 sowie Update von JFace auf 3.28
+  * NEW: 0166 F5 als Shortcut zum Reload einer View
+  * NEW: 0165 An nahezu alle Dialoge können jetzt Dateien angehängt werden (mit dem Büroklammer-Symbol oben rechts)
+  * NEW: 0164 Update auf BouncyCastle 1.72. Bisherige Version ist von CVE-2020-15522 betroffen.
+  * NEW: 0163 TXW2 gegen die zu JAXB Runtime passende, versionsgleiche Bibliothek austauschen
+  * BUG: 0162 In Selectboxen nicht mehr auf FocusIn- und FocusOut-Events bei Listenern reagieren
 
 2023-01-25 Version 2.10.3
 

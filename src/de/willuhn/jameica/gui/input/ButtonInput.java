@@ -25,7 +25,9 @@ import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Color;
+import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
+import de.willuhn.jameica.system.Platform;
 
 /**
  * Eingabefeld, welches jedoch noch einen Button hinten dran
@@ -82,7 +84,14 @@ public abstract class ButtonInput extends AbstractInput
   		clientControl.setFocus();
     button = GUI.getStyleFactory().createButton(comp);
 		if (this.buttonImage == null && this.buttonText == null)
-	    button.setText("...");
+		{
+		  // Unter Windows wird der Button zu schmal angezeigt
+		  final int os = Application.getPlatform().getOS();
+		  if (os == Platform.OS_WINDOWS || os == Platform.OS_WINDOWS_64)
+	      button.setText(" ...  ");
+		  else
+        button.setText("...");
+		}
 	  else if (this.buttonImage != null)
 			button.setImage(this.buttonImage);
 		else if (this.buttonText != null)

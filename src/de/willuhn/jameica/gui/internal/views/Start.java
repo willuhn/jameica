@@ -124,6 +124,15 @@ public class Start extends AbstractView implements Extendable
   }
   
   /**
+   * @see de.willuhn.jameica.gui.AbstractView#canAttach()
+   */
+  @Override
+  public boolean canAttach()
+  {
+    return false;
+  }
+  
+  /**
    * @see de.willuhn.jameica.gui.AbstractView#reload()
    */
   @Override

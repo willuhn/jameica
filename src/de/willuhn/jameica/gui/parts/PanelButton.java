@@ -12,6 +12,7 @@ package de.willuhn.jameica.gui.parts;
 
 import java.rmi.RemoteException;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -20,6 +21,7 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Canvas;
@@ -29,6 +31,7 @@ import org.eclipse.swt.widgets.Control;
 import de.willuhn.jameica.gui.Action;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.Part;
+import de.willuhn.jameica.gui.util.Font;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
@@ -59,9 +62,11 @@ public class PanelButton implements Part
   private String icon    = null;
   private Action action  = null;
   private String tooltip = null;
+  private String text    = null;
   
   private int height     = 0;
   private int width      = 0;
+  private int textHeight = -1;
   
   private boolean enabled = true;
   
@@ -227,8 +232,36 @@ public class PanelButton implements Part
     int y = (this.height - size) / 2;
     if (pressed) y++;
     gc.drawImage(SWTUtil.getImage(this.icon),(this.width - size) / 2,y);
+    this.drawText(gc, pressed);
   }
   
+  /**
+   * Malt den Text auf den GC.
+   * @param gc der Graphics-Context.
+   * @param pressed true, wenn das Icon angeklickt gezeichnet wird.
+   */
+  private void drawText(GC gc, boolean pressed)
+  {
+    final String s = StringUtils.trimToNull(this.text);
+    if (s == null)
+      return;
+    
+    // Aus irgend einem Grund liefert "textExtent" 1px mehr Höhe beim MouseOver.
+    // Wir speichern daher die Höhe, damit sie sich nicht mehr ändert.
+    final Point size = gc.textExtent(s);
+    if (this.textHeight == -1)
+      this.textHeight = size.y;
+    
+    gc.setAlpha(ALPHA_DEFAULT);
+    gc.setTextAntialias(SWT.ON);
+    gc.setForeground(GUI.getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
+    gc.setFont(Font.DEFAULT.getSWTFont());
+    
+    final int x = this.width - size.x - 1;
+    final int y = this.height - this.textHeight - (pressed ? 0 : 1);
+    gc.drawText(s,x,y,true);
+  }
+
   /**
    * Speichert das Icon des Panel-Button.
    * @param icon das Icon des Panel-Button.
@@ -240,6 +273,17 @@ public class PanelButton implements Part
     
     this.icon = icon;
     
+    if (this.canvas != null && !this.canvas.isDisposed())
+      this.canvas.redraw();
+  }
+  
+  /**
+   * Speichert den anzuzeigenden Text.
+   * @param text der anzuzegende Text.
+   */
+  public void setText(String text)
+  {
+    this.text = text;
     if (this.canvas != null && !this.canvas.isDisposed())
       this.canvas.redraw();
   }

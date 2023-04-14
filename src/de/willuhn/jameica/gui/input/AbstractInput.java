@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Widget;
 
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.util.Color;
@@ -141,9 +142,7 @@ public abstract class AbstractInput implements Input
     for (int i=0;i<listeners.size();++i)
     {
     	l = listeners.get(i);
-			control.addListener(SWT.Selection,l);
-			control.addListener(SWT.FocusIn,l);
-			control.addListener(SWT.FocusOut,l);
+    	this.addListener(control,l);
     }
     
     // Es kann sein, dass das Control ein Composite ist (z.Bsp. bei DialogInput)
@@ -158,9 +157,7 @@ public abstract class AbstractInput implements Input
         for (int i=0;i<listeners.size();++i)
         {
           l = listeners.get(i);
-          children[j].addListener(SWT.Selection,l);
-          children[j].addListener(SWT.FocusIn,l);
-          children[j].addListener(SWT.FocusOut,l);
+          this.addListener(children[j],l);
         }
         applyVerifier(children[j]);
 			}
@@ -169,6 +166,18 @@ public abstract class AbstractInput implements Input
     // Einmal manuell starten, damit es vor dem ersten
     // verify event ausgeloest wird
     update();
+  }
+  
+  /**
+   * Übernimmt das eigentliche Hinzufügen des Listeners zum Widget.
+   * @param w das Widget.
+   * @param l der Listener.
+   */
+  protected void addListener(Widget w, Listener l)
+  {
+    w.addListener(SWT.Selection,l);
+    w.addListener(SWT.FocusIn,l);
+    w.addListener(SWT.FocusOut,l);
   }
   
   /**

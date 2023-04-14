@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?> 
 
-<system name="Jameica" version="2.10.3">
+<system name="Jameica" version="2.10.4">
 
   <description>Jameica - Java based messages interchange</description>
-  <url>https://www.willuhn.de/products/jameica/releases/2.10/jameica/jameica-2.10.3.zip</url>
+  <url>https://www.willuhn.de/products/jameica/releases/2.10/jameica/jameica-2.10.4.zip</url>
   <homepage>https://www.willuhn.de/projects/jameica</homepage>
   <license>GPL - http://www.gnu.org/copyleft/gpl.html</license>
 
@@ -27,9 +27,8 @@
       <item id="jameica.menu.quit"           name="Beenden"                         shortcut="CTRL+Q"         icon="window-close.png"        action="de.willuhn.jameica.gui.internal.action.FileClose" />
     </item>
     <item name="Hilfe">
-      <item name="&amp;Über"                                                                                  icon="gtk-info.png"            action="de.willuhn.jameica.gui.internal.action.About" />
-      <item name="-" />
       <item name="Lizenzinformationen" icon="text-x-generic.png"     action="de.willuhn.jameica.gui.internal.action.License" />
+      <item name="&amp;Über"                                                                                  icon="gtk-info.png"            action="de.willuhn.jameica.gui.internal.action.About" />
     </item>
   </menu>
 
@@ -47,6 +46,7 @@
     <consumer queue="jameica.boot"                 class="de.willuhn.jameica.messaging.BootMessageConsumer" />
     <consumer queue="jameica.scripting.add"        class="de.willuhn.jameica.messaging.AddScriptMessageConsumer" />
     <consumer queue="jameica.scripting.remove"     class="de.willuhn.jameica.messaging.RemoveScriptMessageConsumer" />
+    <consumer queue="jameica.activity"             class="de.willuhn.jameica.messaging.ActivityMessageConsumer" />
   </messaging>
 
 </system>

@@ -2,16 +2,13 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" output="test-bin" path="test"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/nanoxml/nanoxml-2.2.3.jar" sourcepath="lib.src/nanoxml/nanoxml-2.2.3.src.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/swt/linux64/swt.jar" sourcepath="lib.src/swt/linux64/src.zip"/>
-	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.core.runtime_3.10.0.v20140318-2214.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.osgi_3.10.1.v20140909-1633.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.jface_3.10.1.v20140813-1009.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/swt/win64/swt.jar" sourcepath="lib.src/swt/linux64/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.ui.forms_3.6.100.v20140422-1825.jar" sourcepath="lib.src/swt/win64/swt.src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/de_willuhn_ds/de_willuhn_ds.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/de_willuhn_util/de_willuhn_util.jar"/>
@@ -21,16 +18,16 @@
 	<classpathentry exported="true" kind="lib" path="lib/paperclips/net.sf.paperclips.ui_1.0.4.jar" sourcepath="lib.src/paperclips/net.sf.paperclips_1.0.4.src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-lang-2.6.jar" sourcepath="/home/willuhn/.m2/repository/commons-lang/commons-lang/2.6/commons-lang-2.6-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="lib/swt/org.eclipse.core.commands_3.6.100.v20140528-1422.jar"/>
-	<classpathentry kind="lib" path="lib/swt/org.eclipse.equinox.common_3.6.200.v20130402-1505.jar"/>
-	<classpathentry kind="lib" path="lib/swt/com.ibm.icu_52.1.0.v201404241930.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/bouncycastle/bcpkix-jdk15on-1.56.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/bouncycastle/bcprov-jdk15on-1.56.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/bouncycastle/bcpkix-jdk18on-1.72.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/bouncycastle/bcprov-jdk18on-1.72.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/bouncycastle/bcutil-jdk18on-1.72.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/h2/h2-1.4.199.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-cli-1.3.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-collections-3.2.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-logging-1.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mckoi/mckoisqldb-1.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/mozilla_rhino/rhino-1.7.14.jar"/>
+	<classpathentry kind="lib" path="lib/mozilla_rhino/rhino-engine-1.7.14.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/velocity/velocity-1.7.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/apache_xmlrpc/ws-commons-util-1.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/apache_xmlrpc/xml-apis-1.0.b2.jar"/>
@@ -41,7 +38,12 @@
 	<classpathentry exported="true" kind="lib" path="lib/java_ee/jaxb-api-2.4.0-b180725.0427.jar"/>
 	<classpathentry kind="lib" path="lib/java_ee/jaxb-runtime-2.4.0-b180725.0644.jar"/>
 	<classpathentry kind="lib" path="lib/java_ee/activation-1.1.1.jar"/>
-	<classpathentry kind="lib" path="lib/java_ee/txw2-20110809.jar"/>
+	<classpathentry kind="lib" path="lib/java_ee/txw2-2.4.0-b180725.0644.jar"/>
 	<classpathentry kind="lib" path="lib/velocity/oro-2.0.8.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.core.commands-3.10.300.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.equinox.common-3.17.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.jface-3.28.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.osgi-3.18.200.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/swt/com.ibm.icu_52.1.0.v201404241930.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

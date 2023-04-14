@@ -1,6 +1,13 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
+buildscript {
+  ext {
+    osgi_platform = 'gtk.linux.x86_64'
+    swt_version = '+'
+  }
+}
+
 sourceCompatibility = 1.7
 compileJava.options.encoding = 'ISO-8859-1'
 
@@ -14,10 +21,19 @@ repositories {
     mavenCentral()
 }
 
+configurations.all {
+    resolutionStrategy {
+        dependencySubstitution {
+            substitute module('org.eclipse.platform:org.eclipse.swt.${osgi.platform}') with module("org.eclipse.platform:org.eclipse.swt.$osgi_platform:$swt_version")
+        }
+    }
+}
+
 dependencies {
     compile 'org.apache.xmlrpc:xmlrpc-client:+'
-    compile 'org.bouncycastle:bcprov-jdk15on:+'
-    compile 'org.bouncycastle:bcpkix-jdk15on:+'
+    compile 'org.bouncycastle:bcprov-jdk18on:+'
+    compile 'org.bouncycastle:bcpkix-jdk18on:+'
+    compile 'org.bouncycastle:bcutil-jdk18on:+'
     compile 'com.h2database:h2:+'
     compile 'commons-cli:commons-cli:+'
     compile 'commons-lang:commons-lang:2.+'
@@ -33,6 +49,20 @@ dependencies {
     compile 'javax.xml.ws:jaxws-api:2.3.1'
     compile 'org.glassfish.jaxb:jaxb-runtime:2.4.0-b180830.0438'
     compile 'org.glassfish.main.javaee-api:javax.jws:3.1.2.2'
+    
+    // SWT
+    compile 'org.eclipse.platform:org.eclipse.swt.gtk.linux.x86_64:+'
+    compile 'org.eclipse.platform:org.eclipse.swt.gtk.linux.aarch64:+'
+    compile 'org.eclipse.platform:org.eclipse.swt.gtk.linux.x86:+'
+
+    compile 'org.eclipse.platform:org.eclipse.swt.win32.win32.x86_64:+'
+    compile 'org.eclipse.platform:org.eclipse.swt.win32.win32.x86:+'
+
+    compile 'org.eclipse.platform:org.eclipse.swt.cocoa.macosx.x86_64:+'
+    compile 'org.eclipse.platform:org.eclipse.swt.cocoa.macosx.aarch64:+'
+    
+    compile 'org.eclipse.platform:org.eclipse.jface:+'
+
 }
 
 task download(type: Copy) {

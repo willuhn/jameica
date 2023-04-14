@@ -37,6 +37,7 @@ import de.willuhn.jameica.messaging.PluginCacheMessageConsumer;
 import de.willuhn.jameica.messaging.SettingsChangedMessage;
 import de.willuhn.jameica.messaging.SettingsRestoredMessage;
 import de.willuhn.jameica.messaging.StatusBarMessage;
+import de.willuhn.jameica.services.SystrayService;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.BootstrapSettings;
 import de.willuhn.jameica.system.Config;
@@ -76,6 +77,8 @@ public class SettingsControl extends AbstractControl
   private Input colorMandatoryBG;
   private CheckboxInput mandatoryLabel;
   private CheckboxInput randomSplash;
+  private CheckboxInput systray;
+  private CheckboxInput minimizeToSystray;
 	
   /**
    * ct.
@@ -321,6 +324,48 @@ public class SettingsControl extends AbstractControl
 		return colorSuccess;
 	}
 	
+	/**
+	 * Liefert eine Checkbox, mit der eingestellt werden kann, ob die Anwendung in das Systray minimiert werden soll.
+	 * @return eine Checkbox, mit der eingestellt werden kann, ob die Anwendung in das Systray minimiert werden soll.
+	 */
+	public Input getMinimizeToSystray()
+	{
+	  if (this.minimizeToSystray != null)
+	    return this.minimizeToSystray;
+	  
+	  final SystrayService service = Application.getBootLoader().getBootable(SystrayService.class);
+	  this.minimizeToSystray = new CheckboxInput(service.isMinimizeToSystray());
+	  this.minimizeToSystray.setName(i18n.tr("Fenster beim Minimieren in System-Tray verschieben"));
+	  return this.minimizeToSystray;
+	}
+  
+  /**
+   * Liefert eine Checkbox, mit der eingestellt werden kann, ob das Systray-Symbol angezeigt werden soll.
+   * @return eine Checkbox, mit der eingestellt werden kann, ob das Systray-Symbol angezeigt werden soll.
+   */
+  public Input getSystray()
+  {
+    if (this.systray != null)
+      return this.systray;
+    
+    final SystrayService service = Application.getBootLoader().getBootable(SystrayService.class);
+    this.systray = new CheckboxInput(service.isEnabled());
+    this.systray.setName(i18n.tr("Symbol im System-Tray anzeigen"));
+    
+    final Listener l = new Listener() {
+      
+      @Override
+      public void handleEvent(Event event)
+      {
+        final boolean enabled = ((Boolean)systray.getValue()).booleanValue();
+        getMinimizeToSystray().setEnabled(enabled);
+      }
+    };
+    this.systray.addListener(l);
+    l.handleEvent(null);
+    return this.systray;
+  }
+	
   /**
    * Liefert eine Checkbox, mit der konfiguriert werden kann, ob auch die Labels vor Pflichtfeldern rot gefaerbt werden.
    * @return Checkbox.
@@ -392,7 +437,11 @@ public class SettingsControl extends AbstractControl
 			Color.ERROR.setSWTColor((org.eclipse.swt.graphics.Color)getColorError().getValue());
 			Color.SUCCESS.setSWTColor((org.eclipse.swt.graphics.Color)getColorSuccess().getValue());
       Color.MANDATORY_BG.setSWTColor((org.eclipse.swt.graphics.Color)getColorMandatoryBG().getValue());
-
+      
+      final SystrayService systray = Application.getBootLoader().getBootable(SystrayService.class);
+      systray.setEnabled(((Boolean)getSystray().getValue()).booleanValue());
+      systray.setMinimizeToSystray(((Boolean)getMinimizeToSystray().getValue()).booleanValue());
+      
       Application.getMessagingFactory().sendSyncMessage(new SettingsChangedMessage());
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Einstellungen gespeichert."),StatusBarMessage.TYPE_SUCCESS));
 

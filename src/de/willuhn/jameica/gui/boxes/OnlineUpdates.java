@@ -11,13 +11,12 @@
 package de.willuhn.jameica.gui.boxes;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import org.eclipse.swt.widgets.Composite;
 
 import de.willuhn.jameica.gui.Action;
+import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.gui.parts.Button;
 import de.willuhn.jameica.gui.parts.InfoPanel;
 import de.willuhn.jameica.messaging.StatusBarMessage;
@@ -38,8 +37,6 @@ public class OnlineUpdates extends AbstractBox
   private final static Settings settings = new Settings(OnlineUpdates.class);
   private SystemRepositoryTrustMessageConsumer mc = new SystemRepositoryTrustMessageConsumer();
   
-  private List<Button> buttons = new ArrayList<Button>();
-
   /**
    * @see de.willuhn.jameica.gui.boxes.Box#getName()
    */
@@ -95,7 +92,6 @@ public class OnlineUpdates extends AbstractBox
    */
   public void paint(Composite parent) throws RemoteException
   {
-    this.buttons.clear();
     InfoPanel panel = new InfoPanel();
     panel.setIcon("dialog-question-large.png");
     panel.setTitle(i18n.tr("Online-Updates für Plugins aktivieren?"));
@@ -106,13 +102,11 @@ public class OnlineUpdates extends AbstractBox
     {
       Button button = new Button(i18n.tr("Online-Updates aktivieren"),new UpdateState(),Boolean.TRUE,false,"ok.png");
       panel.addButton(button);
-      this.buttons.add(button);
     }
     
     {
       Button button = new Button(i18n.tr("Online-Updates nicht verwenden"),new UpdateState(),Boolean.FALSE,false,"process-stop.png");
       panel.addButton(button);
-      this.buttons.add(button);
     }
     panel.addButton(new Button(i18n.tr("Einstellungen..."),new de.willuhn.jameica.gui.internal.action.Settings(),i18n.tr("Updates"),false,"document-properties.png"));
     panel.paint(parent);
@@ -136,12 +130,7 @@ public class OnlineUpdates extends AbstractBox
       service.setUpdateCheck(b);
       settings.setAttribute("displayed",DateUtil.DEFAULT_FORMAT.format(new Date()));
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(b ? i18n.tr("Online-Updates aktiviert") : i18n.tr("Online-Updates deaktiviert"),b ? StatusBarMessage.TYPE_SUCCESS : StatusBarMessage.TYPE_INFO));
-      
-      // Buttons deaktivieren, damit man nicht nochmal drauf klicken kann
-      for (Button button:buttons)
-      {
-        button.setEnabled(false);
-      }
+      GUI.getCurrentView().reload();
     }
   }
   

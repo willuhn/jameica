@@ -52,7 +52,7 @@ public abstract class AbstractView
    */
   public void reload() throws ApplicationException
   {
-    
+    GUI.startView(this.getClass(),this.getCurrentObject());
   }
 
 	/**
@@ -115,57 +115,14 @@ public abstract class AbstractView
   {
     return true;
   }
+  
+  /**
+   * Liefert true, wenn an die View Attachments gehängt werden können.
+   * Kann ueberschrieben werden, wenn nicht gewuenscht.
+   * @return true, wenn an die View Attachments angehängt werden können. Default ist true.
+   */
+  public boolean canAttach()
+  {
+    return true;
+  }
 }
-
-
-
-/***************************************************************************
- * $Log: AbstractView.java,v $
- * Revision 1.4  2010/10/06 15:48:18  willuhn
- * @N Heiners Patch vom 06.10.2010 fuer Hilfetexte zur Laufzeit
- *
- * Revision 1.3  2006/01/18 00:35:57  web0
- * @N AbstractView#reload
- *
- * Revision 1.2  2004/10/29 16:16:24  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2004/10/08 13:38:19  willuhn
- * *** empty log message ***
- *
- * Revision 1.13  2004/02/22 20:05:21  willuhn
- * @N new Logo panel
- *
- * Revision 1.12  2004/02/20 20:45:24  willuhn
- * *** empty log message ***
- *
- * Revision 1.11  2004/01/28 20:51:25  willuhn
- * @C gui.views.parts moved to gui.parts
- * @C gui.views.util moved to gui.util
- *
- * Revision 1.10  2004/01/23 00:29:03  willuhn
- * *** empty log message ***
- *
- * Revision 1.9  2004/01/08 20:50:32  willuhn
- * @N database stuff separated from jameica
- *
- * Revision 1.8  2003/12/29 16:29:47  willuhn
- * @N javadoc
- *
- * Revision 1.7  2003/12/28 22:58:27  willuhn
- * @N synchronize mode
- *
- * Revision 1.6  2003/12/11 21:00:54  willuhn
- * @C refactoring
- *
- * Revision 1.5  2003/11/21 02:10:21  willuhn
- * @N prepared Statements in AbstractDBObject
- * @N a lot of new SWT parts
- *
- * Revision 1.4  2003/11/20 03:48:42  willuhn
- * @N first dialogues
- *
- * Revision 1.3  2003/10/29 00:41:27  willuhn
- * *** empty log message ***
- *
- ***************************************************************************/

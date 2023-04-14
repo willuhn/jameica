@@ -54,12 +54,10 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
   private List<X509Certificate> certs = new LinkedList<X509Certificate>();
   
   private Input cnIssuer      = null;
-  private Input altNames      = null;
+  private TextAreaInput altNames      = null;
   private Input oIssuer       = null;
-  private Input ouIssuer      = null;
   private Input cnSubject     = null;
   private Input oSubject      = null;
-  private Input ouSubject     = null;
   private LabelInput validity = null;
   private Input serial        = null;
   private Input fingerprint   = null;
@@ -82,18 +80,20 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
   public AbstractCertificateDialog(int position, List<X509Certificate> certs)
   {
     super(position);
-    this.setSize(440,SWT.DEFAULT);
+    this.setSize(640,SWT.DEFAULT);
     this.certs.addAll(certs);
     
     this.cnIssuer    = this.createLabel(i18n.tr("Common Name (CN)"));
-    this.altNames    = this.createLabel(i18n.tr("Alternative Hostnamen"));
+
+    this.altNames = new TextAreaInput("");
+    this.altNames.setHeight(50);
+    this.altNames.setName(i18n.tr("Alternative Hostnamen"));
+    this.altNames.setEnabled(false);
     
     this.oIssuer     = this.createLabel(i18n.tr("Organisation (O)"));
-    this.ouIssuer    = this.createLabel(i18n.tr("Abteilung (OU)"));
     
     this.cnSubject   = this.createLink(i18n.tr("Common Name (CN)"));
     this.oSubject    = this.createLabel(i18n.tr("Organisation (O)"));
-    this.ouSubject   = this.createLabel(i18n.tr("Abteilung (OU)"));
     
     this.validity    = this.createLabel(i18n.tr("Gültigkeit"));
     this.serial      = this.createLabel(i18n.tr("Seriennummer"));
@@ -185,7 +185,6 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
 
       this.cnIssuer.setValue(format(cn));
       this.oIssuer.setValue(format(o));
-      this.ouIssuer.setValue(format(ou));
     }
     //
     /////////////////////////////////////////////////////////////////////////////
@@ -197,7 +196,6 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
 
       String cn = p.getAttribute(Principal.COMMON_NAME);
       String o  = p.getAttribute(Principal.ORGANIZATION);
-      String ou = p.getAttribute(Principal.ORGANIZATIONAL_UNIT);
 
       this.cnSubject.setValue(format(cn));
       
@@ -209,7 +207,6 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
       }
 
       this.oSubject.setValue(format(o));
-      this.ouSubject.setValue(format(ou));
     }
     //
     /////////////////////////////////////////////////////////////////////////////
@@ -270,7 +267,6 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
     group.addHeadline(Application.getI18n().tr("Ausgestellt von"));
     group.addInput(this.cnIssuer);
     group.addInput(this.oIssuer);
-    group.addInput(this.ouIssuer);
     /////////////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////////////
@@ -278,7 +274,6 @@ public abstract class AbstractCertificateDialog extends AbstractDialog
     group.addHeadline(Application.getI18n().tr("Ausgestellt für"));
     group.addInput(this.cnSubject);
     group.addInput(this.oSubject);
-    group.addInput(this.ouSubject);
     group.addInput(this.altNames);
     /////////////////////////////////////////////////////////////////////////////
 

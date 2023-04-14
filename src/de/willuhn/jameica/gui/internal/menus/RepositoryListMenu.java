@@ -15,7 +15,7 @@ import de.willuhn.jameica.gui.internal.action.RepositoryAdd;
 import de.willuhn.jameica.gui.internal.action.RepositoryDisable;
 import de.willuhn.jameica.gui.internal.action.RepositoryEnable;
 import de.willuhn.jameica.gui.internal.action.RepositoryRemove;
-import de.willuhn.jameica.gui.internal.parts.RepositoryList.UrlObject;
+import de.willuhn.jameica.gui.internal.parts.RepositoryList.RepositoryEntry;
 import de.willuhn.jameica.gui.parts.CheckedContextMenuItem;
 import de.willuhn.jameica.gui.parts.ContextMenu;
 import de.willuhn.jameica.gui.parts.ContextMenuItem;
@@ -95,10 +95,10 @@ public class RepositoryListMenu extends ContextMenu
     @Override
     public boolean isEnabledFor(Object o)
     {
-      if (o == null || !(o instanceof UrlObject))
+      if (o == null || !(o instanceof RepositoryEntry))
         return false;
 
-      UrlObject u = (UrlObject) o;
+      RepositoryEntry u = (RepositoryEntry) o;
       
       return (enabled != u.isEnabled()) && super.isEnabledFor(o); 
     }

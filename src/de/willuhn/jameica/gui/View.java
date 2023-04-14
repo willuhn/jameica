@@ -19,6 +19,8 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.internal.parts.LogoPart;
 import de.willuhn.jameica.gui.internal.parts.PanelButtonBack;
@@ -31,6 +33,7 @@ import de.willuhn.jameica.messaging.StatusBarMessage;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Customizing;
 import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
 
 /**
  * Bildet das Content-Frame ab.
@@ -146,6 +149,26 @@ public class View implements Part
     }
 
     ////////////////////////////////////////////////////////////////////////////
+    
+    // Reload-Listener auf F5
+    GUI.getDisplay().addFilter(SWT.KeyUp,new Listener() {
+      
+      @Override
+      public void handleEvent(Event event)
+      {
+        if (event.keyCode != SWT.F5)
+          return;
+        
+        try
+        {
+          GUI.getCurrentView().reload();
+        }
+        catch (ApplicationException ae)
+        {
+          Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
+        }
+      }
+    });
 	}
 	
   /**
