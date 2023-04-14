@@ -1,5 +1,7 @@
 HEAD 2.11 (nightly)
 
+2023-04-14 Version 2.10.4
+
   * NEW: 0171 Update auf SWT 4.27 für linux64, linux-arm64, win64, macos64, macos64-aarch64
   * NEW: 0170 Hinweisbox, wenn Repositories von Drittanbietern aktiviert sind
   * NEW: 0169 Neue Option, um die Anwendung in das System-Tray zu minimieren
