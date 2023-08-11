@@ -43,7 +43,8 @@ public interface StorageProvider
 
   /**
    * Liefert die Attachments für den angegebenen Context.
-   * Hierbei werden nur die Informationen zu den Attachments geliefert, nicht der Datei-Inhalt. Der kann per 
+   * Hierbei werden nur die Informationen zu den Attachments geliefert, nicht der Datei-Inhalt.
+   * Der kann per {@link StorageProvider#copy(Attachment, OutputStream)} geladen werden. 
    * @param ctx der Context.
    * @return die Attachments.
    * @throws IOException
@@ -59,7 +60,7 @@ public interface StorageProvider
   public void copy(Attachment a, OutputStream os) throws IOException;
   
   /**
-   * Erstell ein neues Attachment.
+   * Erstellt ein neues Attachment.
    * @param a das zu erstellende Attachment.
    * @param is Stream mit den Daten des neuen Attachments.
    * @throws IOException

@@ -107,7 +107,7 @@ public class StorageProviderLocal implements StorageProvider
   {
     final File dir = this.getDir(a.getContext());
     final File target = new File(dir,a.getFilename());
-    Logger.info("writing attachment file " + target);
+    Logger.info("creating new attachment file " + target);
 
     OutputStream os = null;
     try
@@ -139,13 +139,13 @@ public class StorageProviderLocal implements StorageProvider
   public void copy(Attachment a, OutputStream os) throws IOException
   {
     final File dir = this.getDir(a.getContext());
-    final File target = new File(dir,a.getFilename());
-    Logger.info("creating new attachment file " + target);
+    final File src = new File(dir,a.getFilename());
+    Logger.info("read attachment file " + src);
 
     InputStream is = null;
     try
     {
-      is = new BufferedInputStream(new FileInputStream(target));
+      is = new BufferedInputStream(new FileInputStream(src));
       final long bytes = IOUtil.copy(is,os);
       Logger.info("read " + bytes + " bytes");
     }
@@ -163,6 +163,7 @@ public class StorageProviderLocal implements StorageProvider
   {
     final File dir = this.getDir(a.getContext());
     final File target = new File(dir,a.getFilename());
+    Logger.info("delete attachment file " + target);
     if (!target.delete())
       throw new IOException(i18n.tr("Datei {0} kann nicht gelöscht werden",target.getAbsolutePath()));
   }
