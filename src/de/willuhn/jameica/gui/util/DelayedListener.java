@@ -1,6 +1,6 @@
 /**********************************************************************
  *
- * Copyright (c) 2004 Olaf Willuhn
+ * Copyright (c) 2023 Olaf Willuhn
  * All rights reserved.
  * 
  * This software is copyrighted work licensed under the terms of the
@@ -10,11 +10,16 @@
 
 package de.willuhn.jameica.gui.util;
 
-import org.eclipse.swt.widgets.Display;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.system.Application;
 
 /**
  * Implementiert die verzoegerte Ausloesung einer Aktion, um Bundle-Updates durchzufuehren.
@@ -37,14 +42,16 @@ import de.willuhn.jameica.gui.GUI;
  */
 public class DelayedListener implements Listener
 {
+  private final static ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+  
   /**
    * Das Default-Timeout.
    */
   public final static int TIMEOUT_DEFAULT = 300;
 
-  private long count         = 0;
-  private int timeout        = TIMEOUT_DEFAULT;
-  private Listener listener  = null;
+  private AtomicInteger count = new AtomicInteger();
+  private int timeout         = TIMEOUT_DEFAULT;
+  private Listener listener   = null;
 
   /**
    * ct.
@@ -71,47 +78,37 @@ public class DelayedListener implements Listener
    */
   public final synchronized void handleEvent(final Event event)
   {
-    count++;
-
-    // Muss ich leider doppelt verpacken, da timerExec keinen Zugriff
-    // aus Fremdthreads erlaubt
-    Display display = GUI.getDisplay();
-    display.asyncExec(new Runnable()
-    {
+    final int myCount = this.count.incrementAndGet();
+    
+    final Runnable r = new Runnable() {
+      
+      @Override
       public void run()
       {
-        GUI.getDisplay().timerExec(DelayedListener.this.timeout,new Runnable()
+        // Wenn der aktuelle Counter größer ist, kam nach uns noch ein Aufruf. Dann
+        // muss der sich drum kümmern
+        if (myCount < count.get())
+          return;
+
+        if (Application.inServerMode())
         {
-          private long myCount = count;
-
-          public void run()
-          {
-            if (listener == null)
-              return;
-
-            // count steht immer noch dort, wo wir ihn
-            // hinterlassen haben, also kam nach uns
-            // keiner mehr.
-            if (count <= myCount)
+          listener.handleEvent(event);
+        }
+        else
+        {
+          GUI.getDisplay().asyncExec(new Runnable() {
+            
+            @Override
+            public void run()
+            {
               listener.handleEvent(event);
-          }
-        });
+            }
+          });
+        }
+          
       }
-    });
+    };
+
+    executorService.schedule(r,timeout,TimeUnit.MILLISECONDS);
   }
-
 }
-
-
-/*********************************************************************
- * $Log: DelayedListener.java,v $
- * Revision 1.3  2007/06/04 23:24:26  willuhn
- * @B delayedListener occurs SWTException (invalid thread access) when not wrapped in syncExec/asyncExec
- *
- * Revision 1.2  2007/04/26 18:21:43  willuhn
- * *** empty log message ***
- *
- * Revision 1.1  2007/04/26 18:20:22  willuhn
- * @N Ein verzoegernder Listener fuer Bulk-Updates
- *
- **********************************************************************/
