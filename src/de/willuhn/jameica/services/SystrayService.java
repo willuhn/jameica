@@ -23,6 +23,7 @@ import de.willuhn.jameica.messaging.Message;
 import de.willuhn.jameica.messaging.MessageConsumer;
 import de.willuhn.jameica.messaging.SystemMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Logger;
 
 /**
  * Service, der sich um das Systay kümmert.
@@ -151,6 +152,7 @@ public class SystrayService implements Bootable
           return;
         }
         
+        Logger.info("minimize to systray");
         shell.setVisible(false);
       }
     });

@@ -25,6 +25,7 @@ import de.willuhn.jameica.gui.internal.action.FileClose;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
+import de.willuhn.jameica.system.Platform;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.I18N;
 
@@ -99,13 +100,26 @@ public class SysTray
       // Zusätzlich setzen wir ein "data"-Flag, damit der SystrayService weiss, dass
       // er auf dieses minimize-Event im iconify-Listener nicht reagieren muss.
       // Workaound aber nur anwenden, wenn die Shell behauptet, dass sie nicht minimiert ist
+      // Wenn wir nicht unter Linux laufen, dann wechseln wir mit jedem Klick zwischen
+      // minimize und restore hin und her
       if (!shell.getMinimized())
       {
-        shell.setData(KEY_SYSTRAY_DATA, Boolean.TRUE);
-        shell.setMinimized(true);
+        final int os = Application.getPlatform().getOS();
+        if (os == Platform.OS_LINUX || os == Platform.OS_LINUX_64)
+        {
+          shell.setData(KEY_SYSTRAY_DATA, Boolean.TRUE);
+          shell.setMinimized(true);
+        }
+        else
+        {
+          Logger.info("minimize to systray");
+          shell.setMinimized(true);
+          return;
+        }
       }
 
       // Jetzt können wir die Shell wieder sichtbar machen
+      Logger.info("restore systray");
       shell.setMinimized(false);
       shell.setVisible(true);
     }
