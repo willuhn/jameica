@@ -96,7 +96,7 @@ public class SysTray
         return;
       
       final boolean minimized = (shell.getData(KEY_MINIMIZED) != null);
-      Logger.info("shell minimized: " + minimized);
+      Logger.info("shell was minimized: " + minimized);
       if (!minimized)
       {
         Logger.info("minimize to systray");
