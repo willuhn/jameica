@@ -140,19 +140,18 @@ public class SystrayService implements Bootable
         if (shell == null || shell.isDisposed())
           return;
 
-        if (!shell.isVisible())
-          return;
-        
         if (!isEnabled() || !isMinimizeToSystray())
           return;
-        
-        if (shell.getData(SysTray.KEY_SYSTRAY_DATA) != null)
-        {
-          shell.setData(SysTray.KEY_SYSTRAY_DATA,null);
+
+//        if (!shell.isVisible())
+//          return;
+
+        // Ignorieren, wenn wir bereits minimiert sind
+        if (shell.getData(SysTray.KEY_MINIMIZED) != null)
           return;
-        }
         
-        Logger.info("minimize to systray");
+        Logger.info("shell iconified");
+        shell.setData(SysTray.KEY_MINIMIZED,Boolean.TRUE);
         shell.setVisible(false);
       }
     });

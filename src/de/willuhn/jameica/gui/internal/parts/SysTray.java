@@ -25,7 +25,6 @@ import de.willuhn.jameica.gui.internal.action.FileClose;
 import de.willuhn.jameica.gui.util.SWTUtil;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.OperationCanceledException;
-import de.willuhn.jameica.system.Platform;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.I18N;
 
@@ -35,7 +34,7 @@ import de.willuhn.util.I18N;
 @Lifecycle(Type.CONTEXT)
 public class SysTray
 {
-  public final static String KEY_SYSTRAY_DATA = "__systray-minimize";
+  public final static String KEY_MINIMIZED = "__systray-minimize";
   
   private TrayItem item = null;
   private boolean activity = false;
@@ -68,7 +67,7 @@ public class SysTray
     
       public void widgetSelected(SelectionEvent e)
       {
-        restore();
+        toggle();
       }
     });
 
@@ -86,42 +85,33 @@ public class SysTray
   }
   
   /**
-   * Stellt das Anwendungsfenster wieder her.
+   * Wechselt beim Klick auf das Systray-Symbol zwischen Minimierung und Nicht-Minimierung hin und her.
    */
-  private void restore()
+  private void toggle()
   {
     try
     {
       final Shell shell = GUI.getShell();
+      if (shell == null || shell.isDisposed())
+        return;
       
-      // Unter Linux (zumindest KDE Plasma) behauptete die Shell, nicht minimiert zu sein.
-      // Daher klappte dort das Restore nicht. Wir führen das "setMinimized" daher hier
-      // nochmal zusätzlich aus, damit das Boolean-Flag in der Shell gesetzt ist
-      // Zusätzlich setzen wir ein "data"-Flag, damit der SystrayService weiss, dass
-      // er auf dieses minimize-Event im iconify-Listener nicht reagieren muss.
-      // Workaound aber nur anwenden, wenn die Shell behauptet, dass sie nicht minimiert ist
-      // Wenn wir nicht unter Linux laufen, dann wechseln wir mit jedem Klick zwischen
-      // minimize und restore hin und her
-      if (!shell.getMinimized())
+      final boolean minimized = (shell.getData(KEY_MINIMIZED) != null);
+      Logger.info("shell minimized: " + minimized);
+      if (!minimized)
       {
-        final int os = Application.getPlatform().getOS();
-        if (os == Platform.OS_LINUX || os == Platform.OS_LINUX_64)
-        {
-          shell.setData(KEY_SYSTRAY_DATA, Boolean.TRUE);
-          shell.setMinimized(true);
-        }
-        else
-        {
-          Logger.info("minimize to systray");
-          shell.setMinimized(true);
-          return;
-        }
+        Logger.info("minimize to systray");
+        shell.setData(KEY_MINIMIZED,Boolean.TRUE);
+        shell.setVisible(false);
+        shell.setMinimized(true);
+        return;
       }
-
-      // Jetzt können wir die Shell wieder sichtbar machen
-      Logger.info("restore systray");
-      shell.setMinimized(false);
-      shell.setVisible(true);
+      else
+      {
+        Logger.info("restore from systray");
+        shell.setVisible(true);
+        shell.setMinimized(false);
+        shell.setData(KEY_MINIMIZED,null);
+      }
     }
     catch (Exception e2)
     {
@@ -164,7 +154,7 @@ public class SysTray
         {
           public void handleEvent (Event e)
           {
-            restore();
+            toggle();
           }
         });
       }
