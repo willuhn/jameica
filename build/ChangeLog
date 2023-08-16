@@ -1,5 +1,6 @@
 HEAD 2.11 (nightly)
   
+  * CHG: 0173 Umstellung des JDBC-Treibers von MySQL auf MariaDB
   * CHG: 0172 Rahmen um Slider unter Windows entfernt - das Problem mit der Hintergrundfarbe existiert in aktuellen Windows-/SWT-Versionen nicht mehr
 
 2023-04-14 Version 2.10.4
