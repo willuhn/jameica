@@ -335,7 +335,7 @@ public class SettingsControl extends AbstractControl
 	  
 	  final SystrayService service = Application.getBootLoader().getBootable(SystrayService.class);
 	  this.minimizeToSystray = new CheckboxInput(service.isMinimizeToSystray());
-	  this.minimizeToSystray.setName(i18n.tr("Fenster beim Minimieren in System-Tray verschieben"));
+	  this.minimizeToSystray.setName(i18n.tr("Fenster beim Minimieren/Schlieﬂen in System-Tray verschieben"));
 	  return this.minimizeToSystray;
 	}
   

@@ -1,5 +1,6 @@
 HEAD 2.11 (nightly)
   
+  * NEW: 0174 Wenn Minimieren in Systray aktiviert ist, dann auch beim Klick auf Schliessen-Kreuz im Fenster-Titel nicht beenden sondern in Systray minimieren
   * CHG: 0173 Umstellung des JDBC-Treibers von MySQL auf MariaDB
   * CHG: 0172 Rahmen um Slider unter Windows entfernt - das Problem mit der Hintergrundfarbe existiert in aktuellen Windows-/SWT-Versionen nicht mehr
 

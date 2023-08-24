@@ -131,6 +131,23 @@ public class SystrayService implements Bootable
     GUI.getShell().addShellListener(new ShellAdapter() {
       
       /**
+       * @see org.eclipse.swt.events.ShellAdapter#shellClosed(org.eclipse.swt.events.ShellEvent)
+       */
+      @Override
+      public void shellClosed(ShellEvent e)
+      {
+        final Shell shell = GUI.getShell();
+        if (shell == null || shell.isDisposed())
+          return;
+
+        if (!isEnabled() || !isMinimizeToSystray())
+          return;
+        
+        e.doit = false;
+        this.shellIconified(e);
+      }
+      
+      /**
        * @see org.eclipse.swt.events.ShellAdapter#shellIconified(org.eclipse.swt.events.ShellEvent)
        */
       @Override
@@ -142,9 +159,6 @@ public class SystrayService implements Bootable
 
         if (!isEnabled() || !isMinimizeToSystray())
           return;
-
-//        if (!shell.isVisible())
-//          return;
 
         // Ignorieren, wenn wir bereits minimiert sind
         if (shell.getData(SysTray.KEY_MINIMIZED) != null)
@@ -159,7 +173,7 @@ public class SystrayService implements Bootable
 
 
   /**
-   * Fuehrt die Initialisierung des Scripting-Service aus, wenn das System gebootet wurde.
+   * Fuehrt die Initialisierung des Service aus, wenn das System gebootet wurde.
    */
   private class InitMessageConsumer implements MessageConsumer
   {
