@@ -111,6 +111,7 @@ public class SysTray
         shell.setVisible(true);
         shell.setMinimized(false);
         shell.setData(KEY_MINIMIZED,null);
+        shell.forceActive();
       }
     }
     catch (Exception e2)
