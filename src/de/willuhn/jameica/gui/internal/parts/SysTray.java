@@ -232,7 +232,7 @@ public class SysTray
         {
           String s = "Jameica";
           if (activity)
-            s += (":" + Application.getI18n().tr("Neue Aktivität"));
+            s += (": " + Application.getI18n().tr("Neue Aktivität"));
           
           item.setToolTipText(s);
           item.setImage(SWTUtil.getImage(activity ? "jameica-icon-notify.png" : "jameica-icon.png"));
