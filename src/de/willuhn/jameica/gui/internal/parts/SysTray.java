@@ -190,26 +190,9 @@ public class SysTray
       //
       ///////////////////////////////////////////////////////////////
 
-//      new MenuItem(menu, SWT.SEPARATOR);
-
       // Menu anzeigen
       menu.setVisible(true);
     }
-//    catch (ApplicationException ae)
-//    {
-//      Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
-//      if (GUI.getShell().getMinimized())
-//      {
-//        try
-//        {
-//          Application.getCallback().notifyUser(ae.getMessage());
-//        }
-//        catch (Exception e)
-//        {
-//          Logger.error("unable to notify user",e);
-//        }
-//      }
-//    }
     catch (Exception e)
     {
       Logger.error("unable to display menu",e);
