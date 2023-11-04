@@ -106,7 +106,7 @@ public class PluginRepositories extends AbstractBox
               return; // Den Fall gibt es nicht, weil die Box dann nicht angezeigt wird
             try
             {
-              if (Application.getCallback().askUser(i18n.tr("Sind Sie sicher, dass dieser Hinweis nicht mehr angezeigt werden soll?")))
+              if (Application.getCallback().askUser(i18n.tr("Sind Sie sicher, dass dieser Hinweis nicht mehr angezeigt werden soll?"),false))
               {
                 PluginRepositories.this.setEnabled(false);
                 GUI.getCurrentView().reload();
