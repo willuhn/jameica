@@ -8,7 +8,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/nanoxml/nanoxml-2.2.3.jar" sourcepath="lib.src/nanoxml/nanoxml-2.2.3.src.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/swt/win64/swt.jar" sourcepath="lib.src/swt/linux64/src.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/swt/linux64/swt.jar" sourcepath="lib.src/swt/linux64/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.ui.forms_3.6.100.v20140422-1825.jar" sourcepath="lib.src/swt/win64/swt.src.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/de_willuhn_ds/de_willuhn_ds.jar" sourcepath="/datasource/src"/>
 	<classpathentry exported="true" kind="lib" path="lib/de_willuhn_util/de_willuhn_util.jar" sourcepath="/util/src"/>
