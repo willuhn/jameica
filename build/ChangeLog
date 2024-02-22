@@ -1,5 +1,6 @@
 HEAD 2.11 (nightly)
   
+  * NEW: 0177 Ordner für Dateianhänge kann jetzt auch wieder auf System-Default zurückgesetzt werden. Außerdem wird der aktuell verwendete Ordner angezeigt
   * NEW: 0176 Auf der Startseite einen Hinweis anzeigen, wenn in der letzten Sitzung Fehler dazu führten, dass kein automatisches Backup erstellt werden konnte
   * BUG: 0175 Beim Restore aus dem Systray Fenster forciert in Vordergrund bringen
   * NEW: 0174 Wenn Minimieren in Systray aktiviert ist, dann auch beim Klick auf Schliessen-Kreuz im Fenster-Titel nicht beenden sondern in Systray minimieren

@@ -176,7 +176,7 @@ public class StorageProviderLocal implements StorageProvider
    */
   private File getDir(Context ctx) throws IOException
   {
-    final File basedir = this.getBasedir();
+    final File basedir = this.getBaseDir();
     final File dir = new File(basedir.getAbsolutePath() + File.separator +
                               StringUtils.defaultIfBlank(ctx.getPlugin(),"default") + File.separator +
                               StringUtils.defaultIfBlank(ctx.getClassName(),"default"),StringUtils.defaultIfBlank(ctx.getId(),"default"));
@@ -190,21 +190,59 @@ public class StorageProviderLocal implements StorageProvider
    * Liefert das Basis-Verzeichnis für die Speicherung.
    * @return das Basis-Verzeichnis für die Speicherung.
    */
-  public File getBasedir()
+  public File getBaseDir()
   {
-    final String defaultDir = Application.getConfig().getWorkDir() + File.separator + "attachments";
-    final String basedir = settings.getString("basedir",defaultDir);
-    return new File(basedir);
+    final File def = this.getDefaultBaseDir();
+    if (!this.useCustomBaseDir())
+      return def;
+    
+    // Wenn ein abweichendes Verzeichnis existiert, muss eines angegeben sein. Ansonsten verwenden wir dann doch wieder das Default-Dir.
+    final String basedir = settings.getString("basedir",null);
+    return basedir != null ? new File(basedir) : def;
   }
   
+  /**
+   * Liefert das Default-Basis-Verzeichnis.
+   * @return das Default-Basis-Verzeichnis.
+   */
+  public File getDefaultBaseDir()
+  {
+    return new File(Application.getConfig().getWorkDir() + File.separator + "attachments");
+  }
+  
+  /**
+   * Liefert das abweichende Basis-Verzeichnis für die Speicherung.
+   * @return das abweichende Basis-Verzeichnis für die Speicherung.
+   */
+  public String getCustomBaseDir()
+  {
+    return settings.getString("basedir",null);
+  }
+
   /**
    * Speichert das Basis-Verzeichnis für die Speicherung.
    * @param dir das Basis-Verzeichnis für die Speicherung.
    */
-  public void setBasedir(File dir)
+  public void setCustomBaseDir(String dir)
   {
-    settings.setAttribute("basedir",dir != null ? dir.getAbsolutePath() : null);
+    settings.setAttribute("basedir",dir);
+  }
+  
+  /**
+   * Liefert true, wenn ein abweichendes Basis-Verzeichnis für die Sicherung verwendet werden soll.
+   * @return true, wenn ein abweichendes Basis-Verzeichnis für die Sicherung verwendet werden soll.
+   */
+  public boolean useCustomBaseDir()
+  {
+    return settings.getBoolean("basedir.custom",false);
+  }
+  
+  /**
+   * Legt fest, ob ein abweichendes Basis-Verzeichnis für die Sicherung verwendet werden soll.
+   * @param b true, wenn ein abweichendes Basis-Verzeichnis für die Sicherung verwendet werden soll.
+   */
+  public void useCustomBaseDir(boolean b)
+  {
+    settings.setAttribute("basedir.custom",b);
   }
 }
-
-
