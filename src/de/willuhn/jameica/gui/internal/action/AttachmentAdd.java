@@ -72,16 +72,26 @@ public class AttachmentAdd implements Action
       //////////////////////////////////////////////////////////////////////////
 
       //////////////////////////////////////////////////////////////////////////
-      // Zu importierende Dateien wählen
-      FileDialog d = new FileDialog(GUI.getShell(),SWT.MULTI);
-      d.setText(i18n.tr("Bitte wählen Sie ein oder mehrere hinzuzufügende Dateien aus."));
-      d.setFilterPath(settings.getString("lastdir", System.getProperty("user.home")));
-      if (d.open() == null)
-        throw new OperationCanceledException();
-      
-      final String dir = d.getFilterPath();
-      final String[] files = d.getFileNames();
-      settings.setAttribute("lastdir",dir);
+      String dir = null;
+      String[] files = null;
+      if(context instanceof String[])
+      {
+        files = (String[])context;
+      }
+      else
+      {
+        // Zu importierende Dateien wählen
+        FileDialog d = new FileDialog(GUI.getShell(),SWT.MULTI);
+        d.setText(i18n.tr("Bitte wählen Sie ein oder mehrere hinzuzufügende Dateien aus."));
+        d.setFilterPath(settings.getString("lastdir", System.getProperty("user.home")));
+        if (d.open() == null)
+          throw new OperationCanceledException();
+        
+        dir = d.getFilterPath();
+        files = d.getFileNames();
+        settings.setAttribute("lastdir",dir);
+      }
+     
       
       if (files == null || files.length == 0)
       {
