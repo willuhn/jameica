@@ -1,5 +1,6 @@
 HEAD 2.11 (nightly)
   
+  * BUG: 0180 Selectboxen wurden nicht farbig hervorgehoben, wenn sie als Pflichtfelder markiert waren
   * BUG: 0179 CTRL+A und CTRL+C funktionierte nicht bei Tabellen, die kein Kontextmenü besitzen
   * NEW: 0178 Drag'n'Drop-Support für Attachments
   * NEW: 0177 Ordner für Dateianhänge kann jetzt auch wieder auf System-Default zurückgesetzt werden. Außerdem wird der aktuell verwendete Ordner angezeigt
