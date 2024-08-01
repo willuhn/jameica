@@ -110,6 +110,8 @@ public class GUI implements ApplicationController
     private Stack<HistoryEntry> history  = new Stack<HistoryEntry>();
     private boolean skipHistory          = false;
     private boolean stop                 = false;
+    
+    private BackgroundTask task          = null;
 
 
   /**
@@ -1094,16 +1096,27 @@ public class GUI implements ApplicationController
   public void start(final BackgroundTask task)
   {
     if (getDisplay() == null || getDisplay().isDisposed()) return;
+    
+    if (this.task != null)
+    {
+      Logger.error("there's already running a background task");
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Es wird bereits eine Hintergrund-Aufgabe ausgeführt"),StatusBarMessage.TYPE_ERROR));
+      return;
+    }
+    
+    this.task = task;
 
     // Das Konstrukt sieht merkwuerdig aus - ich weiss. Muss aber so ;)
-    final Thread t = new Thread("bg-task:" + task.getClass().getSimpleName())
+    final String name = "bg-task:" + task.getClass().getSimpleName();
+    final Thread t = new Thread(name)
     {
       public void run()
       {
-        getStatusBar().startProgress();
-        ProgressMonitor monitor = new BackgroundTaskMonitor(task);
+        final ProgressMonitor monitor = new BackgroundTaskMonitor(task);
         try
         {
+          Logger.info("start background task: " + name);
+          getStatusBar().startProgress();
           task.run(monitor);
         }
         catch (OperationCanceledException oce)
@@ -1136,6 +1149,8 @@ public class GUI implements ApplicationController
         }
         finally
         {
+          GUI.this.task = null;
+          Logger.info("finished background task: " + name);
           getStatusBar().stopProgress();
         }
       }
