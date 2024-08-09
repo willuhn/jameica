@@ -133,8 +133,6 @@ public class GUI implements ApplicationController
     {
       Logger.info("startup GUI");
       Logger.info("SWT version: " + SWT.getVersion() + "/" + SWT.getPlatform());
-      boolean highDpi = Customizing.SETTINGS.getBoolean("application.highdpi",true);
-      Logger.info("HIGH DPI support enabled: " + highDpi);
       
       Point dpi = GUI.getDisplay().getDPI();
       Logger.info("Pixel density of screen (DPI): " + (dpi != null ? dpi.y : "n/a") + ", configured: " + SWTUtil.getDPI());
