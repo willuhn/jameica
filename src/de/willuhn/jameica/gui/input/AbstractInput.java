@@ -325,6 +325,7 @@ public abstract class AbstractInput implements Input
       if (isMandatory() && (value == null || "".equals(value.toString())))
       {
         this.control.setBackground(Color.MANDATORY_BG.getSWTColor());
+        this.control.setForeground(Color.BLACK.getSWTColor());
         return;
       }
       this.control.setBackground(null);
