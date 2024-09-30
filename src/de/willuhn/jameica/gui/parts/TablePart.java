@@ -92,6 +92,7 @@ public class TablePart extends AbstractTablePart
   //////////////////////////////////////////////////////////
   // Listeners, Actions
   private de.willuhn.datasource.rmi.Listener deleteListener = new DeleteListener();
+  private de.willuhn.datasource.rmi.Listener storeListener = new StoreListener();
   private List<TableChangeListener> changeListeners         = new ArrayList<TableChangeListener>();
   //////////////////////////////////////////////////////////
 
@@ -474,6 +475,9 @@ public class TablePart extends AbstractTablePart
         // der Listener danach nicht doppelt vorhanden ist.
         ((DBObject)object).removeDeleteListener(this.deleteListener);
         ((DBObject)object).addDeleteListener(this.deleteListener);
+        
+        ((DBObject)object).removeStoreListener(this.storeListener);
+        ((DBObject)object).addStoreListener(this.storeListener);
       }
       catch (Exception e)
       {
@@ -1487,6 +1491,41 @@ public class TablePart extends AbstractTablePart
             try
             {
               removeItem(e.getObject());
+            }
+            catch (Exception ex2)
+            {
+              // ignore
+            }
+          }
+        
+        });
+      }
+    }
+  }
+  
+  /**
+   * Der Listener ueberwacht das speichern von Objekten und aktuelisiert die Objekte in der Tabelle.
+   */
+  private class StoreListener implements de.willuhn.datasource.rmi.Listener
+  {
+
+    @Override
+    public void handleEvent(final de.willuhn.datasource.rmi.Event e) throws RemoteException
+    {
+      try
+      {
+        updateItem(e.getObject(), e.getObject());
+      }
+      catch (SWTException ex)
+      {
+        // Fallback: Wir versuchens mal synchronisiert
+        GUI.getDisplay().syncExec(new Runnable() {
+        
+          public void run()
+          {
+            try
+            {
+              updateItem(e.getObject(), e.getObject());
             }
             catch (Exception ex2)
             {
