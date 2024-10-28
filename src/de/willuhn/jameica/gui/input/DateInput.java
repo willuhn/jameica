@@ -138,28 +138,28 @@ public class DateInput implements Input
   {
     // Wir liefern grundsaetzlich den Text aus dem Eingabe-Feld,
     // damit der User das Datum auch manuell eingeben kann.
-    String text = this.input.getText();
-    if (text == null || text.length() == 0)
+    String inputText = this.input.getText();
+    if (inputText == null || inputText.length() == 0)
       return null;
 
-    text = DateUtil.convert2Date(text);
+    String convertedText = DateUtil.convert2Date(inputText);
     try
     {
-      Date d = this.format.parse(text);
+      Date d = this.format.parse(convertedText);
       
       // Bei der Gelegenheit schreiben wir auch gleich nochmal
       // das Datum schoen formatiert rein. Aber nur, wenn sich der
       // Wert geaendert hat. Sonst springt der Cursor unnoetig
       // an den Anfang des Eingabefeldes. Siehe BUGZILLA 1672
       String newText = this.format.format(d);
-      if (!StringUtils.equals(text, newText))
+      if (!StringUtils.equals(inputText, newText))
         this.input.setText(newText);
       
       return d;
     }
     catch (ParseException e)
     {
-      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Ungültiges Datum: {0}",text),StatusBarMessage.TYPE_ERROR));
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Ungültiges Datum: {0}",inputText),StatusBarMessage.TYPE_ERROR));
       return null;
     }
   }
