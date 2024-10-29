@@ -13,6 +13,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import de.willuhn.jameica.gui.formatter.DateFormatter;
 import de.willuhn.jameica.system.Application;
@@ -23,16 +24,46 @@ import de.willuhn.jameica.system.Application;
 public class DateUtil
 {
   /**
-   * Das Default-Dateformat von Jameica (dd.mm.yyyy).
-   * Abhaengig vom Locale.
+   * Das Default-Dateformat von Jameica.
+   * Abhaengig vom Locale,
+   * z. B. deutsch: dd.MM.yyyy / englisch: MMM d, yyyy
    */
-  public final static DateFormat DEFAULT_FORMAT = SimpleDateFormat.getDateInstance(DateFormat.DEFAULT,Application.getConfig().getLocale());
-  
+  public static volatile DateFormat DEFAULT_FORMAT;
   /**
-   * Das Kurz-Dateformat von Jameica (dd.mm.yy).
-   * Abhaengig vom Locale.
+   * Das Kurz-Dateformat von Jameica.
+   * Abhaengig vom Locale,
+   * z. B. deutsch: dd.MM.yy / englisch: MM/dd/yyyy
    */
-  public final static DateFormat SHORT_FORMAT   = SimpleDateFormat.getDateInstance(DateFormat.SHORT,Application.getConfig().getLocale());
+  public static volatile DateFormat SHORT_FORMAT;
+
+  static {
+    initializeLocale();
+  }
+
+  /**
+   * Wird diese Klasse getestet, existiert die Application-Instanz nicht
+   * und wir können das Locale nicht aus der Config lesen.
+   */
+  private static void initializeLocale() {
+    Locale locale;
+    try {
+      locale = Application.getConfig().getLocale();
+    } catch (NullPointerException e) {
+      // Fallback, falls Application noch nicht initialisiert wurde (für Tests)
+      locale = Locale.GERMANY;
+    }
+    DEFAULT_FORMAT = SimpleDateFormat.getDateInstance(DateFormat.DEFAULT, locale);
+    SHORT_FORMAT = SimpleDateFormat.getDateInstance(DateFormat.SHORT, locale);
+  }
+
+  /**
+   * Überschreibt das von der Config vorgegebene Locale (für Tests)
+   * @param locale
+   */
+  public static void setLocaleForTesting(Locale locale) {
+    DEFAULT_FORMAT = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
+    SHORT_FORMAT = DateFormat.getDateInstance(DateFormat.SHORT, locale);
+  }
 
   /**
    * Eingabehilfe für Datumsfelder. Eine 1-2stellige Zahl wird als Tag des
