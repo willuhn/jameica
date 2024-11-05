@@ -11,12 +11,14 @@
 package de.willuhn.jameica.gui.input;
 
 import java.text.DateFormat;
-import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -136,32 +138,33 @@ public class DateInput implements Input
   @Override
   public Object getValue()
   {
-    // Wir liefern grundsaetzlich den Text aus dem Eingabe-Feld,
+    // Wir verwenden grundsaetzlich den Text aus dem Eingabe-Feld,
     // damit der User das Datum auch manuell eingeben kann.
     String inputText = this.input.getText();
-    if (inputText == null || inputText.length() == 0)
+    if (inputText == null || inputText.isBlank())
       return null;
+    
+    DateTimeFormatter customFormatter = DateUtil.createDateTimeFormatter(this.format);
+    Optional<LocalDate> date = DateUtil.parseUserInput(inputText, customFormatter);
 
-    String convertedText = DateUtil.convert2Date(inputText);
-    try
-    {
-      Date d = this.format.parse(convertedText);
-      
+    if(date.isEmpty()) {
+      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Ungültiges Datum: {0}",inputText),StatusBarMessage.TYPE_ERROR));
+      return null;
+    }
+
+    String parsedText = date
+        .map(d -> d.format(customFormatter))
+        .orElse(inputText);
+    
+    if(!parsedText.equals(inputText)) {
       // Bei der Gelegenheit schreiben wir auch gleich nochmal
       // das Datum schoen formatiert rein. Aber nur, wenn sich der
       // Wert geaendert hat. Sonst springt der Cursor unnoetig
       // an den Anfang des Eingabefeldes. Siehe BUGZILLA 1672
-      String newText = this.format.format(d);
-      if (!StringUtils.equals(inputText, newText))
-        this.input.setText(newText);
-      
-      return d;
+      this.input.setText(parsedText);
     }
-    catch (ParseException e)
-    {
-      Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Ungültiges Datum: {0}",inputText),StatusBarMessage.TYPE_ERROR));
-      return null;
-    }
+    
+    return DateUtil.localDate2Date(date.get());
   }
 
   @Override

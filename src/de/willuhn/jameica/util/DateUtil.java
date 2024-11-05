@@ -12,10 +12,10 @@ package de.willuhn.jameica.util;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
-import java.time.format.FormatStyle;
 import java.time.temporal.ChronoField;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,8 +28,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import de.willuhn.jameica.gui.formatter.DateFormatter;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Logger;
 
 /**
  * Hilfsklasse zum Parsen von Datumsangaben.
@@ -38,57 +38,75 @@ public class DateUtil
 {
   /**
    * Das Default-Dateformat von Jameica.
-   * Abhaengig vom Locale,
-   * z. B. deutsch: dd.MM.yyyy / englisch: MMM d, yyyy
+   * Wird als DateTimeFormatter-Pattern über i18n angegeben.
+   * z. B. deutsch: dd.MM.uuuu / englisch: dd/MM/uuuu
+   * {@see <a href="https://docs.oracle.com/javase/8/docs/api/index.html?java/time/format/DateTimeFormatter.html">Java Docs: DateTimeFormatter</a>}
    */
   public static volatile DateFormat DEFAULT_FORMAT;
   private static volatile DateTimeFormatter defaultFormatter;  // moderne Version davon
   /**
    * Das Kurz-Dateformat von Jameica.
-   * Abhaengig vom Locale,
-   * z. B. deutsch: dd.MM.yy / englisch: MM/dd/yyyy
+   * Wie {@link #DEFAULT_FORMAT}
+   * z. B. deutsch: dd.MM.uu / englisch: dd/MM/uu
    */
   public static volatile DateFormat SHORT_FORMAT;
+  private static volatile DateTimeFormatter shortFormatter;  // moderne Version davon
 
   static {
-    initializeLocale();
+    initializeLocale(null, null, null);
   }
 
   /**
    * Wird diese Klasse getestet, existiert die Application-Instanz nicht
    * und wir können das Locale nicht aus der Config lesen.
    */
-  private static void initializeLocale() {
-    Locale locale;
-    try {
-      locale = Application.getConfig().getLocale();
-    } catch (NullPointerException e) {
-      // Fallback, falls Application noch nicht initialisiert wurde (für Tests)
-      locale = Locale.GERMANY;
+  private static void initializeLocale(Locale locale, String defaultDatePattern, String shortDatePattern) {
+    if (locale == null) {
+      try {
+        locale = Application.getConfig().getLocale();
+      } catch (NullPointerException e) {
+        // Fallback, falls Application noch nicht initialisiert wurde (für Tests)
+        locale = Locale.GERMANY;
+      }
     }
-    DEFAULT_FORMAT = SimpleDateFormat.getDateInstance(DateFormat.DEFAULT, locale);
+    if (defaultDatePattern == null) {
+      try {
+        defaultDatePattern = Application.getI18n().tr("dd.MM.uuuu");
+      } catch (NullPointerException e) {
+        defaultDatePattern = "dd.MM.uuuu";
+      }
+    }
+    if (shortDatePattern == null) {
+      try {
+        shortDatePattern = Application.getI18n().tr("dd.MM.uu");
+      } catch (NullPointerException e) {
+        shortDatePattern = "dd.MM.uu";
+      }
+    }
+
+    DEFAULT_FORMAT = new SimpleDateFormat(
+        createSimpleDateFormatPattern(defaultDatePattern), locale);
+    defaultFormatter = DateTimeFormatter.ofPattern(defaultDatePattern, locale);
+
     SHORT_FORMAT = SimpleDateFormat.getDateInstance(DateFormat.SHORT, locale);
-    defaultFormatter = DateTimeFormatter
-        .ofLocalizedDate(FormatStyle.MEDIUM)
-        .withLocale(locale);
+    shortFormatter = DateTimeFormatter.ofPattern(shortDatePattern, locale);
   }
 
   /**
    * Überschreibt das von der Config vorgegebene Locale (für Tests)
-   * @param locale
+   * @implNote Diese Methode sollte nur für Tests verwendet werden und ist nicht für den Produktions-Betrieb gedacht.
+   * @param locale Das Locale, das beim Parsen und Formatieren berücksichtigt wird
+   * @param defaultDatePattern Das DateTimeFormatter-Pattern, das für die Standardformatierung verwendet wird
+   * @param shortDatePattern Das DateTimeFormatter-Pattern, das für die kurze Formatierung verwendet wird
    */
-  public static void setLocaleForTesting(Locale locale) {
-    DEFAULT_FORMAT = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
-    SHORT_FORMAT = DateFormat.getDateInstance(DateFormat.SHORT, locale);
-    defaultFormatter = DateTimeFormatter
-        .ofLocalizedDate(FormatStyle.MEDIUM)
-        .withLocale(locale);
+  public static void setLocaleForTesting(Locale locale, String defaultDatePattern, String shortDatePattern) {
+    initializeLocale(locale, defaultDatePattern, shortDatePattern);
   }
 
   /**
    * Eingabehilfe für Datumsfelder.<br>
    * Wie {@link #parseUserInput(String, DateTimeFormatter)}, nur dass ein String
-   * zurückgegeben wird
+   * zurückgegeben wird. Verwendet immer das {@link #DEFAULT_FORMAT}.
    * @param text zu parsender Text.
    * @return das vervollstaendigte Datum oder der Originalwert, wenn es nicht
    * geparst werden konnter.
@@ -227,6 +245,51 @@ public class DateUtil
   }
 
   /**
+   * Erzeugt aus einem DateTimeFormatter-Pattern ein SimpleDateFormat-Pattern.
+   * @param dateTimeFormatterPattern das DateTimeFormatter-Pattern
+   * @return das SimpleDateFormat-Pattern
+   */
+  private static String createSimpleDateFormatPattern(String dateTimeFormatterPattern) {
+    // u (Jahr ohne Ära) im DateTimeFormatter entspricht y im SimpleDateFormat
+    return dateTimeFormatterPattern.replace("u", "y");
+  }
+  
+  /**
+   * Versucht aus einem java.text.DateFormat einen java.time.format.DateTimeFormatter zu erstellen.
+   * @param dtFormat Das DateFormat. Eine Konvertierung ist nur möglich, wenn es
+   *                 instanceof java.text.SimpleDateFormat ist. Andernfalls wird
+   *                 das {@link DEFAULT_FORMAT} verwendet.
+   * @return der DateTimeFormatter
+   */
+  public static DateTimeFormatter createDateTimeFormatter(DateFormat dtFormat) {
+    if (dtFormat.equals(DEFAULT_FORMAT)) {
+      return defaultFormatter;
+    }
+    if (dtFormat.equals(SHORT_FORMAT)) {
+      return shortFormatter;
+    }
+    if (!(dtFormat instanceof SimpleDateFormat)) {
+      // nur bei einem SimpleDateFormat existiert .toPattern()
+      Logger.warn("Unable to create DateTimeFormatter from custom DateFormat. Using default Formatter");
+      return defaultFormatter;
+    }
+    
+    String sdPattern = ((SimpleDateFormat)dtFormat).toPattern();    
+    String dateTimeFormatterPattern = sdPattern.replace("y", "u");
+    
+    return DateTimeFormatter.ofPattern(dateTimeFormatterPattern);
+  }
+
+  /**
+   * Konvertiert ein java.time.LocalDate zu einem java.util.Date
+   * @param localDate das LocalDate
+   * @return das Date
+   */
+  public static Date localDate2Date(LocalDate localDate) {
+    return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+  }
+
+  /**
    * Resettet die Uhrzeit eines Datums.
    * @param date das Datum.
    * @return das neue Datum.
@@ -237,7 +300,7 @@ public class DateUtil
       return null;
     
     Calendar cal = Calendar.getInstance();
-    cal.setTime(date == null ? new Date() : date);
+    cal.setTime(date);
     cal.set(Calendar.HOUR_OF_DAY,0);
     cal.set(Calendar.MINUTE,0);
     cal.set(Calendar.SECOND,0);
@@ -256,7 +319,7 @@ public class DateUtil
       return null;
     
     Calendar cal = Calendar.getInstance();
-    cal.setTime(date == null ? new Date() : date);
+    cal.setTime(date);
     cal.set(Calendar.HOUR_OF_DAY,23);
     cal.set(Calendar.MINUTE,59);
     cal.set(Calendar.SECOND,59);

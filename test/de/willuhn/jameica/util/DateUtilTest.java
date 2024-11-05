@@ -10,8 +10,11 @@
 
 package de.willuhn.jameica.util;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -125,9 +128,9 @@ public class DateUtilTest {
 
   @Test
   public void convert2DateValid() throws Exception {
-    DateUtil.setLocaleForTesting(Locale.GERMAN);
-    String expected = "input | converted%n";
-    String actual = "input | converted%n";
+    DateUtil.setLocaleForTesting(Locale.GERMAN, "dd.MM.uuuu", "dd.MM.uu");
+    String expected = String.format("input | converted%n");
+    String actual = String.format("input | converted%n");
     for (int i = 0; i < validDates.length; i++) {
       String input = validDates[i][0];
       String result = DateUtil.convert2Date(input);
@@ -139,8 +142,9 @@ public class DateUtilTest {
 
   @Test
   public void convert2DateInvalid() throws Exception {
-    String expected = "input | converted%n";
-    String actual = "input | converted%n";
+    DateUtil.setLocaleForTesting(Locale.GERMAN, "dd.MM.uuuu", "dd.MM.uu");
+    String expected = String.format("input | converted%n");
+    String actual = String.format("input | converted%n");
     for (int i = 0; i < invalidDates.length; i++) {
       String input = invalidDates[i];
       String converted = DateUtil.convert2Date(input);
@@ -152,11 +156,11 @@ public class DateUtilTest {
 
   @Test
   public void parseUserInputValid() throws Exception {
-    DateUtil.setLocaleForTesting(Locale.GERMAN);
+    DateUtil.setLocaleForTesting(Locale.GERMAN, "dd.MM.uuuu", "dd.MM.uu");
 
     DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd.MM.uuuu");
-    String expected = "input | parsed%n";
-    String actual = "input | parsed%n";
+    String expected = String.format("input | parsed%n");
+    String actual = String.format("input | parsed%n");
     for (int i = 0; i < validDates.length; i++) {
       String input = validDates[i][0];
       expected += String.format ("%s | %s%n", input, validDates[i][1]);
@@ -170,9 +174,9 @@ public class DateUtilTest {
 
   @Test
   public void parseUserInputInvalid() throws Exception {
-    DateUtil.setLocaleForTesting(Locale.GERMAN);
-    String expected = "input | parsingSucceeded%n";
-    String actual = "input | parsingSucceeded%n";
+    DateUtil.setLocaleForTesting(Locale.GERMAN, "dd.MM.uuuu", "dd.MM.uu");
+    String expected = String.format("input | parsingSucceeded%n");
+    String actual = String.format("input | parsingSucceeded%n");
     for (int i = 0; i < invalidDates.length; i++) {
       String input = invalidDates[i];
       Optional<LocalDate> parsed = DateUtil.parseUserInput(input, null);
@@ -184,7 +188,7 @@ public class DateUtilTest {
 
   @Test
   public void parseUserInputUsingCustomFormatter() throws Exception {
-    DateUtil.setLocaleForTesting(Locale.GERMAN);
+    DateUtil.setLocaleForTesting(Locale.GERMAN, "dd.MM.uuuu", "dd.MM.uu");
     String inputDate = "01---02//2023";
 
     Optional<LocalDate> parsedDate = DateUtil.parseUserInput(inputDate, null);
@@ -193,5 +197,49 @@ public class DateUtilTest {
     DateTimeFormatter customFormatter = DateTimeFormatter.ofPattern("dd---MM//uuuu");
     parsedDate = DateUtil.parseUserInput(inputDate, customFormatter);
     Assert.assertEquals(Optional.of(LocalDate.of(2023, 2, 1)), parsedDate);
+  }
+  
+  @Test
+  public void createDateTimeFormatter() throws Exception {
+    DateUtil.setLocaleForTesting(Locale.ITALIAN, "uuuu-MM-dd", "uu-MM-dd");
+    
+    Date dNow = new Date();
+    LocalDate ldToday = LocalDate.now();
+    
+    DateFormat df;
+    DateTimeFormatter dtf;
+    
+    // DEFAULT_FORMAT
+    df = new SimpleDateFormat("yyyy-MM-dd");
+    dtf = DateUtil.createDateTimeFormatter(df);
+    Assert.assertEquals(df.format(dNow), dtf.format(ldToday));
+    
+    // SHORT_FORMAT
+    df = new SimpleDateFormat("yy-MM-dd");
+    dtf = DateUtil.createDateTimeFormatter(df);
+    Assert.assertEquals(df.format(dNow), dtf.format(ldToday));
+    
+    // custom format
+    df = new SimpleDateFormat("MM--yyyy...dd");
+    dtf = DateUtil.createDateTimeFormatter(df);
+    Assert.assertEquals(df.format(dNow), dtf.format(ldToday));
+  }
+
+  @Test
+  public void localDate2Date() throws Exception {
+    DateUtil.setLocaleForTesting(Locale.GERMAN, "dd.MM.uuuu", "dd.MM.uu");
+    
+    LocalDate ldToday = LocalDate.now();
+    Date dNow = DateUtil.localDate2Date(ldToday);
+    
+    Assert.assertEquals(dNow, DateUtil.startOfDay(dNow));
+    
+    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    String dNowFormatted = df.format(dNow);
+    
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd");
+    String ldTodayFormatted = ldToday.format(dtf);
+    
+    Assert.assertEquals(ldTodayFormatted, dNowFormatted);
   }
 }
