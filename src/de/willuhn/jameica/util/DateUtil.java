@@ -11,9 +11,22 @@ package de.willuhn.jameica.util;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
+import java.time.format.FormatStyle;
+import java.time.temporal.ChronoField;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import de.willuhn.jameica.gui.formatter.DateFormatter;
 import de.willuhn.jameica.system.Application;
@@ -163,6 +176,131 @@ public class DateUtil
     // Es wurde in keinem parse-faehigen Format eingegeben. Der String wird
     // wie eingegeben zurückgereicht.
     return text;
+  }
+
+  /**
+   * Eingabehilfe für Datumsfelder.<br>
+   * Unterstützte Formate:<br>
+   * - Das per defaultFormatter angegebene Format<br>
+   * - d | dd | ddMM | ddMMyy | ddMMyyyy<br>
+   * - dd. | dd.MM. | dd.MM.yy | dd.MM.yyyy (dd und MM auch einstellig)<br>
+   * - dd/ | dd/MM/ | dd/MM/yy | dd/MM/yyyy (dd und MM auch einstellig)<br>
+   * - "h" (heute) | "t" (today)<br>
+   * - +D | -D (heute plus/minus D Tage)<br>
+   * - ++M | --M (heute plus/minus M Monate)<br>
+   * Das Datum muss immer in der Reihenfolge "Tag - Monat - Jahr" angegeben werden (auch im defaultFormatter).
+   * @param userInput Eingabetext
+   * @param customFormatter Standardformat, das das Datumsfeld nutzt, um das Datum anzuzeigen
+   * @return das geparste Datum als Optional
+   */
+  public static Optional<LocalDate> parseUserInput(String userInput, DateTimeFormatter customFormatter) {
+    if (userInput == null || userInput.isBlank()) {
+      return Optional.empty();
+    }
+    String strippedUserInput = userInput.strip();
+
+    return Stream.<Supplier<Optional<LocalDate>>>of(
+        () -> parseDateUsingFormatter(strippedUserInput, customFormatter),
+        () -> parseDateUsingPatterns(strippedUserInput, "dd", "MM"),
+        () -> parseDateUsingPatterns(strippedUserInput, "d.", "M."),
+        () -> parseDateUsingPatterns(strippedUserInput, "d/", "M/"),
+        () -> parseDateOffsets(strippedUserInput)
+      )
+      .map(Supplier::get)
+      .filter(Optional::isPresent)
+      .findFirst()
+      .orElse(Optional.empty());
+  }
+
+  /**
+   * Parst Datum mithilfe des angegebenen DateTimeFormatter
+   * @param userInput das eingegebene Datum als String
+   * @param formatter der DateTimeFormatter, mit dem das Datum geparst werden soll
+   * @return das geparste Datum als Optional
+   */
+  private static Optional<LocalDate> parseDateUsingFormatter(String userInput, DateTimeFormatter formatter) {
+    if (formatter == null) {
+      return Optional.empty();
+    }
+    try {
+      LocalDate parsedDate = LocalDate.parse(userInput, formatter);
+      return Optional.of(parsedDate);
+    } catch (DateTimeParseException e) {
+      return Optional.empty();
+    }
+  }
+
+  /**
+   * Parst Datum in den Formaten {dayPattern}{monthPattern}{Jahr als 2- bis 4-stellige Zahl}
+   * @param userInput das eingegebene Datum
+   * @param dayPattern das DateTimeFormatter-Pattern, das auf den Tag matcht (z. B. "dd" oder "d.")
+   * @param monthPattern das DateTimeFormatter-Pattern, das auf den Monat matcht (z. B. "MM" oder "M.")
+   * @return das geparste Datum als Optional
+   */
+  private static Optional<LocalDate> parseDateUsingPatterns(String userInput, String dayPattern, String monthPattern) {
+    if (userInput == null || userInput.isEmpty() ) {
+      return Optional.empty();
+    }
+    if (userInput.length() == 1) {
+      userInput = "0" + userInput;
+    }
+    DateTimeFormatter inputFormatter = new DateTimeFormatterBuilder()
+        .appendPattern(dayPattern)
+        .optionalStart()
+        .appendPattern(monthPattern)
+        .optionalStart()
+        .appendValueReduced(ChronoField.YEAR, 2, 4, LocalDate.now().getYear() - 80)
+        .optionalEnd()
+        .optionalEnd()
+        .parseDefaulting(ChronoField.MONTH_OF_YEAR, LocalDate.now().getMonthValue())
+        .parseDefaulting(ChronoField.YEAR, LocalDate.now().getYear())
+        .toFormatter();
+    return parseDateUsingFormatter(userInput, inputFormatter);
+  }
+
+  /**
+   * Parst das Datum als Offset zum heutigen Datum
+   * "h" (heute) | "t" (today)
+   * +D | -D (heute plus/minus D Tage)
+   * ++M | --M (heute plus/minus M Monate)
+   * @param userInput
+   * @return das geparste Datum als Optional
+   */
+  private static Optional<LocalDate> parseDateOffsets(String userInput) {
+    if (userInput == null || userInput.isEmpty()) {
+      return Optional.empty();
+    }
+    if (userInput.equalsIgnoreCase("h") || userInput.equalsIgnoreCase("t")) {
+      userInput = "+0"; // heute
+    }
+
+    String regex = "^((\\+{1,2}|-{1,2}))(\\d+)$";
+    Pattern pattern = Pattern.compile(regex);
+
+    Matcher matcher = pattern.matcher(userInput);
+    if (!matcher.matches()) {
+      return Optional.empty();
+    }
+
+    String prefix = matcher.group(1);
+    String digits = matcher.group(3);
+    int offset;
+    try {
+      offset = Integer.parseInt(digits);
+    } catch (NumberFormatException e) {
+      return Optional.empty();
+    }
+
+    Map<String, Function<Integer, LocalDate>> offsetFunctions = Map.of(
+        "+", LocalDate.now()::plusDays,
+        "++", LocalDate.now()::plusMonths,
+        "-", LocalDate.now()::minusDays,
+        "--", LocalDate.now()::minusMonths
+    );
+
+    return Optional
+        .ofNullable(offsetFunctions.get(prefix))
+        .map(func -> func.apply(offset));
   }
 
   /**
