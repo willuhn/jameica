@@ -104,6 +104,8 @@ public class DateInput implements Input
     this.dialog.setTitle(Application.getI18n().tr("Datum"));
     this.dialog.setText(Application.getI18n().tr("Bitte wählen Sie das Datum aus"));
     this.input = new DialogInput(date == null ? null : this.format.format(date), this.dialog);
+    this.input.setData(DATAKEY_TOOLTIP, String.format(Application.getI18n().tr("DateInput.tooltip")));
+
     setupFocusListener();
     setupKeyListener();
   }
