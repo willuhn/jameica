@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -290,6 +291,54 @@ public class DateUtil
   }
 
   /**
+   * Fügt eine Anzahl von Monaten zu einem LocalDate hinzu. Ist das Eingabedatum
+   * der letzte Tag eines Monats, wird das Ausgabedatum ebenfalls der letzte
+   * Tag des Monats sein.<br>
+   * Beispiele:<br>
+   * 30.04. + 1 Monat = 31.05.<br>
+   * 31.05. - 1 Monat = 30.04.
+   * @param date das Eingabedatum
+   * @param months die Anzahl der Monate, die hinzugefügt werden soll (auch negativ möglich)
+   * @return das Ausgabedatum
+   */
+  public static LocalDate addMonthsMaintainingEndOfMonth(LocalDate date, long months) {
+    if (date == null) {
+      return null;
+    }
+    boolean isEndOfMonth = date.equals(date.with(TemporalAdjusters.lastDayOfMonth()));
+    LocalDate adjustedDate = date.plusMonths(months);
+    if (isEndOfMonth) {
+      adjustedDate = adjustedDate.with(TemporalAdjusters.lastDayOfMonth());
+    }
+    return adjustedDate;
+  }
+  
+  /**
+   * Gibt Index und Länge von Tag, Monat und Jahr in einem formatierten Datums-String
+   * für den angegebenen DateTimeFormatter zurück.<br>
+   * Limitationen:<br>
+   * - Der DateTimeFormatter darf Tag/Monat/Jahr nur als Zahlen erzeugen, keine Monatsnamen o. Ä.<br>
+   * - Tag- und Monatsfelder müssen 2-stellig sein<br>
+   * - Die Reihenfolge Tag - Monat - Jahr muss eingehalten werden, siehe auch: {@link #parseUserInput(String, DateTimeFormatter)}
+   * - Für 3-stellige Jahre kann die Länge falsch sein
+   * @param dtFormatter der DateTimeFormatter
+   * @return alle Positionen für diesen DateTimeFormatter
+   */
+  public static DatePositions getDatePositions(DateTimeFormatter dtFormatter) {
+    LocalDate testDate = LocalDate.of(3333, 11, 22);
+    
+    String formattedTestDate = dtFormatter.format(testDate);
+    
+    String dayString = "22";
+    int dayIndex = formattedTestDate.indexOf(dayString);
+    
+    String monthString = "11";
+    int monthIndex = formattedTestDate.indexOf(monthString);
+
+    return new DatePositions(dayIndex, 2, monthIndex, 2);
+  }
+
+  /**
    * Resettet die Uhrzeit eines Datums.
    * @param date das Datum.
    * @return das neue Datum.
@@ -325,5 +374,51 @@ public class DateUtil
     cal.set(Calendar.SECOND,59);
     cal.set(Calendar.MILLISECOND,999);
     return cal.getTime();
+  }
+
+
+  // kann in Java 14+ durch eine Zeile ersetzt werden:
+  // public record DatePositions(int dayIndex, int dayWidth, int monthIndex, int monthWidth) { }
+  public static class DatePositions {
+    private final int dayIndex;
+    private final int dayWidth;
+    private final int monthIndex;
+    private final int monthWidth;
+
+    public DatePositions(int dayIndex, int dayWidth, int monthIndex, int monthWidth) {
+        this.dayIndex = dayIndex;
+        this.dayWidth = dayWidth;
+        this.monthIndex = monthIndex;
+        this.monthWidth = monthWidth;
+    }
+
+    public int dayIndex() {
+        return dayIndex;
+    }
+
+    public int dayWidth() {
+        return dayWidth;
+    }
+
+    public int monthIndex() {
+      return monthIndex;
+    }
+
+    public int monthWidth() {
+      return monthWidth;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (!(obj instanceof DatePositions)) {
+        return false;
+      }
+      DatePositions other = (DatePositions) obj;
+      return 
+          this.dayIndex == other.dayIndex() &&
+          this.dayWidth == other.dayWidth() &&
+          this.monthIndex == other.monthIndex() &&
+          this.monthWidth == other.monthWidth();
+    }
   }
 }

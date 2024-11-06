@@ -12,6 +12,7 @@ package de.willuhn.jameica.gui.input;
 import java.util.ArrayList;
 
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -44,7 +45,7 @@ import de.willuhn.logging.Logger;
  */
 public class DialogInput extends ButtonInput
 {
-  private final static Object PLACEHOLDER = new Object();
+  private static final Object PLACEHOLDER = new Object();
 
 	private Text text;
   private AbstractDialog dialog;
@@ -52,6 +53,7 @@ public class DialogInput extends ButtonInput
   private int maxlength = 0;
   
   private ArrayList<FocusListener> focusListeners = new ArrayList<>();
+  private ArrayList<KeyListener> keyListeners = new ArrayList<>();
 
   private Object oldValue = PLACEHOLDER;
 
@@ -180,8 +182,16 @@ public class DialogInput extends ButtonInput
   	this.choosen = value;
   }
 
+  public void setSelection(int start, int end) {
+    this.text.setSelection(start, end);
+  }
+
   public void addFocusListener(FocusListener listener) {
     this.focusListeners.add(listener);
+  }
+
+  public void addKeyListener(KeyListener listener) {
+    this.keyListeners.add(listener);
   }
 
   @Override
@@ -198,6 +208,9 @@ public class DialogInput extends ButtonInput
 
     for (FocusListener l: focusListeners) {
       this.text.addFocusListener(l);
+    }
+    for (KeyListener l: keyListeners) {
+      this.text.addKeyListener(l);
     }
 
   	return text;

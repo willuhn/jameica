@@ -18,8 +18,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -41,9 +44,11 @@ public class DateInput implements Input
 {
   private Map<String,Object> data = new HashMap<String,Object>();
 
-  private final static Object PLACEHOLDER = new Object();
+  private static final Object PLACEHOLDER = new Object();
   
   private DateFormat format = DateUtil.DEFAULT_FORMAT;
+  private DateTimeFormatter dtFormatter;
+  private DateUtil.DatePositions datePositions;
   
   private DialogInput input     = null;
   private CalendarDialog dialog = null;
@@ -76,8 +81,11 @@ public class DateInput implements Input
    * @param format das Format.
    */
   public DateInput(Date date, DateFormat format) {
-    if (format != null)
+    if (format != null) {
       this.format = format;
+    }
+    this.dtFormatter = DateUtil.createDateTimeFormatter(this.format);
+    this.datePositions = DateUtil.getDatePositions(this.dtFormatter);
 
     this.dialog = new MyCalendarDialog();
 
@@ -97,6 +105,7 @@ public class DateInput implements Input
     this.dialog.setText(Application.getI18n().tr("Bitte wählen Sie das Datum aus"));
     this.input = new DialogInput(date == null ? null : this.format.format(date), this.dialog);
     setupFocusListener();
+    setupKeyListener();
   }
 
   private void setupFocusListener() {
@@ -104,7 +113,58 @@ public class DateInput implements Input
       @Override
       public void focusLost(FocusEvent e) {
         //Automatische Formatierung bei Focus-Lost des Eingabefeldes
-        getValue();
+        parseAndUpdateInputText();
+      }
+    });
+  }
+
+  /**
+   * Erlaubt das Ändern des Datums mittels Tastenkombination:<br>
+   * ALT & BILD_HOCH: Tag +1<br>
+   * ALT & BILD_RUNTER: Tag -1<br>
+   * ALT & SHIFT & BILD_HOCH: Monat +1<br>
+   * ALT & SHIFT & BILD_RUNTER: Monat -1
+   */
+  private void setupKeyListener() {
+    this.input.addKeyListener(new KeyAdapter() {
+      @Override
+      public void keyPressed(KeyEvent e) {
+        boolean dayModifierPressed = e.stateMask == SWT.ALT;
+        boolean monthModifierPressed = e.stateMask == (SWT.ALT | SWT.SHIFT);
+        boolean plusPressed = e.keyCode == SWT.PAGE_UP;
+        boolean minusPressed = e.keyCode == SWT.PAGE_DOWN;
+        
+        int dayOffset;
+        int monthOffset;
+        int selectionIndex;
+        int selectionWidth;
+        
+        if (dayModifierPressed) {
+          dayOffset = plusPressed ? 1 : (minusPressed ? -1 : 0);
+          monthOffset = 0;
+          selectionIndex = datePositions.dayIndex();
+          selectionWidth = datePositions.dayWidth();
+        } else if (monthModifierPressed) {
+          dayOffset = 0;
+          monthOffset = plusPressed ? 1 : (minusPressed ? -1 : 0);
+          selectionIndex = datePositions.monthIndex();
+          selectionWidth = datePositions.monthWidth();
+        } else {
+          return;
+        }
+        
+        if(dayOffset == 0 && monthOffset == 0) {
+          return;
+        }
+        
+        parseAndUpdateInputText().ifPresent(date -> {
+          LocalDate updatedDate = date.plusDays(dayOffset);
+          updatedDate = DateUtil.addMonthsMaintainingEndOfMonth(updatedDate, monthOffset);
+          setValue(updatedDate);
+          input.setSelection(selectionIndex, selectionIndex + selectionWidth);
+        });
+        
+        e.doit = false;  // Event nicht weiter propagieren
       }
     });
   }
@@ -146,22 +206,28 @@ public class DateInput implements Input
   @Override
   public Object getValue()
   {
+    Optional<LocalDate> date = parseAndUpdateInputText();
+    return date
+        .map(d -> DateUtil.localDate2Date(d))
+        .orElse(null);
+  }
+  
+  private Optional<LocalDate> parseAndUpdateInputText() {
     // Wir verwenden grundsaetzlich den Text aus dem Eingabe-Feld,
     // damit der User das Datum auch manuell eingeben kann.
     String inputText = this.input.getText();
     if (inputText == null || inputText.isBlank())
-      return null;
+      return Optional.empty();
     
-    DateTimeFormatter customFormatter = DateUtil.createDateTimeFormatter(this.format);
-    Optional<LocalDate> date = DateUtil.parseUserInput(inputText, customFormatter);
+    Optional<LocalDate> date = DateUtil.parseUserInput(inputText, this.dtFormatter);
 
     if(date.isEmpty()) {
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Ungültiges Datum: {0}",inputText),StatusBarMessage.TYPE_ERROR));
-      return null;
+      return Optional.empty();
     }
 
     String parsedText = date
-        .map(d -> d.format(customFormatter))
+        .map(d -> d.format(this.dtFormatter))
         .orElse(inputText);
     
     if(!parsedText.equals(inputText)) {
@@ -171,8 +237,7 @@ public class DateInput implements Input
       // an den Anfang des Eingabefeldes. Siehe BUGZILLA 1672
       this.input.setText(parsedText);
     }
-    
-    return DateUtil.localDate2Date(date.get());
+    return date;
   }
 
   @Override
@@ -235,10 +300,14 @@ public class DateInput implements Input
       return;
     }
     
-    // Wenn es ein Date ist, koennen wir es getrost uebernehmen
+    // Wenn es ein Date/LocalDate ist, koennen wir es getrost uebernehmen
     if (value instanceof Date)
     {
       this.input.setText(this.format.format((Date)value));
+    }
+    if (value instanceof LocalDate)
+    {
+      this.input.setText(((LocalDate)value).format(dtFormatter));
     }
   }
   

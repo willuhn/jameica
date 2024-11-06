@@ -242,4 +242,43 @@ public class DateUtilTest {
     
     Assert.assertEquals(ldTodayFormatted, dNowFormatted);
   }
+  
+  @Test
+  public void addMonthsMaintainingEndOfMonth() throws Exception {
+    DateUtil.setLocaleForTesting(Locale.GERMAN, "dd.MM.uuuu", "dd.MM.uu");
+    
+    LocalDate inputDate;
+    LocalDate expectedDate;
+    LocalDate modifiedDate;
+    
+    inputDate = LocalDate.of(2024, 4, 29);
+    expectedDate = LocalDate.of(2024, 5, 29);
+    modifiedDate = DateUtil.addMonthsMaintainingEndOfMonth(inputDate, 1);
+    Assert.assertEquals(expectedDate, modifiedDate);
+    
+    inputDate = LocalDate.of(2024, 4, 30);
+    expectedDate = LocalDate.of(2024, 5, 31);
+    modifiedDate = DateUtil.addMonthsMaintainingEndOfMonth(inputDate, 1);
+    Assert.assertEquals(expectedDate, modifiedDate);
+    
+    inputDate = LocalDate.of(2024, 5, 31);
+    expectedDate = LocalDate.of(2024, 4, 30);
+    modifiedDate = DateUtil.addMonthsMaintainingEndOfMonth(inputDate, -1);
+    Assert.assertEquals(expectedDate, modifiedDate);
+  }
+  
+  @Test
+  public void getDatePositions() throws Exception {
+    DateTimeFormatter dtfLong = DateTimeFormatter.ofPattern("dd---MM-----uuuu");
+    DateUtil.DatePositions positionsLong = DateUtil.getDatePositions(dtfLong);
+    DateUtil.DatePositions expectedPositions = new DateUtil.DatePositions(0, 2, 5, 2);
+    Assert.assertEquals(expectedPositions, positionsLong);
+    
+    
+    DateTimeFormatter dtfShort = DateTimeFormatter.ofPattern("dd---MM----uu");
+    DateUtil.DatePositions positionsShort = DateUtil.getDatePositions(dtfShort);
+    DateUtil.DatePositions expectedPositionsShort = new DateUtil.DatePositions(0, 2, 5, 2);
+    Assert.assertEquals(expectedPositionsShort, positionsShort);
+  }
+  
 }
