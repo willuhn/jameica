@@ -12,7 +12,6 @@ package de.willuhn.jameica.gui.input;
 
 import java.text.DateFormat;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
@@ -76,29 +75,38 @@ public class DateInput implements Input
    * @param date das Datum.
    * @param format das Format.
    */
-  public DateInput(Date date, DateFormat format)
-  {
+  public DateInput(Date date, DateFormat format) {
     if (format != null)
       this.format = format;
-    
+
     this.dialog = new MyCalendarDialog();
-    
+
     if (date != null)
       this.dialog.setDate(date);
-    
+
     this.dialog.addCloseListener(new Listener() {
-    
-      public void handleEvent(Event event)
-      {
+
+      public void handleEvent(Event event) {
         if (event == null || event.data == null)
           return;
         input.setText(DateInput.this.format.format((Date) event.data));
       }
     });
-    
+
     this.dialog.setTitle(Application.getI18n().tr("Datum"));
     this.dialog.setText(Application.getI18n().tr("Bitte wählen Sie das Datum aus"));
-    this.input = new DialogInput(date == null ? null : this.format.format(date),this.dialog);
+    this.input = new DialogInput(date == null ? null : this.format.format(date), this.dialog);
+    setupFocusListener();
+  }
+
+  private void setupFocusListener() {
+    this.input.addFocusListener(new FocusAdapter() {
+      @Override
+      public void focusLost(FocusEvent e) {
+        //Automatische Formatierung bei Focus-Lost des Eingabefeldes
+        getValue();
+      }
+    });
   }
 
   /**
@@ -263,16 +271,6 @@ public class DateInput implements Input
   {
     this.input.setMandatory(this.isMandatory());
     this.input.paint(parent);
-    
-    this.input.getControl().addFocusListener(new FocusAdapter() {
-      @Override
-      public void focusLost(FocusEvent e)
-      {
-        //Automatische Formatierung bei Focus-Lost des Eingabefeldes
-        getValue();
-      }
-    });
-
   }
 
   @Override
