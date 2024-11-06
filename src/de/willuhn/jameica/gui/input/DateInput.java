@@ -92,24 +92,27 @@ public class DateInput implements Input
     if (date != null)
       this.dialog.setDate(date);
 
-    this.dialog.addCloseListener(new Listener() {
+    this.dialog.setTitle(Application.getI18n().tr("Datum"));
+    this.dialog.setText(Application.getI18n().tr("Bitte wählen Sie das Datum aus"));
+    this.input = new DialogInput(date == null ? null : this.format.format(date), this.dialog);
+    this.input.setData(DATAKEY_TOOLTIP, String.format(Application.getI18n().tr("DateInput.tooltip")));
 
+    setupDialogCloseListener();
+    setupFocusListener();
+    setupKeyListener();
+  }
+
+  private void setupDialogCloseListener() {
+    this.dialog.addCloseListener(new Listener() {
+      @Override
       public void handleEvent(Event event) {
         if (event == null || event.data == null)
           return;
         input.setText(DateInput.this.format.format((Date) event.data));
       }
     });
-
-    this.dialog.setTitle(Application.getI18n().tr("Datum"));
-    this.dialog.setText(Application.getI18n().tr("Bitte wählen Sie das Datum aus"));
-    this.input = new DialogInput(date == null ? null : this.format.format(date), this.dialog);
-    this.input.setData(DATAKEY_TOOLTIP, String.format(Application.getI18n().tr("DateInput.tooltip")));
-
-    setupFocusListener();
-    setupKeyListener();
   }
-
+  
   private void setupFocusListener() {
     this.input.addFocusListener(new FocusAdapter() {
       @Override
