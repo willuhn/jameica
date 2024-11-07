@@ -183,7 +183,8 @@ public class DialogInput extends ButtonInput
   }
 
   public void setSelection(int start, int end) {
-    this.text.setSelection(start, end);
+    if (this.text != null && !this.text.isDisposed())
+        this.text.setSelection(start, end);
   }
 
   public void addFocusListener(FocusListener listener) {
