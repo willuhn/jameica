@@ -130,9 +130,9 @@ public class DateUtil
    * - "h" (heute) | "t" (today)<br>
    * - +D | -D (heute plus/minus D Tage)<br>
    * - ++M | --M (heute plus/minus M Monate)<br>
-   * Das Datum muss immer in der Reihenfolge "Tag - Monat - Jahr" angegeben werden (auch im defaultFormatter).
+   * Das Datum muss immer in der Reihenfolge "Tag - Monat - Jahr" angegeben werden (auch im customFormatter).
    * @param userInput Eingabetext
-   * @param customFormatter Standardformat, das das Datumsfeld nutzt, um das Datum anzuzeigen
+   * @param customFormatter Formatter, den das Datumsfeld nutzt, um das Datum anzuzeigen
    * @return das geparste Datum als Optional
    */
   public static Optional<LocalDate> parseUserInput(String userInput, DateTimeFormatter customFormatter) {
@@ -186,16 +186,17 @@ public class DateUtil
     if (userInput.length() == 1) {
       userInput = "0" + userInput;
     }
+    LocalDate now = LocalDate.now();
     DateTimeFormatter inputFormatter = new DateTimeFormatterBuilder()
         .appendPattern(dayPattern)
         .optionalStart()
         .appendPattern(monthPattern)
         .optionalStart()
-        .appendValueReduced(ChronoField.YEAR, 2, 4, LocalDate.now().getYear() - 80)
+        .appendValueReduced(ChronoField.YEAR, 2, 4, now.getYear() - 80)
         .optionalEnd()
         .optionalEnd()
-        .parseDefaulting(ChronoField.MONTH_OF_YEAR, LocalDate.now().getMonthValue())
-        .parseDefaulting(ChronoField.YEAR, LocalDate.now().getYear())
+        .parseDefaulting(ChronoField.MONTH_OF_YEAR, now.getMonthValue())
+        .parseDefaulting(ChronoField.YEAR, now.getYear())
         .toFormatter();
     return parseDateUsingFormatter(userInput, inputFormatter);
   }
@@ -257,25 +258,25 @@ public class DateUtil
   
   /**
    * Versucht aus einem java.text.DateFormat einen java.time.format.DateTimeFormatter zu erstellen.
-   * @param dtFormat Das DateFormat. Eine Konvertierung ist nur möglich, wenn es
-   *                 instanceof java.text.SimpleDateFormat ist. Andernfalls wird
-   *                 das {@link DEFAULT_FORMAT} verwendet.
+   * @param dFormat Das DateFormat. Eine Konvertierung ist nur möglich, wenn es
+   *                instanceof java.text.SimpleDateFormat ist. Andernfalls wird
+   *                das {@link DEFAULT_FORMAT} verwendet.
    * @return der DateTimeFormatter
    */
-  public static DateTimeFormatter createDateTimeFormatter(DateFormat dtFormat) {
-    if (dtFormat.equals(DEFAULT_FORMAT)) {
+  public static DateTimeFormatter createDateTimeFormatter(DateFormat dFormat) {
+    if (dFormat.equals(DEFAULT_FORMAT)) {
       return defaultFormatter;
     }
-    if (dtFormat.equals(SHORT_FORMAT)) {
+    if (dFormat.equals(SHORT_FORMAT)) {
       return shortFormatter;
     }
-    if (!(dtFormat instanceof SimpleDateFormat)) {
+    if (!(dFormat instanceof SimpleDateFormat)) {
       // nur bei einem SimpleDateFormat existiert .toPattern()
       Logger.warn("Unable to create DateTimeFormatter from custom DateFormat. Using default Formatter");
       return defaultFormatter;
     }
     
-    String sdPattern = ((SimpleDateFormat)dtFormat).toPattern();    
+    String sdPattern = ((SimpleDateFormat)dFormat).toPattern();    
     String dateTimeFormatterPattern = sdPattern.replace("y", "u");
     
     return DateTimeFormatter.ofPattern(dateTimeFormatterPattern);
@@ -320,7 +321,6 @@ public class DateUtil
    * - Der DateTimeFormatter darf Tag/Monat/Jahr nur als Zahlen erzeugen, keine Monatsnamen o. Ä.<br>
    * - Tag- und Monatsfelder müssen 2-stellig sein<br>
    * - Die Reihenfolge Tag - Monat - Jahr muss eingehalten werden, siehe auch: {@link #parseUserInput(String, DateTimeFormatter)}
-   * - Für 3-stellige Jahre kann die Länge falsch sein
    * @param dtFormatter der DateTimeFormatter
    * @return alle Positionen für diesen DateTimeFormatter
    */
@@ -419,6 +419,15 @@ public class DateUtil
           this.dayWidth == other.dayWidth() &&
           this.monthIndex == other.monthIndex() &&
           this.monthWidth == other.monthWidth();
+    }
+    
+    @Override
+    public int hashCode() {
+      int result = Integer.hashCode(dayIndex);
+      result = 31 * result + Integer.hashCode(dayWidth);
+      result = 31 * result + Integer.hashCode(monthIndex);
+      result = 31 * result + Integer.hashCode(monthWidth);
+      return result;
     }
   }
 }
