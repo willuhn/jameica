@@ -1,5 +1,6 @@
 HEAD 2.11 (nightly)
   
+  * NEW: 0184 Wenn Anwendungim Maximiert-Zustand beendet, dann Fenster-Größe nicht speichern. Beim Start auch dann Fenster-Größe setzen, wenn im Maximiert-Zustand gestartet wird
   * BUG: 0183 Pfad zur Jameica JAR-Datei in jameica-macos-aarch64.sh falsch 
   * NEW: 0182 Update auf SWT 4.33 für linux64, linux-arm64, win64, macos64, macos64-aarch64 sowie Java 21 auf win64, macos64, macos64-aarch64 
   * NEW: 0181 Nur einen Hintergrund-Task in der GUI zur gleichen Zeit zulassen

@@ -353,31 +353,26 @@ public class GUI implements ApplicationController
     int width  = SETTINGS.getInt("window.width", 1000);
     int height = SETTINGS.getInt("window.height", 780);
 
-    // BUGZILLA 194
-    boolean maximized = SETTINGS.getBoolean("window.maximized", false);
+    Logger.info("window position: " + x + "x" + y +", size: " + width + "x" + height);
+    getShell().setSize(width,height);
     
-    if (maximized)
+    // Wir checken noch, ob die Position ueberhaupt auf dem Bildschirm ist
+    if (x >= 0 && y >= 0)
+    {
+      // OK, es ist etwas angegeben. Checken, ob die Werte plausibel sind
+      // Sonst koennte es passieren, dass das Fenster ausserhalb des sichtbaren
+      // Bereiches landet
+      Rectangle rect = getDisplay().getClientArea(); // getClientArea liefert die Groesse des gesamten virtuellen Screens
+      if ((x < (rect.width)) && (y < rect.height))
+        getShell().setLocation(x,y);
+    }
+
+    if (SETTINGS.getBoolean("window.maximized", false))
     {
       Logger.info("window size: maximized");
-      getShell().setLocation(x,y); // Bei maximized ebenfalls die Position angeben - Anwendung kann sich ja auf dem zweiten Screen befunden haben
       getShell().setMaximized(true);
     }
-    else
-    {
-      Logger.info("window position: " + x + "x" + y +", size: " + width + "x" + height);
-      getShell().setSize(width,height);
-      
-      // Wir checken noch, ob die Position ueberhaupt auf dem Bildschirm ist
-      if (x >= 0 && y >= 0)
-      {
-        // OK, es ist etwas angegeben. Checken, ob die Werte plausibel sind
-        // Sonst koennte es passieren, dass das Fenster ausserhalb des sichtbaren
-        // Bereiches landet
-        Rectangle rect = getDisplay().getClientArea(); // getClientArea liefert die Groesse des gesamten virtuellen Screens
-        if ((x < (rect.width)) && (y < rect.height))
-          getShell().setLocation(x,y);
-      }
-    }
+    
 
     getShell().addDisposeListener(new DisposeListener() {
       public void widgetDisposed(DisposeEvent e)
@@ -395,14 +390,14 @@ public class GUI implements ApplicationController
           SETTINGS.setAttribute("window.maximized", maximized);
 
           // Nur speichern, wenn plausible und sinnvolle Werte vorliegen
-          if (size.x >= 0 && size.y >= 0)
+          if (!maximized && size.x >= 0 && size.y >= 0)
           {
             Logger.info("saving window size: " + size.x + "x" + size.y);
             SETTINGS.setAttribute("window.width", size.x);
             SETTINGS.setAttribute("window.height",size.y);
           }
 
-          if (loc.x >= 0 && loc.y >= 0)
+          if (!maximized && loc.x >= 0 && loc.y >= 0)
           {
             Logger.info("saving window location: " + loc.x + "x" + loc.y);
             // Zumindest unter Linux liefert das immer 0.
