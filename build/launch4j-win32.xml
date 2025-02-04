@@ -3,34 +3,32 @@
   <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
   <jar>jameica-win32.jar</jar>
-  <outfile>/work/willuhn/git/jameica/build/jameica-win32.exe</outfile>
+  <outfile>C:\work\git\jameica\build\jameica-win32.exe</outfile>
   <errTitle>Bitte installieren Sie Java.</errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
   <priority>normal</priority>
-  <downloadUrl>https://www.java.com/de/</downloadUrl>
+  <downloadUrl>https://adoptium.net/de/</downloadUrl>
   <supportUrl></supportUrl>
   <stayAlive>false</stayAlive>
   <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
-  <icon>/work/willuhn/git/hibiscus/icons/hibiscus.ico</icon>
+  <icon>C:\work\git\hibiscus\icons\hibiscus.ico</icon>
   <jre>
     <path>jre-win32</path>
-    <bundledJre64Bit>false</bundledJre64Bit>
-    <bundledJreAsFallback>true</bundledJreAsFallback>
+    <requiresJdk>false</requiresJdk>
+    <requires64Bit>false</requires64Bit>
     <minVersion></minVersion>
     <maxVersion></maxVersion>
-    <jdkPreference>preferJre</jdkPreference>
-    <runtimeBits>32/64</runtimeBits>
     <opt>-Xmx512m -Djava.net.preferIPv4Stack=true -Dswt.autoScale=quarter</opt>
   </jre>
   <versionInfo>
-    <fileVersion>2.10.0.0</fileVersion>
-    <txtFileVersion>2.10.0</txtFileVersion>
+    <fileVersion>2.10.5.0</fileVersion>
+    <txtFileVersion>2.10.5</txtFileVersion>
     <fileDescription>Jameica</fileDescription>
     <copyright>Olaf Willuhn</copyright>
-    <productVersion>2.10.0.0</productVersion>
-    <txtProductVersion>2.10.0</txtProductVersion>
+    <productVersion>2.10.5.0</productVersion>
+    <txtProductVersion>2.10.5</txtProductVersion>
     <productName>Jameica</productName>
     <companyName>Olaf Willuhn</companyName>
     <internalName>jameica-win32</internalName>

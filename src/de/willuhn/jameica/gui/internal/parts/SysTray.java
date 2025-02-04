@@ -34,7 +34,7 @@ import de.willuhn.util.I18N;
 @Lifecycle(Type.CONTEXT)
 public class SysTray
 {
-  public final static String KEY_SYSTRAY_DATA = "__systray-minimize";
+  public final static String KEY_MINIMIZED = "__systray-minimize";
   
   private TrayItem item = null;
   private boolean activity = false;
@@ -67,7 +67,7 @@ public class SysTray
     
       public void widgetSelected(SelectionEvent e)
       {
-        restore();
+        toggle();
       }
     });
 
@@ -85,29 +85,34 @@ public class SysTray
   }
   
   /**
-   * Stellt das Anwendungsfenster wieder her.
+   * Wechselt beim Klick auf das Systray-Symbol zwischen Minimierung und Nicht-Minimierung hin und her.
    */
-  private void restore()
+  private void toggle()
   {
     try
     {
       final Shell shell = GUI.getShell();
+      if (shell == null || shell.isDisposed())
+        return;
       
-      // Unter Linux (zumindest KDE Plasma) behauptete die Shell, nicht minimiert zu sein.
-      // Daher klappte dort das Restore nicht. Wir führen das "setMinimized" daher hier
-      // nochmal zusätzlich aus, damit das Boolean-Flag in der Shell gesetzt ist
-      // Zusätzlich setzen wir ein "data"-Flag, damit der SystrayService weiss, dass
-      // er auf dieses minimize-Event im iconify-Listener nicht reagieren muss.
-      // Workaound aber nur anwenden, wenn die Shell behauptet, dass sie nicht minimiert ist
-      if (!shell.getMinimized())
+      final boolean minimized = (shell.getData(KEY_MINIMIZED) != null);
+      Logger.info("shell was minimized: " + minimized);
+      if (!minimized)
       {
-        shell.setData(KEY_SYSTRAY_DATA, Boolean.TRUE);
+        Logger.info("minimize to systray");
+        shell.setData(KEY_MINIMIZED,Boolean.TRUE);
+        shell.setVisible(false);
         shell.setMinimized(true);
+        return;
       }
-
-      // Jetzt können wir die Shell wieder sichtbar machen
-      shell.setMinimized(false);
-      shell.setVisible(true);
+      else
+      {
+        Logger.info("restore from systray");
+        shell.setVisible(true);
+        shell.setMinimized(false);
+        shell.setData(KEY_MINIMIZED,null);
+        shell.forceActive();
+      }
     }
     catch (Exception e2)
     {
@@ -150,7 +155,7 @@ public class SysTray
         {
           public void handleEvent (Event e)
           {
-            restore();
+            toggle();
           }
         });
       }
@@ -185,26 +190,9 @@ public class SysTray
       //
       ///////////////////////////////////////////////////////////////
 
-//      new MenuItem(menu, SWT.SEPARATOR);
-
       // Menu anzeigen
       menu.setVisible(true);
     }
-//    catch (ApplicationException ae)
-//    {
-//      Application.getMessagingFactory().sendMessage(new StatusBarMessage(ae.getMessage(),StatusBarMessage.TYPE_ERROR));
-//      if (GUI.getShell().getMinimized())
-//      {
-//        try
-//        {
-//          Application.getCallback().notifyUser(ae.getMessage());
-//        }
-//        catch (Exception e)
-//        {
-//          Logger.error("unable to notify user",e);
-//        }
-//      }
-//    }
     catch (Exception e)
     {
       Logger.error("unable to display menu",e);
@@ -227,7 +215,7 @@ public class SysTray
         {
           String s = "Jameica";
           if (activity)
-            s += (":" + Application.getI18n().tr("Neue Aktivität"));
+            s += (": " + Application.getI18n().tr("Neue Aktivität"));
           
           item.setToolTipText(s);
           item.setImage(SWTUtil.getImage(activity ? "jameica-icon-notify.png" : "jameica-icon.png"));

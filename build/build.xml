@@ -180,6 +180,10 @@
       <param name="param.target" value="${project.zipdir}/jre-macos64" />
       <param name="param.source" value="${define.jre.macos64}" />
     </antcall>
+    <antcall target="sub_addjre_tar">
+      <param name="param.target" value="${project.zipdir}/jre-macosaarch64" />
+      <param name="param.source" value="${define.jre.macosaarch64}" />
+    </antcall>
 
     <!-- ZIP-File fuer Linux -->
     <zip destfile="${project.release}/${project.zipfilename.linux}" duplicate="fail">
@@ -359,6 +363,7 @@
         <include name="jameica-macos-aarch64.sh" />
         <include name="jameica-icon.icns" />
         <include name="plugins" />
+        <include name="jre-macosaarch64/**" />
         <include name="lib/**" />
         <exclude name="Info.plist" />
         <exclude name="lib/swt/win*/**" />

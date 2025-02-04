@@ -45,7 +45,7 @@ public class StatusBarMessage extends TextMessage
    */
   public StatusBarMessage(String text, int type)
   {
-    super((type == TYPE_SUCCESS ? (type == TYPE_INFO ? "INFO" : "OK") : "ERROR"),text);
+    super(type == TYPE_SUCCESS ? "OK" : (type == TYPE_INFO ? "INFO" : "ERROR"),text);
     this.type = type;
   }
   

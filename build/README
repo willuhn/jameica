@@ -1,7 +1,7 @@
 ###########################################################################
 # Jameica                                                                 #
 #                                                                         #
-# Copyright (c) 2004 Olaf Willuhn                                         #
+# Copyright (c) 2024 Olaf Willuhn                                         #
 # All rights reserved.                                                    #
 #                                                                         #
 # This software is copyrighted work licensed under the terms of the       #
@@ -13,17 +13,17 @@ Hinweis:
 
   Die ausfuehrliche Installationsanleitung findest du unter
   
-  http://www.willuhn.de/wiki/doku.php?id=support:install
+  https://www.willuhn.de/wiki/doku.php?id=handbuch:sonstiges:install
 
 ###########################################################################
 # 1. Systemvoraussetzungen                                                #
 ###########################################################################
 
-- SUN/Oracle Java 1.8 oder hoeher (JRE oder SDK)
+- Java 17 oder hoeher
   Gib "java -version" an einer Shell (Windows: Eingabeaufforderung)
   ein, um die Version zu ueberpruefen.
 
-  Java kannst du von http://www.java.com herunterladen.
+  Java kannst du von https://adoptium.net herunterladen.
 
 ###########################################################################
 # 2. INSTALLATION                                                         #
@@ -42,15 +42,15 @@ Hinweis:
    Windows (32 Bit) :    "jameica-win32.exe"
    Windows (64 Bit) :    "jameica-win64.exe"
 
-   Mac OS X (32 Bit):    "./jameica-macos.sh"
    Mac OS X (64 Bit):    "./jameica-macos64.sh"
+   Mac OS X (ARM 64):    "./jameica-macos-aarch64.sh"
 
    OpenBSD          :    "./jameica-openbsd.sh"
 
 Hinweis: Jameica schreibt keinerlei Dateien in das Programm-Verzeichnis.
          Alle Einstellungen, Log-Files und Daten werden in einem Verzeichnis
          ".jameica" innerhalb Ihres Homebereiches abgelegt. Das sind i.d.R.:
-         Windows: "C:\Dokumente und Einstellungen\<benutzername>\.jameica"
+         Windows: "C:\Users\<benutzername>\.jameica"
          Linux:   "/home/<benutzername>/.jameica"
 
 #                                                                         #
@@ -78,7 +78,7 @@ Klicke im Menu auf "Datei->Einstellungen->Plugins", waehle dort unter
   Mit diesem Parameter kann ein abweichendes Benutzer-Verzeichnis
   verwendet werden. Somit ist es z.Bsp. moeglich mehrere Konfigurationen
   parallel zu benutzen. Bsp.:
-  Windows:  "jameica-win32.exe -f d:\daten\.jameica"
+  Windows:  "jameica-win64.exe -f d:\daten\.jameica"
   Linux:    "./jameica.sh -f /tmp/jameicatest"
 
 -p <Passwort>, --password=<Passwort>

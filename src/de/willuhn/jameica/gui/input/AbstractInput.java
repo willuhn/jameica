@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -186,7 +187,7 @@ public abstract class AbstractInput implements Input
    */
   private void applyVerifier(final Control control)
   {
-    if (control == null || !(control instanceof Text))
+    if (control == null || !(control instanceof Text || control instanceof Combo))
       return;
     
     Listener updateCheck = new Listener() {
@@ -413,22 +414,3 @@ public abstract class AbstractInput implements Input
   }
 
 }
-
-/*********************************************************************
- * $Log: AbstractInput.java,v $
- * Revision 1.30  2011/09/26 11:18:42  willuhn
- * Zeilenumbruch aus einzeiligen Eingabefeldern beim Copy'n'Paste entfernen - das behindert sonst das Paste - siehe http://www.onlinebanking-forum.de/phpBB2/viewtopic.php?p=78495#78495
- *
- * Revision 1.29  2011-08-08 11:32:29  willuhn
- * @C AbstractInput#getStyleBits() public weil ...
- * @C ...vertikale Ausrichtung des Labels im Container nicht mehr hart mit "instanceof TextAreaInput" sondern anhand des Stylebits festlegen
- *
- * Revision 1.28  2011-08-08 10:45:05  willuhn
- * @C AbstractInput#update() ist jetzt "protected" (war package-private)
- *
- * Revision 1.27  2011-05-11 08:42:07  willuhn
- * @N setData(String,Object) und getData(String) in Input. Damit koennen generische Nutzdaten im Eingabefeld gespeichert werden (siehe SWT-Widget)
- *
- * Revision 1.26  2011-05-03 10:13:11  willuhn
- * @R Hintergrund-Farbe nicht mehr explizit setzen. Erzeugt auf Windows und insb. Mac teilweise unschoene Effekte. Besonders innerhalb von Label-Groups, die auf Windows/Mac andere Hintergrund-Farben verwenden als der Default-Hintergrund
- **********************************************************************/

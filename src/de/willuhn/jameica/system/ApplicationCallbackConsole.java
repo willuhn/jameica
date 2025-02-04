@@ -124,6 +124,13 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
 			Logger.debug("master password given via commandline");
 			return this.password;
 		}
+
+		this.password = Application.getStartupParams().getPasswordUsingCommand();
+		if (this.password != null && this.password.length() > 0)
+		{
+			Logger.debug("master password given via command specified in commandline");
+			return this.password;
+		}
 		
 		// Eingabe ueberhaupt moeglich?
     if (Application.inNonInteractiveMode())
@@ -226,6 +233,9 @@ public class ApplicationCallbackConsole extends AbstractApplicationCallback
     ////////////////////////////////////////////////////////////////////////////
     // Passwort via Kommandozeile angegeben?
     this.password = Application.getStartupParams().getPassword();
+    if (this.password == null || this.password.length() == 0) {
+      this.password = Application.getStartupParams().getPasswordUsingCommand();
+    }
 
     if (this.password != null && this.password.length() > 0)
     {

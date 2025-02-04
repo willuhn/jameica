@@ -72,7 +72,7 @@ public class Attachment implements Serializable
   
   /**
    * Speichert den Zeitstempel des Dateianhangs.
-   * @param created der Zeitstempel des Dateianhangs.
+   * @param date der Zeitstempel des Dateianhangs.
    */
   public void setDate(long date)
   {

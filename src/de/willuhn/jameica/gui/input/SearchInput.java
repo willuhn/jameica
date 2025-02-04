@@ -457,6 +457,8 @@ public class SearchInput extends AbstractInput
     if (text != null && !text.isDisposed())
     {
       text.setEnabled(enabled);
+      text.setEditable(enabled);
+
       if (enabled)
         text.setForeground(Color.FOREGROUND.getSWTColor());
       else

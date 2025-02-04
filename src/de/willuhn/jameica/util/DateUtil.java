@@ -11,11 +11,26 @@ package de.willuhn.jameica.util;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
-import de.willuhn.jameica.gui.formatter.DateFormatter;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.logging.Logger;
 
 /**
  * Hilfsklasse zum Parsen von Datumsangaben.
@@ -23,141 +38,304 @@ import de.willuhn.jameica.system.Application;
 public class DateUtil
 {
   /**
-   * Das Default-Dateformat von Jameica (dd.mm.yyyy).
-   * Abhaengig vom Locale.
+   * Das Default-Dateformat von Jameica.
+   * Wird als DateTimeFormatter-Pattern über i18n angegeben.
+   * z. B. deutsch: dd.MM.uuuu / englisch: dd/MM/uuuu
+   * {@see <a href="https://docs.oracle.com/javase/8/docs/api/index.html?java/time/format/DateTimeFormatter.html">Java Docs: DateTimeFormatter</a>}
    */
-  public final static DateFormat DEFAULT_FORMAT = SimpleDateFormat.getDateInstance(DateFormat.DEFAULT,Application.getConfig().getLocale());
-  
+  public static volatile DateFormat DEFAULT_FORMAT;
+  private static volatile DateTimeFormatter defaultFormatter;  // moderne Version davon
   /**
-   * Das Kurz-Dateformat von Jameica (dd.mm.yy).
-   * Abhaengig vom Locale.
+   * Das Kurz-Dateformat von Jameica.
+   * Wie {@link #DEFAULT_FORMAT}
+   * z. B. deutsch: dd.MM.uu / englisch: dd/MM/uu
    */
-  public final static DateFormat SHORT_FORMAT   = SimpleDateFormat.getDateInstance(DateFormat.SHORT,Application.getConfig().getLocale());
+  public static volatile DateFormat SHORT_FORMAT;
+  private static volatile DateTimeFormatter shortFormatter;  // moderne Version davon
+
+  static {
+    initializeLocale(null, null, null);
+  }
 
   /**
-   * Eingabehilfe für Datumsfelder. Eine 1-2stellige Zahl wird als Tag des
-   * aktuellen Monats interpretiert. Eine 4stellige Zahl als Tag und Monat des
-   * laufenden Jahres.
+   * Wird diese Klasse getestet, existiert die Application-Instanz nicht
+   * und wir können das Locale nicht aus der Config lesen.
+   */
+  private static void initializeLocale(Locale locale, String defaultDatePattern, String shortDatePattern) {
+    if (locale == null) {
+      try {
+        locale = Application.getConfig().getLocale();
+      } catch (NullPointerException e) {
+        // Fallback, falls Application noch nicht initialisiert wurde (für Tests)
+        locale = Locale.GERMANY;
+      }
+    }
+    if (defaultDatePattern == null) {
+      try {
+        defaultDatePattern = Application.getI18n().tr("dd.MM.uuuu");
+      } catch (NullPointerException e) {
+        defaultDatePattern = "dd.MM.uuuu";
+      }
+    }
+    if (shortDatePattern == null) {
+      try {
+        shortDatePattern = Application.getI18n().tr("dd.MM.uu");
+      } catch (NullPointerException e) {
+        shortDatePattern = "dd.MM.uu";
+      }
+    }
+
+    DEFAULT_FORMAT = new SimpleDateFormat(
+        createSimpleDateFormatPattern(defaultDatePattern), locale);
+    defaultFormatter = DateTimeFormatter.ofPattern(defaultDatePattern, locale);
+
+    SHORT_FORMAT = SimpleDateFormat.getDateInstance(DateFormat.SHORT, locale);
+    shortFormatter = DateTimeFormatter.ofPattern(shortDatePattern, locale);
+  }
+
+  /**
+   * Überschreibt das von der Config vorgegebene Locale (für Tests)
+   * @implNote Diese Methode sollte nur für Tests verwendet werden und ist nicht für den Produktions-Betrieb gedacht.
+   * @param locale Das Locale, das beim Parsen und Formatieren berücksichtigt wird
+   * @param defaultDatePattern Das DateTimeFormatter-Pattern, das für die Standardformatierung verwendet wird
+   * @param shortDatePattern Das DateTimeFormatter-Pattern, das für die kurze Formatierung verwendet wird
+   */
+  public static void setLocaleForTesting(Locale locale, String defaultDatePattern, String shortDatePattern) {
+    initializeLocale(locale, defaultDatePattern, shortDatePattern);
+  }
+
+  /**
+   * Eingabehilfe für Datumsfelder.<br>
+   * Wie {@link #parseUserInput(String, DateTimeFormatter)}, nur dass ein String
+   * zurückgegeben wird. Verwendet immer das {@link #DEFAULT_FORMAT}.
    * @param text zu parsender Text.
    * @return das vervollstaendigte Datum oder der Originalwert, wenn es nicht
    * geparst werden konnter.
    */
   public static String convert2Date(String text)
   {
-    int tag = 0;
-    int monat = 0;
-    
-    // Eventuell mit Uhrzeit eingegeben. Wir lassen die Finger davon
-    if (text.length() > 10)
-      return text;
-
-    // Datum im Format dd eingegeben. Wir vervollstaendigen mit aktuellem Monat und Jahr
-    if (text.length() <= 2)
-    {
-      try
-      {
-        tag = Integer.parseInt(text);
-        checkDay(tag);
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.DAY_OF_MONTH, tag);
-        return new DateFormatter(DEFAULT_FORMAT).format(cal.getTime());
-      }
-      catch (NumberFormatException e)
-      {
-        return text;
-      }
-    }
-    
-    // Datum im Format ddmm eingegeben. Wir parsen beides und vervollstaendigen mit dem aktuellen Jahr
-    if (text.length() == 4)
-    {
-      try
-      {
-        tag = Integer.parseInt(text.substring(0, 2));
-        monat = Integer.parseInt(text.substring(2));
-        checkDay(tag);
-        checkMonth(monat);
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.DAY_OF_MONTH, tag);
-        cal.set(Calendar.MONTH, monat - 1);
-        return new DateFormatter(DEFAULT_FORMAT).format(cal.getTime());
-      }
-      catch (NumberFormatException e)
-      {
-        return text;
-      }
-    }
-    
-    // [BUGZILLA 1281] Ist vermutlich ddmmyyyy
-    if (text.matches("^[0-9]{8}$"))
-    {
-      try
-      {
-        tag = Integer.parseInt(text.substring(0, 2));
-        monat = Integer.parseInt(text.substring(2));
-        int jahr = Integer.parseInt(text.substring(4,8));
-        checkDay(tag);
-        checkMonth(monat);
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.DAY_OF_MONTH, tag);
-        cal.set(Calendar.MONTH, monat - 1);
-        cal.set(Calendar.YEAR, jahr);
-        return new DateFormatter(DEFAULT_FORMAT).format(cal.getTime());
-      }
-      catch (NumberFormatException e)
-      {
-        return text;
-      }
-    }
-    
-    DateFormat df = DEFAULT_FORMAT;
-    
-    // dd.mm.yy
-    if (text.matches("^[0-9]{1,2}\\.[0-9]{1,2}\\.[0-9]{2}$"))
-      df = SHORT_FORMAT;
-
-    try
-    {
-      // Checken, ob wir das Datum als Date-Objekt parsen koennen
-      Date d = df.parse(text);
-      
-      // jepp, dann neu formatieren - u.a. mit fuehrenden Nullen und 4-stelligem Jahr
-      return new DateFormatter(DEFAULT_FORMAT).format(d);
-    }
-    catch (Exception e)
-    {
-      // User hat Quatsch eingegeben
-    }
-    
-    // Es wurde in keinem parse-faehigen Format eingegeben. Der String wird
-    // wie eingegeben zurückgereicht.
-    return text;
+    Optional<LocalDate> date = parseUserInput(text, defaultFormatter);
+    return date
+        .map(d -> d.format(defaultFormatter))
+        .orElse(text);
   }
 
   /**
-   * Prueft, ob sich der Tag innerhalb des erlaubten Bereichs befindet.
-   * @param day der Tag.
-   * @throws NumberFormatException
+   * Eingabehilfe für Datumsfelder.<br>
+   * Unterstützte Formate:<br>
+   * - Das per defaultFormatter angegebene Format<br>
+   * - d | dd | ddMM | ddMMyy | ddMMyyyy<br>
+   * - dd. | dd.MM. | dd.MM.yy | dd.MM.yyyy (dd und MM auch einstellig)<br>
+   * - dd/ | dd/MM/ | dd/MM/yy | dd/MM/yyyy (dd und MM auch einstellig)<br>
+   * - "h" (heute) | "t" (today)<br>
+   * - +D | -D (heute plus/minus D Tage)<br>
+   * - ++M | --M (heute plus/minus M Monate)<br>
+   * Das Datum muss immer in der Reihenfolge "Tag - Monat - Jahr" angegeben werden (auch im customFormatter).
+   * @param userInput Eingabetext
+   * @param customFormatter Formatter, den das Datumsfeld nutzt, um das Datum anzuzeigen
+   * @return das geparste Datum als Optional
    */
-  private static void checkDay(int day) throws NumberFormatException
-  {
-    if (day < 1 || day > 31)
-    {
-      throw new NumberFormatException();
+  public static Optional<LocalDate> parseUserInput(String userInput, DateTimeFormatter customFormatter) {
+    if (userInput == null || userInput.isBlank()) {
+      return Optional.empty();
+    }
+    String strippedUserInput = userInput.strip();
+
+    return Stream.<Supplier<Optional<LocalDate>>>of(
+        () -> parseDateUsingFormatter(strippedUserInput, customFormatter),
+        () -> parseDateUsingPatterns(strippedUserInput, "dd", "MM"),
+        () -> parseDateUsingPatterns(strippedUserInput, "d.", "M."),
+        () -> parseDateUsingPatterns(strippedUserInput, "d/", "M/"),
+        () -> parseDateOffsets(strippedUserInput)
+      )
+      .map(Supplier::get)
+      .filter(Optional::isPresent)
+      .findFirst()
+      .orElse(Optional.empty());
+  }
+
+  /**
+   * Parst Datum mithilfe des angegebenen DateTimeFormatter
+   * @param userInput das eingegebene Datum als String
+   * @param formatter der DateTimeFormatter, mit dem das Datum geparst werden soll
+   * @return das geparste Datum als Optional
+   */
+  private static Optional<LocalDate> parseDateUsingFormatter(String userInput, DateTimeFormatter formatter) {
+    if (formatter == null) {
+      return Optional.empty();
+    }
+    try {
+      LocalDate parsedDate = LocalDate.parse(userInput, formatter);
+      return Optional.of(parsedDate);
+    } catch (DateTimeParseException e) {
+      return Optional.empty();
     }
   }
 
   /**
-   * Prueft, ob sich der Monat innerhalb des erlaubten Bereichs befindet.
-   * @param month der Monat.
-   * @throws NumberFormatException
+   * Parst Datum in den Formaten {dayPattern}{monthPattern}{Jahr als 2- bis 4-stellige Zahl}
+   * @param userInput das eingegebene Datum
+   * @param dayPattern das DateTimeFormatter-Pattern, das auf den Tag matcht (z. B. "dd" oder "d.")
+   * @param monthPattern das DateTimeFormatter-Pattern, das auf den Monat matcht (z. B. "MM" oder "M.")
+   * @return das geparste Datum als Optional
    */
-  private static void checkMonth(int month) throws NumberFormatException
-  {
-    if (month < 1 || month > 12)
-    {
-      throw new NumberFormatException();
+  private static Optional<LocalDate> parseDateUsingPatterns(String userInput, String dayPattern, String monthPattern) {
+    if (userInput == null || userInput.isEmpty() ) {
+      return Optional.empty();
     }
+    if (userInput.length() == 1) {
+      userInput = "0" + userInput;
+    }
+    LocalDate now = LocalDate.now();
+    DateTimeFormatter inputFormatter = new DateTimeFormatterBuilder()
+        .appendPattern(dayPattern)
+        .optionalStart()
+        .appendPattern(monthPattern)
+        .optionalStart()
+        .appendValueReduced(ChronoField.YEAR, 2, 4, now.getYear() - 80)
+        .optionalEnd()
+        .optionalEnd()
+        .parseDefaulting(ChronoField.MONTH_OF_YEAR, now.getMonthValue())
+        .parseDefaulting(ChronoField.YEAR, now.getYear())
+        .toFormatter();
+    return parseDateUsingFormatter(userInput, inputFormatter);
+  }
+
+  /**
+   * Parst das Datum als Offset zum heutigen Datum
+   * "h" (heute) | "t" (today)
+   * +D | -D (heute plus/minus D Tage)
+   * ++M | --M (heute plus/minus M Monate)
+   * @param userInput
+   * @return das geparste Datum als Optional
+   */
+  private static Optional<LocalDate> parseDateOffsets(String userInput) {
+    if (userInput == null || userInput.isEmpty()) {
+      return Optional.empty();
+    }
+    if (userInput.equalsIgnoreCase("h") || userInput.equalsIgnoreCase("t")) {
+      userInput = "+0"; // heute
+    }
+
+    String regex = "^((\\+{1,2}|-{1,2}))(\\d+)$";
+    Pattern pattern = Pattern.compile(regex);
+
+    Matcher matcher = pattern.matcher(userInput);
+    if (!matcher.matches()) {
+      return Optional.empty();
+    }
+
+    String prefix = matcher.group(1);
+    String digits = matcher.group(3);
+    int offset;
+    try {
+      offset = Integer.parseInt(digits);
+    } catch (NumberFormatException e) {
+      return Optional.empty();
+    }
+
+    Map<String, Function<Integer, LocalDate>> offsetFunctions = Map.of(
+        "+", LocalDate.now()::plusDays,
+        "++", LocalDate.now()::plusMonths,
+        "-", LocalDate.now()::minusDays,
+        "--", LocalDate.now()::minusMonths
+    );
+
+    return Optional
+        .ofNullable(offsetFunctions.get(prefix))
+        .map(func -> func.apply(offset));
+  }
+
+  /**
+   * Erzeugt aus einem DateTimeFormatter-Pattern ein SimpleDateFormat-Pattern.
+   * @param dateTimeFormatterPattern das DateTimeFormatter-Pattern
+   * @return das SimpleDateFormat-Pattern
+   */
+  private static String createSimpleDateFormatPattern(String dateTimeFormatterPattern) {
+    // u (Jahr ohne Ära) im DateTimeFormatter entspricht y im SimpleDateFormat
+    return dateTimeFormatterPattern.replace("u", "y");
+  }
+  
+  /**
+   * Versucht aus einem java.text.DateFormat einen java.time.format.DateTimeFormatter zu erstellen.
+   * @param dFormat Das DateFormat. Eine Konvertierung ist nur möglich, wenn es
+   *                instanceof java.text.SimpleDateFormat ist. Andernfalls wird
+   *                das {@link DEFAULT_FORMAT} verwendet.
+   * @return der DateTimeFormatter
+   */
+  public static DateTimeFormatter createDateTimeFormatter(DateFormat dFormat) {
+    if (dFormat.equals(DEFAULT_FORMAT)) {
+      return defaultFormatter;
+    }
+    if (dFormat.equals(SHORT_FORMAT)) {
+      return shortFormatter;
+    }
+    if (!(dFormat instanceof SimpleDateFormat)) {
+      // nur bei einem SimpleDateFormat existiert .toPattern()
+      Logger.warn("Unable to create DateTimeFormatter from custom DateFormat. Using default Formatter");
+      return defaultFormatter;
+    }
+    
+    String sdPattern = ((SimpleDateFormat)dFormat).toPattern();    
+    String dateTimeFormatterPattern = sdPattern.replace("y", "u");
+    
+    return DateTimeFormatter.ofPattern(dateTimeFormatterPattern);
+  }
+
+  /**
+   * Konvertiert ein java.time.LocalDate zu einem java.util.Date
+   * @param localDate das LocalDate
+   * @return das Date
+   */
+  public static Date localDate2Date(LocalDate localDate) {
+    return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+  }
+
+  /**
+   * Fügt eine Anzahl von Monaten zu einem LocalDate hinzu. Ist das Eingabedatum
+   * der letzte Tag eines Monats, wird das Ausgabedatum ebenfalls der letzte
+   * Tag des Monats sein.<br>
+   * Beispiele:<br>
+   * 30.04. + 1 Monat = 31.05.<br>
+   * 31.05. - 1 Monat = 30.04.
+   * @param date das Eingabedatum
+   * @param months die Anzahl der Monate, die hinzugefügt werden soll (auch negativ möglich)
+   * @return das Ausgabedatum
+   */
+  public static LocalDate addMonthsMaintainingEndOfMonth(LocalDate date, long months) {
+    if (date == null) {
+      return null;
+    }
+    boolean isEndOfMonth = date.equals(date.with(TemporalAdjusters.lastDayOfMonth()));
+    LocalDate adjustedDate = date.plusMonths(months);
+    if (isEndOfMonth) {
+      adjustedDate = adjustedDate.with(TemporalAdjusters.lastDayOfMonth());
+    }
+    return adjustedDate;
+  }
+  
+  /**
+   * Gibt Index und Länge von Tag, Monat und Jahr in einem formatierten Datums-String
+   * für den angegebenen DateTimeFormatter zurück.<br>
+   * Limitationen:<br>
+   * - Der DateTimeFormatter darf Tag/Monat/Jahr nur als Zahlen erzeugen, keine Monatsnamen o. Ä.<br>
+   * - Tag- und Monatsfelder müssen 2-stellig sein<br>
+   * - Die Reihenfolge Tag - Monat - Jahr muss eingehalten werden, siehe auch: {@link #parseUserInput(String, DateTimeFormatter)}
+   * @param dtFormatter der DateTimeFormatter
+   * @return alle Positionen für diesen DateTimeFormatter
+   */
+  public static DatePositions getDatePositions(DateTimeFormatter dtFormatter) {
+    LocalDate testDate = LocalDate.of(3333, 11, 22);
+    
+    String formattedTestDate = dtFormatter.format(testDate);
+    
+    String dayString = "22";
+    int dayIndex = formattedTestDate.indexOf(dayString);
+    
+    String monthString = "11";
+    int monthIndex = formattedTestDate.indexOf(monthString);
+
+    return new DatePositions(dayIndex, 2, monthIndex, 2);
   }
 
   /**
@@ -171,7 +349,7 @@ public class DateUtil
       return null;
     
     Calendar cal = Calendar.getInstance();
-    cal.setTime(date == null ? new Date() : date);
+    cal.setTime(date);
     cal.set(Calendar.HOUR_OF_DAY,0);
     cal.set(Calendar.MINUTE,0);
     cal.set(Calendar.SECOND,0);
@@ -190,11 +368,66 @@ public class DateUtil
       return null;
     
     Calendar cal = Calendar.getInstance();
-    cal.setTime(date == null ? new Date() : date);
+    cal.setTime(date);
     cal.set(Calendar.HOUR_OF_DAY,23);
     cal.set(Calendar.MINUTE,59);
     cal.set(Calendar.SECOND,59);
     cal.set(Calendar.MILLISECOND,999);
     return cal.getTime();
+  }
+
+
+  // kann in Java 14+ durch eine Zeile ersetzt werden:
+  // public record DatePositions(int dayIndex, int dayWidth, int monthIndex, int monthWidth) { }
+  public static class DatePositions {
+    private final int dayIndex;
+    private final int dayWidth;
+    private final int monthIndex;
+    private final int monthWidth;
+
+    public DatePositions(int dayIndex, int dayWidth, int monthIndex, int monthWidth) {
+        this.dayIndex = dayIndex;
+        this.dayWidth = dayWidth;
+        this.monthIndex = monthIndex;
+        this.monthWidth = monthWidth;
+    }
+
+    public int dayIndex() {
+        return dayIndex;
+    }
+
+    public int dayWidth() {
+        return dayWidth;
+    }
+
+    public int monthIndex() {
+      return monthIndex;
+    }
+
+    public int monthWidth() {
+      return monthWidth;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (!(obj instanceof DatePositions)) {
+        return false;
+      }
+      DatePositions other = (DatePositions) obj;
+      return 
+          this.dayIndex == other.dayIndex() &&
+          this.dayWidth == other.dayWidth() &&
+          this.monthIndex == other.monthIndex() &&
+          this.monthWidth == other.monthWidth();
+    }
+    
+    @Override
+    public int hashCode() {
+      int result = Integer.hashCode(dayIndex);
+      result = 31 * result + Integer.hashCode(dayWidth);
+      result = 31 * result + Integer.hashCode(monthIndex);
+      result = 31 * result + Integer.hashCode(monthWidth);
+      return result;
+    }
   }
 }

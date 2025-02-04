@@ -14,9 +14,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Scale;
 
-import de.willuhn.jameica.system.Application;
-import de.willuhn.jameica.system.Platform;
-
 /**
  * Eingabefeld in Form eines Schiebereglers.
  */
@@ -112,13 +109,7 @@ public class ScaleInput extends AbstractInput
     if (this.scale != null && !this.scale.isDisposed())
       return this.scale;
     
-    // Windows-Bug: Das Control uebernimmt hier nicht die Hintergrundfarbe
-    // sondern wird immer mit weissem Hintergrund gezeichnet. Ich konnte
-    // auch keinen Bug-Report bei eclipse.org finden. Als Workaround mache
-    // ich bei Windows jetzt einen Rahmen drum. Dann faellts nicht so auf ;)
-    int os = Application.getPlatform().getOS();
-    int style = (os == Platform.OS_WINDOWS || os == Platform.OS_WINDOWS_64) ? SWT.BORDER : SWT.NONE;
-    this.scale = new Scale(this.getParent(),this.orientation | style);
+    this.scale = new Scale(this.getParent(),this.orientation | SWT.NONE);
     
     Object tooltip = this.getData(DATAKEY_TOOLTIP);
     if (tooltip != null)

@@ -56,8 +56,8 @@ public class FeatureClipboard implements Feature
     if (this.listener != null)
       return;
     
-    // Die benoetigten Controls sind noch nicht da
-    if (ctx.control == null || ctx.menu == null)
+    // Das benoetigte Control ist noch nicht da
+    if (ctx.control == null)
       return;
     
     this.applyShortcut(ctx);

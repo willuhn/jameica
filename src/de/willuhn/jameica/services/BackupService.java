@@ -11,6 +11,7 @@
 package de.willuhn.jameica.services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import de.willuhn.boot.BootLoader;
@@ -23,6 +24,7 @@ import de.willuhn.jameica.messaging.Message;
 import de.willuhn.jameica.messaging.MessageConsumer;
 import de.willuhn.jameica.messaging.QueryMessage;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.system.Settings;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
@@ -32,6 +34,8 @@ import de.willuhn.util.ApplicationException;
  */
 public class BackupService implements Bootable
 {
+  private final static Settings settings = new Settings(BackupService.class);
+  
   private Consumer mc = new Consumer();
   
   /**
@@ -68,6 +72,15 @@ public class BackupService implements Bootable
       Application.getMessagingFactory().getMessagingQueue("jameica.boot").queueMessage(new BootMessage(Application.getI18n().tr("Fehler beim Wiederherstellen des Backups. Bitte prüfen Sie das System-Log")));
     }
   }
+  
+  /**
+   * Liefert die Fehler der letzten Sitzung, die dazu führten, dass kein Backup durchgeführt wurde.
+   * @return die Fehler, die dazu führten, dass kein Backup durchgeführt wurde.
+   */
+  public List<String> getLastErrors()
+  {
+    return Arrays.asList(settings.getList("errors",new String[0]));
+  }
 
   /**
    * @see de.willuhn.boot.Bootable#shutdown()
@@ -76,6 +89,7 @@ public class BackupService implements Bootable
   {
     try
     {
+      settings.setAttribute("errors",this.mc.errors.toArray(new String[0]));
       if (this.mc.errors.size() > 0)
       {
         String text = this.mc.errors.size() + " error(s) occured in current jameica session, skipping backup";
@@ -129,11 +143,19 @@ public class BackupService implements Bootable
      */
     public void handleMessage(Message message) throws Exception
     {
+      if (this.errors.size() == 50)
+      {
+        Logger.error("reached max error count (50), further errors will not be stored");
+        return;
+      }
+      
       Object data = ((QueryMessage)message).getData();
-      
       String text = data != null ? data.toString() : "<unknown>";
-      
       Logger.warn("detected error: " + text);
+      
+      if (data instanceof Exception)
+        text = ((Exception) data).getMessage();
+      
       this.errors.add(text);
     }
   }

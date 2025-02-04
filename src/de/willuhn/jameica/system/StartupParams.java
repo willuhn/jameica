@@ -9,10 +9,9 @@
  **********************************************************************/
 package de.willuhn.jameica.system;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -49,6 +48,7 @@ public class StartupParams
 	private String workDir         = null;
 	private String username        = null;
 	private String password        = null;
+	private String passwordCommand = null;
 	private int mode 				       = MODE_STANDALONE;
 
   private boolean noninteractive = false;
@@ -82,6 +82,7 @@ public class StartupParams
     options.addOption("u","username",true,"Optionale Angabe des Benutzernamens");
 		options.addOption("p","password",true,"Optionale Angabe des Master-Passworts");
     options.addOption("w","passwordfile",true,"Optionale Angabe des Master-Passworts, welches sich in der angegebenen Datei befindet");
+		options.addOption("P", "passwordcommand", true, "Optional Angabe eines Befehls, der das Master-Passwort auf Stdout ausgibt");
     options.addOption("o","force-password",false,"Angabe des Master-Passworts via Kommandozeile ignorieren (für MacOS nötig)");
 
     options.addOption("n","noninteractive",false,"Koppelt Jameica im Server-Mode von der Konsole ab. " +
@@ -164,6 +165,18 @@ public class StartupParams
 			    }
 			  }
 			}
+
+			if (line.hasOption("P")) {
+					if (line.hasOption("p")) {
+						throw new RuntimeException("cannot use option -p (--password) together with -P (--passwordcommand)");
+					}
+
+					if (line.hasOption("w")) {
+						throw new RuntimeException("cannot use option -w (--passwordfile) together with -P (--passwordcommand)");
+					}
+
+					this.passwordCommand = line.getOptionValue("P");
+			}
 		}
 		catch (Exception e)
 		{
@@ -188,6 +201,43 @@ public class StartupParams
    */
   public String getPassword()
 	{
+		return password;
+	}
+
+	/**
+	 * Versucht, das Master-Passwort mittels eines als Kommandozeilen-Parameter angegebenen Befehls zu erhalten
+	 * @return Master-Passwort falls erfolgreich, sonst {@code null}.
+	 */
+	public String getPasswordUsingCommand() {
+		if (passwordCommand == null) return null;
+
+		final Process proc;
+		try {
+			proc = Runtime.getRuntime().exec(passwordCommand);
+		} catch (IOException e) {
+			Logger.error("cannot execute password command `" + passwordCommand + "`", e);
+			return null;
+		}
+
+		final String password;
+		try (final Scanner scanner = new Scanner(proc.getInputStream(), StandardCharsets.UTF_8)) {
+			password = scanner.useDelimiter("\\A").next().trim();
+		}
+
+		try {
+			if (proc.waitFor() != 0) {
+				Logger.error("password command `" + passwordCommand + "` exited with non-zero exit code: " + proc.exitValue());
+				return null;
+			}
+		} catch (InterruptedException e) {
+			Logger.error("password command interrupted", e);
+			return null;
+		}
+
+		if (password.isEmpty()) {
+			Logger.error("password command `" + passwordCommand + "` returned empty password");
+			return null;
+		}
 		return password;
 	}
   

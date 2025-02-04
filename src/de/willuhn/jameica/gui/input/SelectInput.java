@@ -26,7 +26,6 @@ import de.willuhn.datasource.GenericObject;
 import de.willuhn.datasource.pseudo.PseudoIterator;
 import de.willuhn.jameica.gui.GUI;
 import de.willuhn.jameica.system.Application;
-import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.logging.Logger;
 
 /**
@@ -383,12 +382,6 @@ public class SelectInput extends AbstractInput
   public boolean isEnabled()
   {
     return enabled;
-  }
-
-  @Override
-  protected void update() throws OperationCanceledException
-  {
-    // Wir machen hier nichts. 
   }
 }
 

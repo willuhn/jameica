@@ -81,6 +81,13 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 			Logger.info("master password given via commandline");
 			return this.password;
 		}
+
+		this.password = Application.getStartupParams().getPasswordUsingCommand();
+		if (this.password != null && this.password.length() > 0)
+		{
+			Logger.debug("master password given via command specified in commandline");
+			return this.password;
+		}
 			
     NewPWD p = new NewPWD(NewPWD.POSITION_CENTER);
   	String text = Application.getI18n().tr("Sie starten die Anwendung zum ersten Mal.\n\n" +
@@ -129,6 +136,9 @@ public class ApplicationCallbackSWT extends AbstractApplicationCallback
 
     // Haben wir ein Passwort via Kommandozeilen-Parameter?
     this.password = Application.getStartupParams().getPassword();
+    if (this.password == null || this.password.length() == 0) {
+      this.password = Application.getStartupParams().getPasswordUsingCommand();
+    }
     if (this.password != null && this.password.length() > 0)
     {
       Logger.info("master password given via commandline");

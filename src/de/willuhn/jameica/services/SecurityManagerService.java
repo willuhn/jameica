@@ -90,6 +90,10 @@ public class SecurityManagerService implements Bootable
     if (s == null)
       return null;
 
+    final int minus = s.indexOf('-');
+    if (minus > 0)
+      s = s.substring(0,minus);
+
     final int plus = s.indexOf('+');
     if (plus > 0)
       s = s.substring(0,plus);
