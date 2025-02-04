@@ -1,6 +1,6 @@
 <info>
-  <name>mariadb</name>
-  <description>MariaDB JDBC-Driver</description>
-  <url>https://mariadb.com/kb/en/about-mariadb-connector-j/</url>
-  <license>LGPL - http://www.gnu.org/copyleft/lesser.html</license>
+  <name>mysql</name>
+  <description>MySQL JDBC-Driver</description>
+  <url>http://dev.mysql.com/doc/connector-j/en/</url>
+  <license>The Universal FOSS Exception, Version 1.0 - https://oss.oracle.com/licenses/universal-foss-exception/</license>
 </info>
