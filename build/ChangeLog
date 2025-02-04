@@ -1,5 +1,6 @@
 2025-02-04 Version 2.10.5
   
+  * NEW: 0185 Wir liefern jetzt sowohl MariaDB- als auch MySQL-Treiber mit
   * NEW: 0184 Wenn Anwendung im Maximiert-Zustand beendet, dann Fenster-Größe nicht speichern. Beim Start auch dann Fenster-Größe setzen, wenn im Maximiert-Zustand gestartet wird
   * BUG: 0183 Pfad zur Jameica JAR-Datei in jameica-macos-aarch64.sh falsch 
   * NEW: 0182 Update auf SWT 4.33 für linux64, linux-arm64, win64, macos64, macos64-aarch64 sowie Java 21 auf win64, macos64, macos64-aarch64 
@@ -11,6 +12,7 @@
   * NEW: 0176 Auf der Startseite einen Hinweis anzeigen, wenn in der letzten Sitzung Fehler dazu führten, dass kein automatisches Backup erstellt werden konnte
   * BUG: 0175 Beim Restore aus dem Systray Fenster forciert in Vordergrund bringen
   * NEW: 0174 Wenn Minimieren in Systray aktiviert ist, dann auch beim Klick auf Schliessen-Kreuz im Fenster-Titel nicht beenden sondern in Systray minimieren
+  * CHG: 0173 Umstellung des JDBC-Treibers von MySQL auf MariaDB
   * CHG: 0172 Rahmen um Slider unter Windows entfernt - das Problem mit der Hintergrundfarbe existiert in aktuellen Windows-/SWT-Versionen nicht mehr
 
 2023-04-14 Version 2.10.4

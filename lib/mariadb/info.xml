@@ -1,0 +1,6 @@
+<info>
+  <name>mariadb</name>
+  <description>MariaDB JDBC-Driver</description>
+  <url>https://mariadb.com/kb/en/mariadb/about-mariadb-connector-j/</url>
+  <license>LGPL-2.1-or-later - https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html</license>
+</info>
