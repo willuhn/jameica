@@ -1,7 +1,3 @@
-2023-04-14 Version 2.10.4
-
-  * CHG: 0173 Umstellung des JDBC-Treibers von MySQL auf MariaDB
-
 2025-02-04 Version 2.10.5
   
   * NEW: 0184 Wenn Anwendung im Maximiert-Zustand beendet, dann Fenster-Größe nicht speichern. Beim Start auch dann Fenster-Größe setzen, wenn im Maximiert-Zustand gestartet wird
