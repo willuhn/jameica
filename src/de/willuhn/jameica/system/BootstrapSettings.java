@@ -190,12 +190,11 @@ public class BootstrapSettings
   {
     if (file == null)
     {
+      file = new File(System.getProperty("user.home"),".jameica.properties");
       String xdg = System.getenv("XDG_CONFIG_HOME");
 
-      if (xdg != null)
+      if (!file.canRead() && xdg != null)
         file = new File(xdg,"jameica.properties");
-      else
-        file = new File(System.getProperty("user.home"),".jameica.properties");
     }
 
     return file;
