@@ -189,7 +189,14 @@ public class BootstrapSettings
   private static synchronized File getFile()
   {
     if (file == null)
+    {
       file = new File(System.getProperty("user.home"),".jameica.properties");
+      String xdg = System.getenv("XDG_CONFIG_HOME");
+
+      if (!file.canRead() && xdg != null)
+        file = new File(xdg,"jameica.properties");
+    }
+
     return file;
   }
 }
