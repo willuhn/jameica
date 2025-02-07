@@ -21,7 +21,6 @@ public class CurrencyFormatter implements Formatter
 {
   private DecimalFormat formatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.getDefault());
   private String curr = "";
-  private boolean customFormat = false;
 
   /**
    * Erzeugt einen neuen Formatierer mit dem angegeben Waehrungsstring.
@@ -36,14 +35,9 @@ public class CurrencyFormatter implements Formatter
       this.curr = currencyName;
 
     if (formatter == null)
-    {
       this.formatter.applyPattern("#0.00");
-    }
     else
-    {
       this.formatter = formatter;
-      this.customFormat = true;
-    }
   }
 
   /**
@@ -62,7 +56,7 @@ public class CurrencyFormatter implements Formatter
     if (o instanceof Number)
     {
       double d = ((Number)o).doubleValue();
-      if (!this.customFormat && Math.abs(d) < 0.01d)
+      if (this.formatter.getMaximumFractionDigits() == 2 && Math.abs(d) < 0.01d)
         d = 0.0d;
       return (formatter.format(d) + " " + curr);
     }
