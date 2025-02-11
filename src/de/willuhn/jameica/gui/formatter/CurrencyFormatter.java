@@ -19,10 +19,8 @@ import java.util.Locale;
  */
 public class CurrencyFormatter implements Formatter
 {
-
-  private String curr = "";
-
   private DecimalFormat formatter = (DecimalFormat) NumberFormat.getNumberInstance(Locale.getDefault());
+  private String curr = "";
 
   /**
    * Erzeugt einen neuen Formatierer mit dem angegeben Waehrungsstring.
@@ -56,35 +54,13 @@ public class CurrencyFormatter implements Formatter
     if (o == null)
       return "";
     if (o instanceof Number)
-      return (formatter.format(((Number)o).doubleValue()) + " " + curr);
+    {
+      double d = ((Number)o).doubleValue();
+      if (this.formatter.getMaximumFractionDigits() == 2 && Math.abs(d) < 0.01d)
+        d = 0.0d;
+      return (formatter.format(d) + " " + curr);
+    }
     return o.toString() + " " + curr;
   }
 
 }
-
-/*********************************************************************
- * $Log: CurrencyFormatter.java,v $
- * Revision 1.3  2008/03/04 00:49:25  willuhn
- * @N GUI fuer Backup fertig
- *
- * Revision 1.2  2004/04/27 00:04:44  willuhn
- * @D javadoc
- *
- * Revision 1.1  2004/04/12 19:15:59  willuhn
- * @C refactoring
- * @N forms
- *
- * Revision 1.3  2004/04/05 23:29:26  willuhn
- * *** empty log message ***
- *
- * Revision 1.2  2004/03/11 08:56:55  willuhn
- * @C some refactoring
- *
- * Revision 1.1  2004/01/28 20:51:24  willuhn
- * @C gui.views.parts moved to gui.parts
- * @C gui.views.util moved to gui.util
- *
- * Revision 1.1  2003/12/29 20:07:19  willuhn
- * @N Formatter
- *
- **********************************************************************/
