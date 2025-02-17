@@ -24,7 +24,7 @@ import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 
 /**
- * Liest die System-Konfiguration aus <i>config.xml</i>.
+ * Liest die System-Konfiguration aus <i>plugin.xml</i>.
  * @author willuhn
  */
 public final class Config
@@ -817,5 +817,18 @@ public final class Config
   public String getStoreUntranslatedDir()
   {
     return StringUtils.trimToNull(settings.getString("jameica.system.i18n.untranslated.dir",null));
+  }
+  
+  /**
+   * Liefert true, wenn die Migration mit dem angegebenen Namen aktiv ist.
+   * @param s der Name der Migration.
+   * @return true, wenn sie aktiv ist.
+   */
+  public boolean getMigration(String s)
+  {
+    if (s == null || !s.startsWith("migration-"))
+      return false;
+    
+    return settings.getBoolean(s,false);
   }
 }

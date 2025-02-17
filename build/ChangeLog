@@ -1,5 +1,7 @@
 HEAD 2.11 (nightly)
 
+  * NEW: 0186 Erster Code für H2-Migration (mehrere Versionen des H2-Treibers im Classpath, kann per "migration-h2=true/false" in de.willuhn.jameica.system.Config.properties umgeschaltet werden
+  
 2025-02-04 Version 2.10.5
   
   * NEW: 0185 Wir liefern jetzt sowohl MariaDB- als auch MySQL-Treiber mit

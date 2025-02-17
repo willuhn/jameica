@@ -21,7 +21,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/bouncycastle/bcpkix-jdk18on-1.72.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/bouncycastle/bcprov-jdk18on-1.72.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/bouncycastle/bcutil-jdk18on-1.72.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/h2/h2-1.4.199.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-cli-1.3.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-collections-3.2.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jakarta_commons/commons-logging-1.2.jar"/>
