@@ -34,6 +34,12 @@
     <path id="compilepath">
       <fileset dir="lib">
         <include name="**/*.jar" />
+        
+        <!-- Datenbank-Treiber beim Compilieren nicht im Classpath verwenden -->
+        <exclude name="**/h2/*.jar" />
+        <exclude name="**/h2/**/*.jar" />
+        <exclude name="**/mariadb/*.jar" />
+        <exclude name="**/mysql/*.jar" />
       </fileset>
     </path>
   </target>
