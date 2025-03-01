@@ -473,26 +473,33 @@ public class SearchInput extends AbstractInput
     
     if (this.text != null && !this.text.isDisposed())
     {
-      // Das "setText" loest eine erneute Suche aus. Daher
-      // ueberpringen wir die naechste
-      this.inSearch = true;
-
-      String s = format(this.value);
-      this.text.setText(s == null ? "" : s);
-      
-      if (s != null && !s.equals(this.search))
-        text.setForeground(Color.FOREGROUND.getSWTColor());
-
-      if (this.listeners.size() > 0)
+      try
       {
-        Event e = new Event();
-        e.data = this.value;
-        e.text = s;
-        for (Listener l:this.listeners)
+        // Das "setText" loest sonst eine erneute Suche aus
+        this.inSearch = true;
+        
+        String s = format(this.value);
+        this.text.setText(s == null ? "" : s);
+        
+        if (s != null && !s.equals(this.search))
+          text.setForeground(Color.FOREGROUND.getSWTColor());
+
+        if (this.listeners.size() > 0)
         {
-          l.handleEvent(e);
+          Event e = new Event();
+          e.data = this.value;
+          e.text = s;
+          for (Listener l:this.listeners)
+          {
+            l.handleEvent(e);
+          }
         }
       }
+      finally
+      {
+        this.inSearch = false;
+      }
+
     }
   }
   
