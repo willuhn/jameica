@@ -125,7 +125,14 @@ public class Platform
         dir = this.getDefaultWorkdir();
 
       this.workdir = new File(dir).getCanonicalFile();
-      Logger.info("using workdir: " + this.workdir);
+      
+      // Wenn direkt der Homebereich ausgew‰hlt wurde, korrigieren wir automatisch auf den Default-Ordner
+      final File home = new File(System.getProperty("user.home")).getCanonicalFile();
+      if (home != null && home.equals(this.workdir))
+      {
+        this.workdir = new File(this.getDefaultWorkdir()).getCanonicalFile();
+        Logger.error("not allowed to choose the users home dir (" + home + ") - auto-fixing to " + this.workdir);
+      }
       
       // existiert bereits, ist aber eine Datei. FATAL!
       if (this.workdir.exists() && !this.workdir.isDirectory())
@@ -135,20 +142,22 @@ public class Platform
       try
       {
         if (inProgramDir(this.workdir))
-          throw new ApplicationException("Bitte w‰hlen Sie einen Benutzer-Ordner, der sich auﬂerhalb des Programm-Verzeichnisses befindet.");
+          throw new ApplicationException("Bitte w‰hlen Sie einen Benutzerordner, der sich auﬂerhalb des Programm-Verzeichnisses befindet.");
       }
       catch (IOException ioe)
       {
         Logger.error("unable to check canonical path",ioe);
-        throw new ApplicationException("Benutzer-Ordner nicht ausw‰hlbar: " + ioe.getMessage());
+        throw new ApplicationException("Benutzerordner nicht ausw‰hlbar: " + ioe.getMessage());
       }
-
+      
       if (!this.workdir.exists())
       {
         Logger.info("creating " + this.workdir);
         if (!this.workdir.mkdirs())
           throw new Exception("Der Benutzerordner " + this.workdir + " konnte nicht erstellt werden.");    
       }
+      
+      Logger.info("using workdir: " + this.workdir);
       return this.workdir;
     }
     catch (ApplicationException ae)
