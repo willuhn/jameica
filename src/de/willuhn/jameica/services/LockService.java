@@ -33,8 +33,10 @@ public class LockService implements Bootable
   private RandomAccessFile raf = null;
   private FileChannel channel  = null;
   private FileLock lock        = null;
+  private File file            = null;
   
   private boolean unclean      = false;
+  private boolean locked       = false;
 
   /**
    * @see de.willuhn.boot.Bootable#depends()
@@ -53,7 +55,7 @@ public class LockService implements Bootable
     if (Application.getStartupParams().isIgnoreLockfile())
       return;
     
-    File file = new File(Application.getConfig().getWorkDir(),"jameica.lock");
+    this.file = new File(Application.getConfig().getWorkDir(),"jameica.lock");
     
     try
     {
@@ -71,11 +73,6 @@ public class LockService implements Bootable
       {
         Logger.info("lockfile " + file + " exists, checking");
       }
-
-      // Beim Beenden loeschen wir die Datei grundsaetzlich, auch wenn wir
-      // sie selbst nicht erstellt haben. Sollte das Lock des anderen
-      // Prozesses noch drauf haengen, koennen wir sie eh nicht loeschen
-      file.deleteOnExit();
 
       // OK, wir haben die Datei. Jetzt locken wir sie
       this.raf     = new RandomAccessFile(file, "rw");
@@ -100,6 +97,7 @@ public class LockService implements Bootable
           Logger.warn("detected unclean shutdown from previous run");
         }
         
+        this.locked = true;
         Logger.info(file + " successfully locked");
       }
       catch (OverlappingFileLockException e)
@@ -112,7 +110,14 @@ public class LockService implements Bootable
     catch (IOException e)
     {
       Logger.error("unable to create/lock " + file,e);
-      IOUtil.close(this.channel,this.raf);
+      
+      // Nur schliessen, wenn wir selbst gelockt haben
+      if (this.locked)
+      {
+        IOUtil.close(this.channel,this.raf);
+        this.file.delete();
+      }
+      
       throw new JameicaException(e); // Hier koennen wir nichts mehr machen
     }
   }
@@ -124,7 +129,7 @@ public class LockService implements Bootable
   {
     try
     {
-      if (this.lock != null)
+      if (this.lock != null && this.locked)
         this.lock.release();
     }
     catch (Exception e)
@@ -133,7 +138,11 @@ public class LockService implements Bootable
     }
     finally
     {
-      IOUtil.close(this.channel,this.raf);
+      if (this.locked)
+      {
+        IOUtil.close(this.channel,this.raf);
+        this.file.delete();
+      }
     }
   }
   

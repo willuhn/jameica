@@ -1,5 +1,6 @@
 HEAD 2.11 (nightly)
 
+  * BUG: 0187 Lock-File nur noch löschen, wenn wir es selbst erzeugt haben - siehe https://homebanking-hilfe.de/forum/topic.php?t=27446
   * NEW: 0186 Erster Code für H2-Migration (mehrere Versionen des H2-Treibers im Classpath, kann per "migration-h2=true/false" in de.willuhn.jameica.system.Config.properties umgeschaltet werden
   
 2025-02-04 Version 2.10.5
