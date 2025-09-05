@@ -44,5 +44,12 @@
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.jface-3.28.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/org.eclipse.osgi-3.18.200.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/swt/com.ibm.icu_52.1.0.v201404241930.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta_ee/angus-activation-2.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta_ee/istack-commons-runtime-4.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta_ee/jakarta.activation-api-2.1.3.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta_ee/jakarta.xml.bind-api-4.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta_ee/jaxb-core-4.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta_ee/jaxb-runtime-4.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta_ee/txw2-4.0.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

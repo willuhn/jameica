@@ -46,6 +46,12 @@ dependencies {
     compile 'oro:oro:+'
 
     // Java EE. Ab Java 11 nicht mehr in Java enthalten
+    
+    // jakarta.xml.*
+    compile 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
+    compile 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
+    
+    // javax.xml.*
     compile 'javax.xml.ws:jaxws-api:2.3.1'
     compile 'org.glassfish.jaxb:jaxb-runtime:2.4.0-b180830.0438'
     compile 'org.glassfish.main.javaee-api:javax.jws:3.1.2.2'
