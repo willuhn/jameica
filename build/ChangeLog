@@ -1,5 +1,6 @@
 HEAD 2.11 (nightly)
 
+  * NEW: 0191 Update auf SWT 4.37 für linux64, linux-arm64, win64, macos64, macos64-aarch64
   * BUG: 0190 Das horizontale Skalieren des Hintergrundbildes war falsch - wirkt sich erst in SWT 4.37 aus 
   * BUG: 0189 Die Bilder für die Zoom-Stufen hatten nicht die selben Seitenverhältnisse wie das Original-Bild. Führt in SWT 4.37 zu einer SWTException
   * NEW: 0188 lib/jakarta_ee/* hinzugefügt
