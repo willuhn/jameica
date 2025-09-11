@@ -368,6 +368,7 @@ public class SWTUtil {
 	 * @param image anzuzeigendes Hintergrundbild.
 	 * @param align logische Kombinationen aus SWT.TOP, SWT.BOTTOM, SWT.LEFT, SWT.RIGHT.
 	 * Wenn sowohl SWT.TOP als auch SWT.BOTTOM angegeben sind, wird das Bild vertikal gestreckt.
+   * Wenn sowohl SWT.LEFT als auch SWT.RIGHT angegeben sind, wird das Bild horizontal gestreckt.
 	 * @return das erzeugte Canvas.
 	 */
 	public static Canvas getCanvas(final Composite parent, final Image image, final int align)
@@ -383,16 +384,23 @@ public class SWTUtil {
 			  try
 			  {
 	        Rectangle r = parent.getBounds();
-	        int x = 0;
-	        int y = 0;
-	        
-	        if ((align & SWT.BOTTOM) != 0) y = r.height - i.height;
-	        if ((align & SWT.RIGHT) != 0) x = r.width - i.width;
 	        
 	        if ((align & SWT.TOP) != 0 && (align & SWT.BOTTOM) != 0) // BUGZILLA 286 stretch vertically
-	          e.gc.drawImage(image,0,0, r.width, i.height, 0, 0, r.width, r.height);
+	        {
+            e.gc.drawImage(image,0,0, i.width, i.height, 0, 0, i.width, r.height);
+	        }
+	        else if ((align & SWT.LEFT) != 0 && (align & SWT.RIGHT) != 0) // stretch horizontally
+	        {
+            e.gc.drawImage(image,0,0, i.width, i.height, 0, 0, r.width, i.height);
+	        }
 	        else
-	          e.gc.drawImage(image,x,y);
+	        {
+	          int x = 0;
+	          int y = 0;
+	          if ((align & SWT.BOTTOM) != 0) y = r.height - i.height;
+	          if ((align & SWT.RIGHT) != 0) x = r.width - i.width;
+            e.gc.drawImage(image,x,y);
+	        }
 			  }
 			  catch (IllegalArgumentException ex)
 			  {

@@ -163,7 +163,7 @@ public class TitlePart implements Part
 
     ///////////////////////////////
     // Der Titel selbst
-    title = SWTUtil.getCanvas(head,image, SWT.BOTTOM | SWT.RIGHT);
+    title = SWTUtil.getCanvas(head,image, SWT.RIGHT | SWT.LEFT);
     title.setBackground(GUI.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
     title.setLayout(SWTUtil.createGrid(1,false));
     {

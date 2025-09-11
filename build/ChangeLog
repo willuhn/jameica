@@ -1,5 +1,6 @@
 HEAD 2.11 (nightly)
 
+  * BUG: 0190 Das horizontale Skalieren des Hintergrundbildes war falsch - wirkt sich erst in SWT 4.37 aus 
   * BUG: 0189 Die Bilder für die Zoom-Stufen hatten nicht die selben Seitenverhältnisse wie das Original-Bild. Führt in SWT 4.37 zu einer SWTException
   * NEW: 0188 lib/jakarta_ee/* hinzugefügt
   * BUG: 0187 Lock-File nur noch löschen, wenn wir es selbst erzeugt haben - siehe https://homebanking-hilfe.de/forum/topic.php?t=27446
