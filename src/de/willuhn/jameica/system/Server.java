@@ -89,8 +89,6 @@ public class Server implements ApplicationController
         Logger.error("unable to detach terminal",e);
       }
     }
-    
-    // TODO: JameicaException muesste hier mal noch behandelt werden
   }
 
   /**
