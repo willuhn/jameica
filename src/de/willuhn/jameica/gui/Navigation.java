@@ -262,12 +262,43 @@ public class Navigation implements Part
    * @param navi das hinzuzufuegende Navigations-Element.
    * @throws Exception
    */
-  protected void add(NavigationItem navi) throws Exception
+  public void add(NavigationItem navi) throws Exception
 	{
 		if (navi == null)
 			return;
 		load(navi,this.pluginTree);
 	}
+  
+  /**
+   * Laed einen Navigationszweig neu. Dabei werden alle 
+   * existierenden Einträge durch die neu übergebenen ersetzt.
+   * 
+   * @param item
+   *          das neu zu ladende Navigations-Element.
+   * @throws Exception
+   */
+  public void reload(NavigationItem item) throws Exception
+  {
+    if (item == null)
+      return;
+    TreeItem ti = this.itemLookup.get(item.getID());
+    if (ti == null || ti.isDisposed())
+      return;
+    
+    //Existierende Childs entfernen
+    for (TreeItem i : ti.getItems())
+    {
+      i.dispose();
+    }
+    
+    //Childs neu laden
+    loadChildren(item,ti);
+  }
+
+  private void removeItem(TreeItem item)
+  {
+
+  }
 
 
   /**
