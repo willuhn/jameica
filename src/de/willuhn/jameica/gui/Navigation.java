@@ -248,7 +248,7 @@ public class Navigation implements Part
    */
   private void loadChildren(NavigationItem element, TreeItem parentTree) throws RemoteException
 	{
-		GenericIterator childs = element.getChildren();
+		GenericIterator<?> childs = element.getChildren();
 		if (childs == null || childs.size() == 0)
 			return;
 		while (childs.hasNext())
@@ -262,7 +262,7 @@ public class Navigation implements Part
    * @param navi das hinzuzufuegende Navigations-Element.
    * @throws Exception
    */
-  public void add(NavigationItem navi) throws Exception
+  protected void add(NavigationItem navi) throws Exception
 	{
 		if (navi == null)
 			return;
@@ -294,12 +294,6 @@ public class Navigation implements Part
     //Childs neu laden
     loadChildren(item,ti);
   }
-
-  private void removeItem(TreeItem item)
-  {
-
-  }
-
 
   /**
    * Aktualisiert einen Teil des Navigationsbaumes.
