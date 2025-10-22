@@ -248,7 +248,7 @@ public class Navigation implements Part
    */
   private void loadChildren(NavigationItem element, TreeItem parentTree) throws RemoteException
 	{
-		GenericIterator childs = element.getChildren();
+		GenericIterator<?> childs = element.getChildren();
 		if (childs == null || childs.size() == 0)
 			return;
 		while (childs.hasNext())
@@ -268,7 +268,32 @@ public class Navigation implements Part
 			return;
 		load(navi,this.pluginTree);
 	}
-
+  
+  /**
+   * Laed einen Navigationszweig neu. Dabei werden alle 
+   * existierenden Einträge durch die neu übergebenen ersetzt.
+   * 
+   * @param item
+   *          das neu zu ladende Navigations-Element.
+   * @throws Exception
+   */
+  public void reload(NavigationItem item) throws Exception
+  {
+    if (item == null)
+      return;
+    TreeItem ti = this.itemLookup.get(item.getID());
+    if (ti == null || ti.isDisposed())
+      return;
+    
+    //Existierende Childs entfernen
+    for (TreeItem i : ti.getItems())
+    {
+      i.dispose();
+    }
+    
+    //Childs neu laden
+    loadChildren(item,ti);
+  }
 
   /**
    * Aktualisiert einen Teil des Navigationsbaumes.
