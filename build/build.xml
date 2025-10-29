@@ -8,27 +8,13 @@
     <property environment="env" />
 
     <property name="build.dir" value="build" />
-
-    <!-- read build number -->
-    <buildnumber file="${build.dir}/BUILD" />
     <xmlproperty file="plugin.xml" collapseattributes="true" />
-
-    <!-- create scm tag -->
-    <propertyfile file="${build.dir}/TAG">
-      <entry key="mytag" value="${system.version}" />
-    </propertyfile>
-    <replaceregexp flags="g" file="${build.dir}/TAG" match="\." replace="_" />
-    <loadproperties srcFile="${build.dir}/TAG" />
-    <delete file="${build.dir}/TAG" />
-    <property name="tag" value="V_${mytag}_BUILD_${build.number}" />
 
     <loadproperties srcFile="${build.dir}/build.properties" />
 
     <available file="${signjar.keystore}" type="file" property="havekeystore" />
 
     <echo message="VERSION: ${system.version}" />
-    <echo message="Tag    : ${tag}" />
-    <echo message="BUILD  : ${build.number}" />
     <echo message="JAVA   : ${java.version}" />
 
     <path id="compilepath">
@@ -71,21 +57,6 @@
     </copy>
   </target>
 
-
-
-  <target depends="compile" name="tag" description="tags the source in the scm">
-
-    <exec executable="git" failonerror="true" dir="${basedir}">
-      <arg line="tag -m ${tag} ${tag}" />
-    </exec>
-
-    <exec executable="git" failonerror="true" dir="${basedir}">
-      <arg line="push origin ${tag}" />
-    </exec>
-
-  </target>
-
-
   <target depends="compile" name="jar" description="generates the jar files">
 
     <mkdir dir="${project.release}" />
@@ -101,7 +72,6 @@
         <attribute name="Built-Date" value="${DSTAMP}" />
         <attribute name="Implementation-Title" value="${define.projectname}" />
         <attribute name="Implementation-Version" value="${system.version}" />
-        <attribute name="Implementation-Buildnumber" value="${build.number}" />
       </manifest>
       <fileset dir="${class.dir}" />
     </jar>
@@ -112,20 +82,12 @@
 
     <!-- Die plattformspezifischen JAR-Dateien mit dem Classpath des OS -->
     <antcall target="sub_jar_create">
-      <param name="param.filename" value="${define.jarfilename.linux}" />
-      <param name="param.classpath" value="${classpath.linux}" />
-    </antcall>
-    <antcall target="sub_jar_create">
       <param name="param.filename" value="${define.jarfilename.linux64}" />
       <param name="param.classpath" value="${classpath.linux64}" />
     </antcall>
     <antcall target="sub_jar_create">
       <param name="param.filename" value="${define.jarfilename.linuxarm64}" />
       <param name="param.classpath" value="${classpath.linuxarm64}" />
-    </antcall>
-    <antcall target="sub_jar_create">
-      <param name="param.filename" value="${define.jarfilename.win32}" />
-      <param name="param.classpath" value="${classpath.win32}" />
     </antcall>
     <antcall target="sub_jar_create">
       <param name="param.filename" value="${define.jarfilename.win64}" />
@@ -138,10 +100,6 @@
     <antcall target="sub_jar_create">
       <param name="param.filename" value="${define.jarfilename.macosaarch64}" />
       <param name="param.classpath" value="${classpath.macosaarch64}" />
-    </antcall>
-    <antcall target="sub_jar_create">
-      <param name="param.filename" value="${define.jarfilename.openbsd}" />
-      <param name="param.classpath" value="${classpath.openbsd}" />
     </antcall>
   </target>
 
@@ -178,10 +136,6 @@
       <param name="param.target" value="${project.zipdir}/jre-win64" />
       <param name="param.source" value="${define.jre.win64}" />
     </antcall>
-    <antcall target="sub_addjre_zip">
-      <param name="param.target" value="${project.zipdir}/jre-win32" />
-      <param name="param.source" value="${define.jre.win32}" />
-    </antcall>
     <antcall target="sub_addjre_tar">
       <param name="param.target" value="${project.zipdir}/jre-macos64" />
       <param name="param.source" value="${define.jre.macos64}" />
@@ -190,36 +144,6 @@
       <param name="param.target" value="${project.zipdir}/jre-macosaarch64" />
       <param name="param.source" value="${define.jre.macosaarch64}" />
     </antcall>
-
-    <!-- ZIP-File fuer Linux -->
-    <zip destfile="${project.release}/${project.zipfilename.linux}" duplicate="fail">
-      <zipfileset dir="${project.release}">
-        <include name="${define.projectname}" />
-        <include name="${define.projectname}/plugin.xml" />
-        <include name="${define.projectname}/${define.jarfilename}" />
-        <include name="${define.projectname}/${define.jarfilename.linux}" />
-        <include name="${define.projectname}/LICENSE" />
-        <include name="${define.projectname}/COPYING" />
-        <include name="${define.projectname}/README" />
-        <include name="${define.projectname}/.jameica" />
-        <include name="${define.projectname}/jameica-icon.png" />
-        <include name="${define.projectname}/jameica.service" />
-        <include name="${define.projectname}/plugins" />
-        <include name="${define.projectname}/lib/**" />
-
-        <exclude name="${define.projectname}/lib/swt/win*/**" />
-        <exclude name="${define.projectname}/lib/swt/macos*/**" />
-        <exclude name="${define.projectname}/lib/swt/linux64/**" />
-        <exclude name="${define.projectname}/lib/swt/linux-arm64/**" />
-        <exclude name="${define.projectname}/*.icns" />
-        <exclude name="${define.projectname}/*.plist" />
-      </zipfileset>
-      <zipfileset dir="${project.release}" filemode="755">
-        <include name="${define.projectname}/jameica.sh" />
-        <include name="${define.projectname}/jameicaserver.sh" />
-        <include name="${define.projectname}/rcjameica*" />
-      </zipfileset>
-    </zip>
 
     <!-- ZIP-File fuer Linux64 -->
     <zip destfile="${project.release}/${project.zipfilename.linux64}" duplicate="fail">
@@ -239,7 +163,6 @@
 
         <exclude name="${define.projectname}/lib/swt/win*/**" />
         <exclude name="${define.projectname}/lib/swt/macos*/**" />
-        <exclude name="${define.projectname}/lib/swt/linux/**" />
         <exclude name="${define.projectname}/lib/swt/linux-arm64/**" />
         <exclude name="${define.projectname}/*.icns" />
         <exclude name="${define.projectname}/*.plist" />
@@ -268,7 +191,6 @@
 
         <exclude name="${define.projectname}/lib/swt/win*/**" />
         <exclude name="${define.projectname}/lib/swt/macos*/**" />
-        <exclude name="${define.projectname}/lib/swt/linux/**" />
         <exclude name="${define.projectname}/lib/swt/linux64/**" />
         <exclude name="${define.projectname}/*.icns" />
         <exclude name="${define.projectname}/*.plist" />
@@ -277,28 +199,6 @@
         <include name="${define.projectname}/jameica.sh" />
         <include name="${define.projectname}/jameicaserver.sh" />
         <include name="${define.projectname}/rcjameica*" />
-      </zipfileset>
-    </zip>
-
-    <zip destfile="${project.release}/${project.zipfilename.win32}">
-      <zipfileset dir="${project.release}">
-        <include name="${define.projectname}" />
-        <include name="${define.projectname}/plugin.xml" />
-        <include name="${define.projectname}/${define.jarfilename}" />
-        <include name="${define.projectname}/${define.jarfilename.win32}" />
-        <include name="${define.projectname}/LICENSE" />
-        <include name="${define.projectname}/COPYING" />
-        <include name="${define.projectname}/README" />
-        <include name="${define.projectname}/jameica-win32.exe" />
-        <include name="${define.projectname}/plugins" />
-        <include name="${define.projectname}/lib/**" />
-        <include name="${define.projectname}/jre-win32/**" />
-
-        <exclude name="${define.projectname}/lib/swt/win64/**" />
-        <exclude name="${define.projectname}/lib/swt/macos*/**" />
-        <exclude name="${define.projectname}/lib/swt/linux*/**" />
-        <exclude name="${define.projectname}/*.icns" />
-        <exclude name="${define.projectname}/*.plist" />
       </zipfileset>
     </zip>
 
@@ -317,7 +217,6 @@
         <include name="${define.projectname}/lib/**" />
         <include name="${define.projectname}/jre-win64/**" />
 
-        <exclude name="${define.projectname}/lib/swt/win32/**" />
         <exclude name="${define.projectname}/lib/swt/macos*/**" />
         <exclude name="${define.projectname}/lib/swt/linux*/**" />
         <exclude name="${define.projectname}/*.icns" />
@@ -384,31 +283,6 @@
       </zipfileset>
     </zip>
 
-    <!-- ZIP-File fuer OpenBSD -->
-    <zip destfile="${project.release}/${project.zipfilename.openbsd}" duplicate="fail">
-      <zipfileset dir="${project.release}">
-        <include name="${define.projectname}" />
-        <include name="${define.projectname}/plugin.xml" />
-        <include name="${define.projectname}/${define.jarfilename}" />
-        <include name="${define.projectname}/${define.jarfilename.openbsd}" />
-        <include name="${define.projectname}/LICENSE" />
-        <include name="${define.projectname}/COPYING" />
-        <include name="${define.projectname}/README" />
-        <include name="${define.projectname}/jameica-icon.png" />
-        <include name="${define.projectname}/plugins" />
-        <include name="${define.projectname}/lib/**" />
-
-        <exclude name="${define.projectname}/lib/swt/win*/**" />
-        <exclude name="${define.projectname}/lib/swt/linux*/**" />
-        <exclude name="${define.projectname}/lib/swt/macos*/**" />
-        <exclude name="${define.projectname}/*.icns" />
-        <exclude name="${define.projectname}/*.plist" />
-      </zipfileset>
-      <zipfileset dir="${project.release}" filemode="755">
-        <include name="${define.projectname}/jameica-openbsd.sh" />
-      </zipfileset>
-    </zip>
-
     <!-- ZIP-File mit allen Betriebssystemen -->
     <zip destfile="${project.release}/${project.zipfilename}" duplicate="fail">
       <zipfileset dir="${project.release}">
@@ -423,9 +297,7 @@
       </zipfileset>
     </zip>
 
-
   </target>
-
 
   <target depends="compile" name="src" description="build source package, depends compile target to make sure, the code has no errors">
     <mkdir dir="${project.release}" />
@@ -441,7 +313,6 @@
         <include name="test/**" />
         <include name="${src.dir}/**" />
         <include name="${build.dir}/**" />
-        <exclude name="${build.dir}/BUILD" />
       </fileset>
     </copy>
     <zip casesensitive="true" zipfile="${project.release}/${define.srcfilename}">
@@ -481,25 +352,19 @@
   <target name="sign" description="signs the jar/zip file">
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${define.srcfilename}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename}" />
-    <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.win32}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.win64}" />
-    <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.linux}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.linux64}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.linuxarm64}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.macos64}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.macosaarch64}" />
-    <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.openbsd}" />
 
     <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${define.srcfilename}" />
     <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename}" />
-    <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename.win32}" />
     <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename.win64}" />
-    <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename.linux}" />
     <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename.linux64}" />
     <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename.linuxarm64}" />
     <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename.macos64}" />
     <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename.macosaarch64}" />
-    <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename.openbsd}" />
 
     <echo message="Creating PGP signatures" />
 
@@ -511,13 +376,7 @@
       <arg line="-asb --use-agent ${project.release}/${project.zipfilename}" />
     </exec>
     <exec executable="gpg" failonerror="true" timeout="60000">
-      <arg line="-asb --use-agent ${project.release}/${project.zipfilename.win32}" />
-    </exec>
-    <exec executable="gpg" failonerror="true" timeout="60000">
       <arg line="-asb --use-agent ${project.release}/${project.zipfilename.win64}" />
-    </exec>
-    <exec executable="gpg" failonerror="true" timeout="60000">
-      <arg line="-asb --use-agent ${project.release}/${project.zipfilename.linux}" />
     </exec>
     <exec executable="gpg" failonerror="true" timeout="60000">
       <arg line="-asb --use-agent ${project.release}/${project.zipfilename.linux64}" />
@@ -531,29 +390,21 @@
     <exec executable="gpg" failonerror="true" timeout="60000">
       <arg line="-asb --use-agent ${project.release}/${project.zipfilename.macosaarch64}" />
     </exec>
-    <exec executable="gpg" failonerror="true" timeout="60000">
-      <arg line="-asb --use-agent ${project.release}/${project.zipfilename.openbsd}" />
-    </exec>
   </target>
 
 
-  <target depends="init,compile,tag,jar,zip,javadoc,src,sign,lib,clean" description="build an official release" name="all" />
+  <target depends="zip,javadoc,src,sign,lib,clean" description="build an official release" name="all" />
+  <target depends="zip,lib,clean" description="build inofficial release" name="fast" />
 
-  <target depends="init,compile,jar,zip,src,lib,clean" description="build inofficial release" name="fast" />
-
-  <target depends="init,compile,jar,zip,javadoc,src" description="build nightly build" name="nightly">
+  <target depends="zip,javadoc,src" description="build nightly build" name="nightly">
     <mkdir dir="${project.nightly}" />
 
     <copy file="${project.release}/${project.zipfilename}" todir="${project.nightly}" />
-    <copy file="${project.release}/${project.zipfilename.linux}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.linux64}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.linuxarm64}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.macos64}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.macosaarch64}" todir="${project.nightly}" />
-    <copy file="${project.release}/${project.zipfilename.win32}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.win64}" todir="${project.nightly}" />
-    <copy file="${project.release}/${project.zipfilename.openbsd}" todir="${project.nightly}" />
-
 
     <copy file="${project.release}/${define.srcfilename}" todir="${project.nightly}" />
     <antcall target="lib"/>
@@ -609,7 +460,6 @@
         <attribute name="Built-Date" value="${DSTAMP}" />
         <attribute name="Implementation-Title" value="${define.projectname}" />
         <attribute name="Implementation-Version" value="${system.version}" />
-        <attribute name="Implementation-Buildnumber" value="${build.number}" />
         <attribute name="Main-Class" value="de.willuhn.jameica.Main" />
         <attribute name="Class-Path" value="${param.classpath}" />
       </manifest>

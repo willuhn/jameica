@@ -1,7 +1,6 @@
 HEAD 2.13 (nightly)
 
-2025-10-29 Version 2.12
-
+  * CHG: 0192 Support für 32Bit-Windows, 32Bit-Linux und OpenBSD entfernt, Build-Script vereinfacht
   * NEW: 0191 Update auf SWT 4.37 für linux64, linux-arm64, win64, macos64, macos64-aarch64
   * BUG: 0190 Das horizontale Skalieren des Hintergrundbildes war falsch - wirkt sich erst in SWT 4.37 aus 
   * BUG: 0189 Die Bilder für die Zoom-Stufen hatten nicht die selben Seitenverhältnisse wie das Original-Bild. Führt in SWT 4.37 zu einer SWTException
