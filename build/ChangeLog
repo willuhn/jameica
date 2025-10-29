@@ -1,4 +1,6 @@
-HEAD 2.11 (nightly)
+HEAD 2.13 (nightly)
+
+2025-10-29 Version 2.12
 
   * NEW: 0191 Update auf SWT 4.37 für linux64, linux-arm64, win64, macos64, macos64-aarch64
   * BUG: 0190 Das horizontale Skalieren des Hintergrundbildes war falsch - wirkt sich erst in SWT 4.37 aus 
