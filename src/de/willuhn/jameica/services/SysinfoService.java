@@ -50,7 +50,6 @@ public class SysinfoService implements Bootable
       Logger.warn("unable to detect Jameica Version number");
     }
     Logger.info("  Built-Date : " + Application.getBuildDate());
-    Logger.info("  Buildnumber: " + Application.getBuildnumber());
     Logger.info("  max. memory: " + (Runtime.getRuntime().maxMemory() / 1024 / 1024) + "mb");
     Logger.info("  sys charset: " + Charset.defaultCharset().name());
 

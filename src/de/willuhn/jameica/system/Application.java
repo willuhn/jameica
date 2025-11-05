@@ -491,17 +491,11 @@ public final class Application {
    * ermittelt werden, wenn die Anwendung in ein solches deployed wurde
    * und der entsprechende Parameter im Manifest des JARs existiert.
    * @return Build-Number.
+   * @deprecated Bitte nicht mehr nutzen. Es gibt keine Buildnummer mehr.
    */
+  @Deprecated
   public static int getBuildnumber()
   {
-    try
-    {
-      return new JarInfo(new JarFile("jameica.jar")).getBuildnumber();
-    }
-    catch (Throwable t)
-    {
-      Logger.warn("unable to determine build number. Running in debugger?");
-    }
     return 1;
   }
 
