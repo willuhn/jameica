@@ -10,4 +10,4 @@ fi
 
 mkdir -p $WORKDIR
 cd $BASEDIR
-echo $PASSWORD | java -Djava.net.preferIPv4Stack=true -Xmx512m -jar jameica-linux.jar -d -f $WORKDIR
+echo $PASSWORD | java -Djava.net.preferIPv4Stack=true -Xmx512m -jar jameica-linux64.jar -d -f $WORKDIR

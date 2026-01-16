@@ -52,7 +52,7 @@ JAMEICA_CMD="/opt/hibiscus-server/jameicaserver.sh"
 # Zeichenkette um den Jameica Server in der Liste laufender Prozesse identifizieren zu können,
 # verwendet für die Ermittlung der Process ID (PID) 
 
-JAMEICA="jameica-linux.jar"
+JAMEICA="jameica-linux64.jar"
 
 
 # Freundlicher Name, wird für Ausgabe-Meldungen dieses Scripts verwendet und hat rein beschreibenden Charakter 
