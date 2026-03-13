@@ -210,7 +210,10 @@ public abstract class AbstractDialog<T>
         //              wir APPLICATION_MODAL, damit sichergestellt ist, dass
         //              der Login-Screen VOR dem Splash-Screen erscheint.
         //              Danach verwenden wir nur noch PRIMARY_MODAL
-        Shell rootShell = GUI.getShell();
+        Shell rootShell = getDisplay().getActiveShell();
+        if(rootShell == null) {
+          GUI.getShell();
+        }
         
         int modalType = SWT.PRIMARY_MODAL; // Default PRIMARY_MODAL
         if (rootShell.getData("systemshell") == null) // Ausser beim Bootvorgang - da ist das Property nicht gesetzt
