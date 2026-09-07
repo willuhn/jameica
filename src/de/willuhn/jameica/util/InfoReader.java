@@ -14,7 +14,6 @@ import java.io.InputStream;
 import net.n3.nanoxml.IXMLElement;
 import net.n3.nanoxml.IXMLParser;
 import net.n3.nanoxml.StdXMLReader;
-import net.n3.nanoxml.XMLParserFactory;
 
 /**
  * Kleine Hilfsklasse, die Informationen aus info.xml Files ausliest.
@@ -47,7 +46,7 @@ public class InfoReader {
   {
   	if (is == null)
   		return;
-		IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
+		IXMLParser parser = new SafeXMLParser();
 		parser.setReader(new StdXMLReader(is));
 		IXMLElement xml = (IXMLElement) parser.parse();
 
