@@ -193,7 +193,9 @@ public class Repository
           
           TransportService ts = Application.getBootLoader().getBootable(TransportService.class);
           t = ts.getTransport(data.getSignatureUrl());
-          if (t.exists())
+          boolean signatureExists = t.exists();
+          enforceSignaturePolicy(interactive,signatureExists,data.getPluginGroup().getCertificate() != null);
+          if (signatureExists)
           {
             sig = new File(dir,name + ".zip.sha1");
             t.get(new BufferedOutputStream(new FileOutputStream(sig)),null);
@@ -299,6 +301,21 @@ public class Repository
       Application.getController().start(t);
     else
       t.run(new ConsoleMonitor()); // BUGZILLA 1394
+  }
+
+  /**
+   * Enforces the fail-closed policy used by unattended downloads.
+   * @param interactive whether a user can make an explicit trust decision.
+   * @param signatureExists whether a detached signature is available.
+   * @param certificateExists whether the repository group has a verified certificate.
+   * @throws ApplicationException if the download cannot be authenticated.
+   */
+  static void enforceSignaturePolicy(boolean interactive, boolean signatureExists, boolean certificateExists) throws ApplicationException
+  {
+    if (!signatureExists && !interactive)
+      throw new ApplicationException("unsigned plugins cannot be installed automatically");
+    if (signatureExists && !certificateExists)
+      throw new ApplicationException("signed plugins require a verified repository certificate");
   }
   
   /**
