@@ -40,6 +40,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
+import org.apache.commons.lang.StringUtils;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
@@ -760,6 +761,7 @@ public class SSLFactory
     DateFormat df = DateFormat.getDateInstance(DateFormat.DEFAULT, Application.getConfig().getLocale());
     String validFrom = df.format(cert.getNotBefore());
     String validTo   = df.format(cert.getNotAfter());
+    String hostnames = StringUtils.join(new Certificate(cert).getHostnames(),", ");
 
     try
     {
@@ -767,13 +769,13 @@ public class SSLFactory
     }
     catch (CertificateExpiredException exp)
     {
-      String s = Application.getI18n().tr("Zertifikat abgelaufen. Trotzdem vertrauen?\nGültigkeit: {0} - {1}",new String[]{validFrom,validTo});
+      String s = Application.getI18n().tr("Zertifikat abgelaufen. Trotzdem vertrauen?\nHostname: {2}\nGültigkeit: {0} - {1}",new String[]{validFrom,validTo,hostnames});
       if (!Application.getCallback().askUser(s))
         throw new OperationCanceledException(Application.getI18n().tr("Import des Zertifikats abgebrochen"));
     }
     catch (CertificateNotYetValidException not)
     {
-      String s = Application.getI18n().tr("Zertifikat noch nicht gültig. Trotzdem vertrauen?\nGültigkeit: {0} - {1}",new String[]{validFrom,validTo});
+      String s = Application.getI18n().tr("Zertifikat noch nicht gültig. Trotzdem vertrauen?\nHostname: {2}\nGültigkeit: {0} - {1}",new String[]{validFrom,validTo,hostnames});
       if (!Application.getCallback().askUser(s))
         throw new OperationCanceledException(Application.getI18n().tr("Import des Zertifikats abgebrochen"));
     }

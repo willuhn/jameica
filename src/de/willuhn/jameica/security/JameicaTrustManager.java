@@ -28,6 +28,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.commons.lang.StringUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import de.willuhn.jameica.system.Application;
@@ -246,6 +247,7 @@ public class JameicaTrustManager implements X509TrustManager
         DateFormat df = DateFormat.getDateInstance(DateFormat.DEFAULT, Application.getConfig().getLocale());
         String validFrom = df.format(cert.getNotBefore());
         String validTo   = df.format(cert.getNotAfter());
+        String hostnames = StringUtils.join(new Certificate(cert).getHostnames(),", ");
         try
         {
           cert.checkValidity();
@@ -255,13 +257,13 @@ public class JameicaTrustManager implements X509TrustManager
         catch (CertificateExpiredException exp)
         {
           Logger.warn("certificate expired: " + validFrom + " - " + validTo);
-          if (Application.getCallback().askUser(Application.getI18n().tr("Zertifikat abgelaufen. Trotzdem vertrauen?\nGültigkeit: {0} - {1}",new String[]{validFrom,validTo})))
+          if (Application.getCallback().askUser(Application.getI18n().tr("Zertifikat abgelaufen. Trotzdem vertrauen?\nHostname: {2}\nGültigkeit: {0} - {1}",new String[]{validFrom,validTo,hostnames})))
             return; // Abgelaufen, aber der User ist damit einverstanden
         }
         catch (CertificateNotYetValidException not)
         {
           Logger.warn("certificate not yet valid: " + validFrom + " - " + validTo);
-          if (Application.getCallback().askUser(Application.getI18n().tr("Zertifikat noch nicht gültig. Trotzdem vertrauen?\nGültigkeit: {0} - {1}",new String[]{validFrom,validTo})))
+          if (Application.getCallback().askUser(Application.getI18n().tr("Zertifikat noch nicht gültig. Trotzdem vertrauen?\nHostname: {2}\nGültigkeit: {0} - {1}",new String[]{validFrom,validTo,hostnames})))
             return; // Noch nicht gueltig, aber der User ist damit einverstanden
         }
       }
