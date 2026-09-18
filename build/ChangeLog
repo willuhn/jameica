@@ -1,5 +1,6 @@
 HEAD 2.13 (nightly)
 
+  * NEW: 0201 Hostname im Hinweis-Dialog bei abgelaufenen Zertifikaten mit anzeigen
   * NEW: 0200 Elemente in der Navigation können jetzt ausgeblendet werden
   * NEW: 0199 Neue konfigurierbare Toolbar
   * BUG: 0198 Classloaders eines Plugins mit "shared=false" enthielt nicht die Klassen aus den in "requires" definierten Plugins
