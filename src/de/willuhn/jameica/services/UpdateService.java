@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -408,8 +407,21 @@ public class UpdateService implements Bootable
             if (list.size() == 0)
               continue;
 
-            // Die hoechste Version ist jeweils die erste
-            UpdateStatus status = list.get(0);
+            // Die hoechste Version aus einer explizit gepinnten Quelle verwenden.
+            UpdateStatus status = null;
+            for (UpdateStatus candidate:list)
+            {
+              if (candidate.automatic)
+              {
+                status = candidate;
+                break;
+              }
+            }
+            if (status == null)
+            {
+              Logger.warn("skipping automatic update without trusted HTTPS origin");
+              continue;
+            }
             try
             {
               PluginData pd = status.plugin;
@@ -426,8 +438,11 @@ public class UpdateService implements Bootable
               Logger.error("unable to download plugin",e);
             }
           }
-          TextMessage qm = new TextMessage(i18n.tr("Updates installiert"),i18n.tr("Für folgende Plugins wurden Updates installiert:\n\n{0}\nBitte starten Sie Jameica neu.",names.toString()));
-          Application.getMessagingFactory().getMessagingQueue("jameica.popup").sendMessage(qm);
+          if (names.length() > 0)
+          {
+            TextMessage qm = new TextMessage(i18n.tr("Updates installiert"),i18n.tr("Für folgende Plugins wurden Updates installiert:\n\n{0}\nBitte starten Sie Jameica neu.",names.toString()));
+            Application.getMessagingFactory().getMessagingQueue("jameica.popup").sendMessage(qm);
+          }
         }
         else
         {
@@ -495,6 +510,7 @@ public class UpdateService implements Bootable
     private PluginData plugin = null;
     private boolean available = false;
     private boolean notified  = false;
+    private boolean automatic = false;
     
     /**
      * ct.
@@ -530,8 +546,7 @@ public class UpdateService implements Bootable
       final Manifest localMf = this.plugin.getInstalledManifest();
       
       //////////////////////////////////////////////////////////////////////////////////////////////////////
-      // Wenn in der installierten Version eine Homepage angegeben ist, muss das Update von der selben
-      // Server-Adresse kommen, damit es aktualisiert werden kann
+      // Explizit gepinnte Plugins duerfen nur von derselben HTTPS-Origin automatisch aktualisiert werden.
       if (localMf.validateHomepage())
       {
         try
@@ -543,19 +558,12 @@ public class UpdateService implements Bootable
             return;
           }
 
-          if (localMf != null)
+          if (!AutomaticUpdatePolicy.isAllowed(localMf,download))
           {
-            final String homepage = localMf.getHomepage();
-            if (StringUtils.trimToNull(homepage) != null)
-            {
-              final URL home = new URL(homepage);
-              if (!Objects.equals(download.getHost().toLowerCase(),home.getHost().toLowerCase()))
-              {
-                Logger.warn("download url \"" + download + "\" does not belong to plugin homepage \"" + homepage + "\"");
-                return;
-              }
-            }
+            Logger.warn("download url \"" + download + "\" does not belong to the trusted HTTPS origin of plugin \"" + plugin.getName() + "\"");
+            return;
           }
+          this.automatic = true;
         }
         catch (Exception e)
         {
@@ -624,5 +632,5 @@ public class UpdateService implements Bootable
       }
     }
   }
-}
 
+}
