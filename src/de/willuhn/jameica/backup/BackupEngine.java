@@ -39,6 +39,7 @@ import de.willuhn.io.ZipCreator;
 import de.willuhn.io.ZipExtractor;
 import de.willuhn.jameica.services.RepositoryService;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.util.ZipFileValidator;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.ProgressMonitor;
@@ -582,9 +583,7 @@ public class BackupEngine
    */
   static void validateRestore(ZipFile zip, File targetDirectory) throws IOException
   {
-    Enumeration<? extends ZipEntry> entries = zip.entries();
-    while (entries.hasMoreElements())
-      getRestorePath(entries.nextElement(),targetDirectory);
+    ZipFileValidator.validate(zip,targetDirectory);
   }
 
   /**
@@ -596,22 +595,6 @@ public class BackupEngine
    */
   private static Path getRestorePath(ZipEntry entry, File targetDirectory) throws IOException
   {
-    String name = entry.getName();
-    String portableName = name.replace('\\','/');
-    if (portableName.startsWith("/"))
-      throw new IOException("invalid ZIP entry: " + name);
-
-    String[] components = portableName.split("/",-1);
-    for (String component:components)
-    {
-      if (component.indexOf(':') >= 0 || component.endsWith(".") || component.endsWith(" "))
-        throw new IOException("invalid ZIP entry: " + name);
-    }
-
-    Path target = targetDirectory.getCanonicalFile().toPath();
-    Path file = new File(targetDirectory,portableName).getCanonicalFile().toPath();
-    if (file.equals(target) || !file.startsWith(target))
-      throw new IOException("invalid ZIP entry: " + name);
-    return file;
+    return ZipFileValidator.resolve(entry,targetDirectory);
   }
 }

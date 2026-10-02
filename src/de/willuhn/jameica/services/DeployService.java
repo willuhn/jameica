@@ -31,6 +31,7 @@ import de.willuhn.jameica.plugin.PluginSource.Type;
 import de.willuhn.jameica.plugin.ZippedPlugin;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.jameica.system.Settings;
+import de.willuhn.jameica.util.ZipFileValidator;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
@@ -113,7 +114,7 @@ public class DeployService implements Bootable
         // Plugin-Quelle ermitteln (wurde von update() gespeichert)
         String s = this.settings.getString(file.getCanonicalPath(),null);
         final Type type = s != null ? Type.valueOf(s) : null;
-          
+
         SecurityManagerService service = Application.getBootLoader().getBootable(SecurityManagerService.class);
 
         Exception e = service.getSecurityManager().doPrivileged(new PrivilegedAction<Exception>() {
@@ -279,32 +280,37 @@ public class DeployService implements Bootable
       
       File zip       = plugin.getFile();
       File pluginDir = source.getDir();
-      
-      // Vorherige Version loeschen, falls vorhanden
       File target = new File(pluginDir,plugin.getName());
-      if (target.exists())
+      try (ZipFile archive = new ZipFile(zip,ZipFile.OPEN_READ))
       {
-        monitor.setStatusText(i18n.tr("Lösche vorherige Version..."));
-        Logger.info("deleting previous version in " + target);
-        
-        // Wenn hier eine Marker-Datei liegt, fehlte der Neustart dazwischen
-        // Wuerden wir jetzt den Ordner loeschen, wuerde auch der Delete-Marker verschwinden
-        // und die Jar-Datei wuerde sich nicht mehr entfernen lassen
-        File marker = new File(target,".deletemarker");
-        if (marker.exists())
-          throw new ApplicationException(i18n.tr("Bitte starten Sie erst Jameica neu."));
-        
-        // Wenn das nicht klappt, fehlte der Neustart dazwischen, der hier aufraeumt
-        if (!FileUtil.deleteRecursive(target))
-          throw new ApplicationException(i18n.tr("Der Ordner {0} konnte nicht gelöscht werden.",target.getAbsolutePath()));
-      }
+        // Das Archiv vollstaendig pruefen, bevor eine vorhandene Version geloescht wird.
+        ZipFileValidator.validatePlugin(archive,pluginDir,plugin.getName());
 
-      // Entpacken
-      monitor.setStatusText(i18n.tr("Installiere..."));
-      Logger.info("extracting " + zip + " to " + target);
-      ZipExtractor extractor = new ZipExtractor(new ZipFile(zip,ZipFile.OPEN_READ));
-      extractor.setMonitor(monitor);
-      extractor.extract(pluginDir);
+        // Vorherige Version loeschen, falls vorhanden
+        if (target.exists())
+        {
+          monitor.setStatusText(i18n.tr("Lösche vorherige Version..."));
+          Logger.info("deleting previous version in " + target);
+
+          // Wenn hier eine Marker-Datei liegt, fehlte der Neustart dazwischen
+          // Wuerden wir jetzt den Ordner loeschen, wuerde auch der Delete-Marker verschwinden
+          // und die Jar-Datei wuerde sich nicht mehr entfernen lassen
+          File marker = new File(target,".deletemarker");
+          if (marker.exists())
+            throw new ApplicationException(i18n.tr("Bitte starten Sie erst Jameica neu."));
+
+          // Wenn das nicht klappt, fehlte der Neustart dazwischen, der hier aufraeumt
+          if (!FileUtil.deleteRecursive(target))
+            throw new ApplicationException(i18n.tr("Der Ordner {0} konnte nicht gelöscht werden.",target.getAbsolutePath()));
+        }
+
+        // Das bereits gepruefte, offene Archiv entpacken.
+        monitor.setStatusText(i18n.tr("Installiere..."));
+        Logger.info("extracting " + zip + " to " + target);
+        ZipExtractor extractor = new ZipExtractor(archive);
+        extractor.setMonitor(monitor);
+        extractor.extract(pluginDir);
+      }
 
       if (!multi)
       {
