@@ -33,6 +33,7 @@ import de.willuhn.jameica.system.BackgroundTask;
 import de.willuhn.jameica.system.ConsoleMonitor;
 import de.willuhn.jameica.system.OperationCanceledException;
 import de.willuhn.jameica.transport.Transport;
+import de.willuhn.jameica.util.SafeXMLParser;
 import de.willuhn.jameica.util.XPathEmu;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -41,7 +42,6 @@ import de.willuhn.util.ProgressMonitor;
 import net.n3.nanoxml.IXMLElement;
 import net.n3.nanoxml.IXMLParser;
 import net.n3.nanoxml.StdXMLReader;
-import net.n3.nanoxml.XMLParserFactory;
 
 /**
  * Container fuer ein einzelnes Repository.
@@ -77,7 +77,7 @@ public class Repository
       ByteArrayOutputStream bos = new ByteArrayOutputStream();
       t.get(bos,null);
 
-      IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
+      IXMLParser parser = new SafeXMLParser();
       parser.setReader(new StdXMLReader(new ByteArrayInputStream(bos.toByteArray())));
       
       IXMLElement root = (IXMLElement) parser.parse();
