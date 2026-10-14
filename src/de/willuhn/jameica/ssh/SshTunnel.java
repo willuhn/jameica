@@ -91,10 +91,23 @@ public class SshTunnel
     if (knownHosts != null && knownHosts.length() > 0)
     {
       File f = new File(knownHosts);
-      if (f.exists() && f.isFile() && f.canRead())
-        jsch.setKnownHosts(knownHosts);
+      if (f.exists() && !f.isFile())
+      {
+        Logger.warn("known_hosts is not a regular file: " + knownHosts + ", hostkey checking may fail");
+      }
       else
-        Logger.warn("known_hosts file not found or not readable: " + knownHosts + ", hostkey checking may fail");
+      {
+        // JSch erlaubt auch eine noch nicht existierende Datei. Sie wird dann
+        // bei Bedarf (nach Zustimmung des Benutzers) angelegt.
+        try
+        {
+          jsch.setKnownHosts(knownHosts);
+        }
+        catch (Exception e)
+        {
+          Logger.warn("unable to read known_hosts file " + knownHosts + ": " + e.getMessage());
+        }
+      }
     }
 
     if (c.getAuthType() == SshTunnelConfig.AuthType.PUBLICKEY)
@@ -110,7 +123,17 @@ public class SshTunnel
 
     Session s = jsch.getSession(c.getSshUser(),c.getSshHost(),c.getSshPort());
     s.setUserInfo(new TunnelUserInfo(c));
-    s.setConfig("StrictHostKeyChecking",c.isStrictHostKeyChecking() ? "yes" : "no");
+    if (c.isStrictHostKeyChecking())
+    {
+      // Bei strikter Pruefung fragen wir den Benutzer bei unbekannten und bei
+      // geaenderten Hostkeys und tragen den Schluessel bei Zustimmung ein.
+      s.setHostKeyRepository(new PromptingHostKeyRepository(jsch,jsch.getHostKeyRepository()));
+      s.setConfig("StrictHostKeyChecking","yes");
+    }
+    else
+    {
+      s.setConfig("StrictHostKeyChecking","no");
+    }
     s.setConfig("PreferredAuthentications",
         c.getAuthType() == SshTunnelConfig.AuthType.PUBLICKEY ? "publickey" : "password,keyboard-interactive");
 
