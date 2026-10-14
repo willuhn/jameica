@@ -15,6 +15,12 @@ import java.io.File;
 import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
+import de.willuhn.jameica.gui.extension.Extension;
+import de.willuhn.jameica.gui.extension.ExtensionRegistry;
+import de.willuhn.jameica.gui.internal.ext.SshTunnelSettingsView;
+import de.willuhn.jameica.messaging.Message;
+import de.willuhn.jameica.messaging.MessageConsumer;
+import de.willuhn.jameica.messaging.SystemMessage;
 import de.willuhn.jameica.security.Wallet;
 import de.willuhn.jameica.ssh.SshTunnel;
 import de.willuhn.jameica.ssh.SshTunnelConfig;
@@ -47,6 +53,8 @@ public class SshTunnelService implements Bootable
   private Wallet wallet    = null;
   private SshTunnel tunnel = null;
 
+  private Extension settingsExt = null;
+
   /**
    * @see de.willuhn.boot.Bootable#depends()
    */
@@ -54,7 +62,7 @@ public class SshTunnelService implements Bootable
   {
     // SSLService ist noetig, damit das Wallet (RSAEngine) mit dem
     // Master-Passwort entschluesselt werden kann.
-    return new Class[]{LogService.class,SSLService.class,MessagingService.class};
+    return new Class[]{LogService.class,SSLService.class,MessagingService.class,BeanService.class};
   }
 
   /**
@@ -62,6 +70,9 @@ public class SshTunnelService implements Bootable
    */
   public void init(BootLoader loader, Bootable caller) throws SkipServiceException
   {
+    // GUI-Extension erst registrieren, wenn das System gestartet ist.
+    Application.getMessagingFactory().registerMessageConsumer(new InitMessageConsumer());
+
     if (!isEnabled())
     {
       Logger.info("ssh tunnel is disabled");
@@ -296,5 +307,56 @@ public class SshTunnelService implements Bootable
     if (this.wallet == null)
       this.wallet = new Wallet(SshTunnelService.class);
     return this.wallet;
+  }
+
+  /**
+   * Registriert die GUI-Extension in den System-Einstellungen.
+   */
+  private void registerSettingsExtension()
+  {
+    if (this.settingsExt != null)
+      return;
+
+    try
+    {
+      BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
+      this.settingsExt = beanService.get(SshTunnelSettingsView.class);
+      ExtensionRegistry.register(this.settingsExt,de.willuhn.jameica.gui.internal.views.Settings.class.getName());
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to register ssh tunnel settings extension",e);
+    }
+  }
+
+  /**
+   * Fuehrt die GUI-Initialisierung aus, sobald das System gestartet ist.
+   */
+  private class InitMessageConsumer implements MessageConsumer
+  {
+    /**
+     * @see de.willuhn.jameica.messaging.MessageConsumer#autoRegister()
+     */
+    public boolean autoRegister()
+    {
+      return false;
+    }
+
+    /**
+     * @see de.willuhn.jameica.messaging.MessageConsumer#getExpectedMessageTypes()
+     */
+    public Class[] getExpectedMessageTypes()
+    {
+      return new Class[]{SystemMessage.class};
+    }
+
+    /**
+     * @see de.willuhn.jameica.messaging.MessageConsumer#handleMessage(de.willuhn.jameica.messaging.Message)
+     */
+    public void handleMessage(Message message) throws Exception
+    {
+      if (((SystemMessage) message).getStatusCode() == SystemMessage.SYSTEM_STARTED)
+        registerSettingsExtension();
+    }
   }
 }
