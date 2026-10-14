@@ -126,6 +126,20 @@ public class SshTunnelSettingsView implements Extension
       tab.addLabelPair(i18n.tr("Benutzername"),this.sshUser);
 
       this.authPublicKey = new CheckboxInput(c.getAuthType() == SshTunnelConfig.AuthType.PUBLICKEY);
+
+      // Ein-/Ausblenden der Felder je nach Authentifizierungs-Verfahren.
+      // Der Listener muss bereits vor dem Malen registriert werden, weil
+      // AbstractInput die Listener erst beim paint() an die Widgets haengt.
+      final Listener l = new Listener() {
+        public void handleEvent(Event event)
+        {
+          boolean key = ((Boolean)authPublicKey.getValue()).booleanValue();
+          password.setEnabled(!key);
+          privateKey.setEnabled(key);
+          passphrase.setEnabled(key);
+        }
+      };
+      this.authPublicKey.addListener(l);
       tab.addCheckbox(this.authPublicKey,i18n.tr("Authentifizierung per privatem Schluessel (Public Key)"));
 
       this.password = new PasswordInput(c.getPassword());
@@ -137,24 +151,14 @@ public class SshTunnelSettingsView implements Extension
       this.passphrase = new PasswordInput(c.getPassphrase());
       tab.addLabelPair(i18n.tr("Passphrase"),this.passphrase);
 
+      // Initialen Zustand der Felder setzen.
+      l.handleEvent(null);
+
       this.knownHosts = new TextInput(c.getKnownHosts());
       tab.addLabelPair(i18n.tr("known_hosts-Datei"),this.knownHosts);
 
       this.strictHostKey = new CheckboxInput(c.isStrictHostKeyChecking());
       tab.addCheckbox(this.strictHostKey,i18n.tr("Hostkey strikt gegen known_hosts pruefen"));
-
-      // Ein-/Ausblenden der Felder je nach Authentifizierungs-Verfahren.
-      final Listener l = new Listener() {
-        public void handleEvent(Event event)
-        {
-          boolean key = ((Boolean)authPublicKey.getValue()).booleanValue();
-          password.setEnabled(!key);
-          privateKey.setEnabled(key);
-          passphrase.setEnabled(key);
-        }
-      };
-      this.authPublicKey.addListener(l);
-      l.handleEvent(null);
 
       tab.addHeadline(i18n.tr("Port-Weiterleitung"));
       tab.addText(i18n.tr("Der lokale Port wird auf den Ziel-Host und Ziel-Port in Sicht des " +
