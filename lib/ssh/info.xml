@@ -1,0 +1,6 @@
+<info>
+  <name>JSch</name>
+  <description>JSch is a pure Java implementation of SSH2 (community fork)</description>
+  <url>https://github.com/mwiede/jsch</url>
+  <license>BSD-style - https://github.com/mwiede/jsch/blob/jsch-2.28.8/LICENSE.txt</license>
+</info>
