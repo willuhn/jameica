@@ -40,6 +40,7 @@ public class Init5 implements Bootable
       DeployService.class,
       SSLService.class,
       SSLSocketFactoryService.class,
+      SshTunnelService.class,
       PluginService.class,
       PluginServiceService.class,
       SearchService.class,
