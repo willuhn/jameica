@@ -1,0 +1,6 @@
+<info>
+  <name>JUnit</name>
+  <description>JUnit is a unit testing framework for Java. This directory also contains Hamcrest Core, a required dependency of JUnit.</description>
+  <url>https://junit.org/junit4/</url>
+  <license>Eclipse Public License 1.0 - https://junit.org/junit4/license.html (Hamcrest Core: BSD 3-Clause)</license>
+</info>
