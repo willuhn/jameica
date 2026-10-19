@@ -94,6 +94,10 @@
       <param name="param.classpath" value="${classpath.win64}" />
     </antcall>
     <antcall target="sub_jar_create">
+      <param name="param.filename" value="${define.jarfilename.winaarch64}" />
+      <param name="param.classpath" value="${classpath.winaarch64}" />
+    </antcall>
+    <antcall target="sub_jar_create">
       <param name="param.filename" value="${define.jarfilename.macos64}" />
       <param name="param.classpath" value="${classpath.macos64}" />
     </antcall>
@@ -135,6 +139,10 @@
     <antcall target="sub_addjre_zip">
       <param name="param.target" value="${project.zipdir}/jre-win64" />
       <param name="param.source" value="${define.jre.win64}" />
+    </antcall>
+    <antcall target="sub_addjre_zip">
+      <param name="param.target" value="${project.zipdir}/jre-winaarch64" />
+      <param name="param.source" value="${define.jre.winaarch64}" />
     </antcall>
     <antcall target="sub_addjre_tar">
       <param name="param.target" value="${project.zipdir}/jre-macos64" />
@@ -218,7 +226,31 @@
         <include name="${define.projectname}/jre-win64/**" />
 
         <exclude name="${define.projectname}/lib/swt/macos*/**" />
+        <exclude name="${define.projectname}/lib/swt/win-aarch64/**" />
         <exclude name="${define.projectname}/lib/swt/linux*/**" />
+        <exclude name="${define.projectname}/*.icns" />
+        <exclude name="${define.projectname}/*.plist" />
+      </zipfileset>
+    </zip>
+
+    <!-- ZIP-File fuer Win64 Aarch -->
+    <zip destfile="${project.release}/${project.zipfilename.winaarch64}">
+      <zipfileset dir="${project.release}">
+        <include name="${define.projectname}" />
+        <include name="${define.projectname}/plugin.xml" />
+        <include name="${define.projectname}/${define.jarfilename}" />
+        <include name="${define.projectname}/${define.jarfilename.winaarch64}" />
+        <include name="${define.projectname}/LICENSE" />
+        <include name="${define.projectname}/COPYING" />
+        <include name="${define.projectname}/README" />
+        <include name="${define.projectname}/jameica-win-aarch64.exe" />
+        <include name="${define.projectname}/plugins" />
+        <include name="${define.projectname}/lib/**" />
+        <include name="${define.projectname}/jre-winaarch64/**" />
+
+        <exclude name="${define.projectname}/lib/swt/macos*/**" />
+        <exclude name="${define.projectname}/lib/swt/linux*/**" />
+        <exclude name="${define.projectname}/lib/swt/win64*/**" />
         <exclude name="${define.projectname}/*.icns" />
         <exclude name="${define.projectname}/*.plist" />
       </zipfileset>
@@ -353,6 +385,7 @@
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${define.srcfilename}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.win64}" />
+    <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.winaarch64}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.linux64}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.linuxarm64}" />
     <checksum format="MD5SUM" algorithm="SHA" file="${project.release}/${project.zipfilename.macos64}" />
@@ -361,6 +394,7 @@
     <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${define.srcfilename}" />
     <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename}" />
     <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename.win64}" />
+    <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename.winaarch64}" />
     <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename.linux64}" />
     <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename.linuxarm64}" />
     <checksum format="MD5SUM" algorithm="SHA-256" file="${project.release}/${project.zipfilename.macos64}" />
@@ -377,6 +411,9 @@
     </exec>
     <exec executable="gpg" failonerror="true" timeout="60000">
       <arg line="-asb --use-agent ${project.release}/${project.zipfilename.win64}" />
+    </exec>
+    <exec executable="gpg" failonerror="true" timeout="60000">
+      <arg line="-asb --use-agent ${project.release}/${project.zipfilename.winaarch64}" />
     </exec>
     <exec executable="gpg" failonerror="true" timeout="60000">
       <arg line="-asb --use-agent ${project.release}/${project.zipfilename.linux64}" />
@@ -405,6 +442,7 @@
     <copy file="${project.release}/${project.zipfilename.macos64}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.macosaarch64}" todir="${project.nightly}" />
     <copy file="${project.release}/${project.zipfilename.win64}" todir="${project.nightly}" />
+    <copy file="${project.release}/${project.zipfilename.winaarch64}" todir="${project.nightly}" />
 
     <copy file="${project.release}/${define.srcfilename}" todir="${project.nightly}" />
     <antcall target="lib"/>
