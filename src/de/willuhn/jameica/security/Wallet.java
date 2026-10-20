@@ -30,6 +30,7 @@ import de.willuhn.jameica.security.crypto.Engine;
 import de.willuhn.jameica.security.crypto.RSAEngine;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
 
 /**
  * Liefert eine Art Brieftasche, ueber die andere Klassen Daten
@@ -53,11 +54,12 @@ import de.willuhn.logging.Logger;
  *   String password = wallet.getString("passwort");
  * }</pre>
  *
- * <p>Wallet values are intentionally limited to Jameica's data-only core
- * types. Older wallet files containing custom plugin classes are rejected
- * instead of instantiating classes selected by encrypted XML input. Plugins
- * should store strings, scalar values, byte/character arrays, {@link Login},
- * or reminder data, or maintain their own versioned data format.</p>
+ * <p>Gespeichert werden koennen einfache Werte (Strings, Zahlen, Boolean, Datum),
+ * Byte- und Character-Arrays, die gaengigen Collections und Maps, {@link Login},
+ * Reminder sowie JavaBeans und Enums aus dem eigenen Code installierter Plugins.
+ * Beans werden ueber ihre Properties gespeichert und benoetigen einen oeffentlichen
+ * Standard-Konstruktor. Wallets im alten XMLEncoder-Format werden weiterhin gelesen
+ * und beim naechsten Speichern in das neue Format ueberfuehrt.</p>
  */
 public final class Wallet
 {
@@ -65,6 +67,7 @@ public final class Wallet
 	private Class clazz 	       = null;
 	private volatile Hashtable<String, Serializable>	serialized = new Hashtable<String, Serializable>();
 	private Engine engine        = new RSAEngine();
+	private WalletTypes types    = null;
   
   /**
 	 * ct.
@@ -85,6 +88,7 @@ public final class Wallet
   public Wallet(Class clazz, Engine engine) throws Exception
   {
     this.clazz = clazz;
+    this.types = WalletTypes.forWallet(clazz);
     this.setEngine(engine);
     Logger.debug("creating wallet " + clazz.getName() + " via " + this.engine.getClass().getSimpleName());
     read();
@@ -114,7 +118,6 @@ public final class Wallet
 			Logger.warn("alias cannot be null");
 			return;
 		}
-		WalletXmlDecoder.validateAlias(alias);
 		Hashtable<String,Serializable> candidate = new Hashtable<String,Serializable>(this.serialized);
 		if (data == null)
 		{
@@ -123,9 +126,6 @@ public final class Wallet
 		}
 		else
 		{
-		  if (!candidate.containsKey(alias))
-		    WalletXmlDecoder.validateEntryCount(candidate.size() + 1);
-		  WalletXmlDecoder.validate(data);
 			Logger.debug("storing key " + alias);
 			candidate.put(alias,data);
 		}
@@ -268,13 +268,19 @@ public final class Wallet
       is = new BufferedInputStream(new FileInputStream(f));
 
       // Einlesen und entschluesseln
-      WalletXmlDecoder.Buffer bos = new WalletXmlDecoder.Buffer();
+      WalletFormat.Buffer bos = new WalletFormat.Buffer();
       this.engine.decrypt(is,bos);
 
       Logger.debug("deserializing wallet");
-      Hashtable<String,Serializable> result = WalletXmlDecoder.decode(bos.toByteArray());
+      Hashtable<String,Serializable> result = WalletFormat.read(bos.toByteArray(),this.types);
       Logger.debug("reading wallet done");
       return result;
+    }
+    catch (Exception e)
+    {
+      // Die Datei bleibt in jedem Fall unveraendert liegen.
+      Logger.error("unable to read wallet file " + f.getAbsolutePath() + ", file left unchanged",e);
+      throw new ApplicationException(Application.getI18n().tr("Wallet-Datei {0} kann nicht gelesen werden. Die Datei wurde nicht verändert. Fehler: {1}",f.getAbsolutePath(),e.getMessage()));
     }
     finally
     {
@@ -325,7 +331,7 @@ public final class Wallet
     try
     {
       Logger.debug("serializing wallet");
-      byte[] encoded = WalletXmlDecoder.encode(candidate);
+      byte[] encoded = WalletFormat.write(candidate,this.types);
       try (InputStream input = new ByteArrayInputStream(encoded);
            OutputStream output = new BufferedOutputStream(new FileOutputStream(tempfile)))
       {
