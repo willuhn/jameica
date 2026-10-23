@@ -73,7 +73,7 @@ public final class Application {
 
 
     // Wir nehmen grundsaetzlich unseren eigenen Classloader.
-    MultipleClassLoader cl = new MigratingMultipleClassLoader();
+    MultipleClassLoader cl = new MultipleClassLoader();
     cl.setName("loader.jameica");
     cl.addClassloader(Application.class.getClassLoader());
 
@@ -479,7 +479,7 @@ public final class Application {
       }
       catch (Exception e)
       {
-        app.startupError(e);
+        app.startupError(new Exception("Cannot read jameica application manifest", e));
       }
     }
     return app.manifest;
@@ -519,63 +519,3 @@ public final class Application {
     return "";
   }
 }
-
-
-/*********************************************************************
- * $Log: Application.java,v $
- * Revision 1.87  2011/07/18 16:30:59  willuhn
- * @N Name fuer den Classloader vergebbar
- *
- * Revision 1.86  2011-01-25 23:33:54  willuhn
- * *** empty log message ***
- *
- * Revision 1.85  2011-01-25 23:32:26  willuhn
- * @I indention cleanup
- *
- * Revision 1.84  2010/03/04 23:08:30  willuhn
- * @N Sauberes Programm-Ende, wenn der User den Startvorgang selbst abgebrochen hat
- *
- * Revision 1.83  2009/06/24 11:24:33  willuhn
- * @N Security-Manager via Bootloader setzen
- *
- * Revision 1.82  2008/12/17 22:28:38  willuhn
- * @R t o d o  tag entfernt
- *
- * Revision 1.81  2008/05/23 09:24:52  willuhn
- * @N fatale Stacktraces immer auch auf der Console direkt ausgeben
- *
- * Revision 1.80  2008/05/19 22:31:42  willuhn
- * @N Tolerieren ungueltiger Locale-Angaben
- *
- * Revision 1.79  2008/04/23 23:10:14  willuhn
- * @N Platform-Klasse fuer Plattform-/OS-Spezifisches
- * @N Default-Workverzeichnis unter MacOS ist nun ~/Library/jameica
- *
- * Revision 1.78  2008/04/20 23:30:58  willuhn
- * @N MACOS Kommandozeilen-Parameter ausgeben
- *
- * Revision 1.77  2008/03/11 00:13:08  willuhn
- * @N Backup scharf geschaltet
- *
- * Revision 1.76  2008/03/07 17:14:09  willuhn
- * @N Shutdown via Hook verbessert
- *
- * Revision 1.75  2008/03/07 16:31:48  willuhn
- * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
- *
- * Revision 1.74  2008/02/13 01:04:34  willuhn
- * @N Jameica auf neuen Bootloader umgestellt
- * @C Markus' Aenderungen RMI-Registrierung uebernommen
- *
- * Revision 1.73  2008/01/09 22:25:06  willuhn
- * @C Namensueberschneidung bei den Locales
- *
- * Revision 1.72  2007/12/11 15:20:36  willuhn
- * @C .class-Files nur dann in Classfinder uebernehmen, wenn sie sich im "bin"-Verzeichnis befinden
- *
- * Revision 1.71  2007/11/13 14:14:56  willuhn
- * @N Bei exklusivem Classloader wird nun das gesamte Plugin (incl. Services) ueber dessen Classloader geladen
- *
- * Revision 1.70  2007/11/13 00:45:18  willuhn
- * @N Classloader (privat/global) vom Plugin beeinflussbar (via "shared=true/false" in plugin.xml)
- **********************************************************************/
