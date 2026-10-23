@@ -31,6 +31,7 @@ import de.willuhn.jameica.gui.Part;
 public class ButtonArea implements Part
 {
   private List<Button> buttons = new ArrayList<Button>();
+  private int alignment = GridData.HORIZONTAL_ALIGN_END;
 
   /**
    * @see de.willuhn.jameica.gui.Part#paint(org.eclipse.swt.widgets.Composite)
@@ -44,12 +45,22 @@ public class ButtonArea implements Part
 
     Composite comp = new Composite(parent, SWT.NONE);
     comp.setLayout(layout);
-    comp.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+    comp.setLayoutData(new GridData(this.alignment));
     
     for (Button b:this.buttons)
     {
       b.paint(comp);
     }
+  }
+
+  /**
+   * Legt die horizontale Ausrichtung der Button-Gruppe fest.
+   * Standardmaessig werden Buttons rechtsbuendig angezeigt.
+   * @param alignment eine der horizontalen GridData-Ausrichtungen.
+   */
+  public void setAlignment(int alignment)
+  {
+    this.alignment = alignment;
   }
 
 

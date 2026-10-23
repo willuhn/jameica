@@ -17,19 +17,29 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
+import java.net.URL;
+import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.Properties;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import de.willuhn.io.FileFinder;
 import de.willuhn.io.FileUtil;
 import de.willuhn.io.ZipCreator;
 import de.willuhn.io.ZipExtractor;
+import de.willuhn.jameica.services.RepositoryService;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.util.ZipFileValidator;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.ProgressMonitor;
@@ -43,6 +53,16 @@ public class BackupEngine
   private final static DateFormat format = new SimpleDateFormat("yyyyMMdd__HH_mm_ss");
   private final static String PREFIX = "jameica-backup-";
   private final static String MARKER = ".restore";
+  private final static String[] ACTIVE_CONTENT_DIRECTORIES =
+  {
+    "plugins",
+    "updates"
+  };
+  private final static String SCRIPT_SETTINGS = "cfg/de.willuhn.jameica.services.ScriptingService.properties";
+  private final static String CONFIG_SETTINGS = "cfg/de.willuhn.jameica.system.Config.properties";
+  private final static String UPDATE_SETTINGS = "cfg/de.willuhn.jameica.services.UpdateService.properties";
+  private final static String REPOSITORY_SETTINGS = "cfg/de.willuhn.jameica.services.RepositoryService.properties";
+  private final static String[] TRUSTED_REPOSITORIES = Stream.concat(Arrays.stream(RepositoryService.Defaults.WELL_KNOWN),Stream.of(RepositoryService.Defaults.SYSTEM_REPOSITORY)).toArray(String[]::new);
   
   /**
    * Liefert eine Liste der bisher erstellten Backups.
@@ -196,9 +216,19 @@ public class BackupEngine
     }
     
     boolean enabled = Application.getConfig().getUseBackup();
+    File workdir = new File(Application.getConfig().getWorkDir());
 
-    try
+    try (ZipFile zip = new ZipFile(backup.getFile()))
     {
+      validateRestore(zip,workdir);
+      // Backups are data, not an implicitly trusted way to register code for the next startup.
+      if (validateActiveContent(zip,workdir))
+      {
+        String question = Application.getI18n().tr("Das Backup enthält registrierte Scripts oder zusätzliche Plugin-Verzeichnisse. Diese Inhalte können beim Start beliebigen Code mit Ihren Benutzerrechten ausführen. Fahren Sie nur fort, wenn Sie Herkunft und Inhalt des Backups vollständig vertrauen. Wiederherstellung trotzdem fortsetzen?");
+        if (!Application.getCallback().askUser(question,false))
+          throw new ApplicationException(Application.getI18n().tr("Wiederherstellung des Backups auf Wunsch des Benutzers abgebrochen"));
+      }
+
       // Restore-Marker loeschen. Muessen wir vor der Erstellung des Backups machen
       BackupEngine.undoRestoreMark();
 
@@ -243,8 +273,7 @@ public class BackupEngine
 
       // Und sichern das Backup zurueck
       monitor.setStatusText("restoring backup " + backup.getFile().getAbsolutePath());
-      File workdir = new File(Application.getConfig().getWorkDir());
-      ZipExtractor ext = new ZipExtractor(new ZipFile(backup.getFile()));
+      ZipExtractor ext = new ZipExtractor(zip);
       ext.setMonitor(monitor);
       ext.extract(workdir);
       monitor.setStatusText("restore completed");
@@ -266,6 +295,165 @@ public class BackupEngine
         Application.getConfig().setUseBackup(false);
       }
     }
+  }
+
+  /**
+   * Validates restored active content before any existing data is removed.
+   * Plugin and update directories contain code that the normal backup writer
+   * deliberately excludes and are always rejected. Script registrations and
+   * additional plugin directories require an explicit trust decision.
+   * @param zip backup to inspect.
+   * @param targetDirectory restore target directory.
+   * @return true if the restore requires explicit confirmation.
+   * @throws ApplicationException if the backup contains forbidden active content.
+   */
+  static boolean validateActiveContent(ZipFile zip, File targetDirectory) throws ApplicationException
+  {
+    try
+    {
+      Path target = targetDirectory.getCanonicalFile().toPath();
+      boolean automaticUpdate = false;
+      boolean untrustedRepository = false;
+      boolean confirmationRequired = false;
+      Enumeration<? extends ZipEntry> entries = zip.entries();
+      while (entries.hasMoreElements())
+      {
+        ZipEntry entry = entries.nextElement();
+        Path destination = getRestorePath(entry,targetDirectory);
+        String canonicalName = target.relativize(destination).toString().replace(File.separatorChar,'/');
+        String lexicalName = new File(entry.getName().replace('\\','/')).toPath().normalize().toString().replace(File.separatorChar,'/');
+        if (isActiveContentDirectory(getTopLevel(lexicalName)) || isActiveContentDirectory(getTopLevel(canonicalName)))
+          throw new ApplicationException(Application.getI18n().tr("Das Backup enthält ausführbaren Code und wird aus Sicherheitsgründen nicht wiederhergestellt"));
+
+        // Der String "activeKey" enthält den zu prüfenden Parameter, wenn es
+        // die Script-Settings oder die Primär-Config ist
+        String activeKey = null;
+        if (isSettingsFile(lexicalName,canonicalName,SCRIPT_SETTINGS))
+          activeKey = "scripts";
+        if (isSettingsFile(lexicalName,canonicalName,CONFIG_SETTINGS))
+          activeKey = "jameica.plugin.dir";
+
+        boolean update = isSettingsFile(lexicalName,canonicalName,UPDATE_SETTINGS);
+        boolean repository = isSettingsFile(lexicalName,canonicalName,REPOSITORY_SETTINGS);
+
+        // Es ist keine der 4 relevanten Config-Dateien oder ein Verzeichnis. Keine Prüfung erforderlich
+        if ((activeKey == null && !update && !repository) || entry.isDirectory())
+          continue;
+
+        Properties properties = new Properties();
+        try (InputStream input = zip.getInputStream(entry))
+        {
+          properties.load(input);
+        }
+
+        // Wenn es die Update-Datei ist, dann checken, ob automatische Updates aktiviert sind
+        if (update)
+        {
+          automaticUpdate |= "true".equalsIgnoreCase(properties.getProperty("update.install","").trim());
+          continue;
+        }
+
+        // Wenn es die Repository-Datei ist, dann checken, ob unbekannte Repositories vorhanden sind
+        if (repository)
+        {
+          untrustedRepository |= hasActiveUntrustedRepository(properties);
+          continue;
+        }
+
+        if (activeKey != null)
+        {
+          for (String key:properties.stringPropertyNames())
+          {
+            // Wenn der Parameter "scripts" enthalten ist oder per "jameica.plugin.dir.*" irgendwelche Plugin-Quellen
+            // explizit angegeben sind, dann abbrechen
+            String value = properties.getProperty(key);
+            if ((activeKey.equals(key) || key.startsWith(activeKey + ".")) &&
+                (value.length() > 0 || "jameica.plugin.dir".equals(activeKey)))
+              confirmationRequired = true;
+          }
+        }
+      }
+
+      // Unbekannte Repositories und gleichzeitig automatische Updates lassen wir aus Sicherheitsgründen nicht zu
+      if (automaticUpdate && untrustedRepository)
+        throw new ApplicationException(Application.getI18n().tr("Das Backup enthält sowohl unbekannte Repositories sowie automatische Updates und wird aus Sicherheitsgründen nicht wiederhergestellt"));
+
+      return confirmationRequired;
+    }
+    catch (ApplicationException e)
+    {
+      throw e;
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to validate active content",e);
+      throw new ApplicationException("Unable to validate restored active content",e);
+    }
+  }
+
+  /** Mirrors the active repository-list semantics without contacting a server. */
+  private static boolean hasActiveUntrustedRepository(Properties properties)
+  {
+    for (int i=0;i<255;++i)
+    {
+      String value = properties.getProperty("repository.url." + i);
+      if (value == null || value.length() == 0)
+        continue;
+      try
+      {
+        String url = new URL(value).toString();
+        if (isTrustedRepository(url))
+          continue;
+
+        String enabled = properties.getProperty(url + ".enabled");
+        if (enabled == null || "true".equalsIgnoreCase(enabled.trim()))
+          return true;
+      }
+      catch (Exception e)
+      {
+        // RepositoryService ignores invalid URLs too.
+      }
+    }
+    return false;
+  }
+
+  /** Checks the system and bundled well-known repositories. */
+  private static boolean isTrustedRepository(String url)
+  {
+    for (String trusted:TRUSTED_REPOSITORIES)
+    {
+      if (trusted.equalsIgnoreCase(url))
+        return true;
+    }
+    return false;
+  }
+
+  /** Returns the first portable path component. */
+  private static String getTopLevel(String name)
+  {
+    int separator = name.indexOf('/');
+    return separator >= 0 ? name.substring(0,separator) : name;
+  }
+
+  /** Checks both the archive spelling and the canonical restore destination. */
+  private static boolean isSettingsFile(String lexicalName, String canonicalName, String expected)
+  {
+    return expected.equalsIgnoreCase(lexicalName) || expected.equalsIgnoreCase(canonicalName);
+  }
+
+  /**
+   * Checks whether a directory contains code activated by Jameica.
+   * @param name top-level directory name.
+   * @return true if the directory must not be backed up or restored as data.
+   */
+  private static boolean isActiveContentDirectory(String name)
+  {
+    for (String active:ACTIVE_CONTENT_DIRECTORIES)
+    {
+      if (active.equalsIgnoreCase(name))
+        return true;
+    }
+    return false;
   }
   
   /**
@@ -311,12 +499,10 @@ public class BackupEngine
         if (!children[i].isDirectory())
           continue; // Wir sichern nur Unterverzeichnisse. Also keine Backups (rekursiv) und Logs
         
-        // Wir sichern die Verzeichnisse "plugins" und "updates" nicht mit. Die koennen jederzeit
-        // neu installiert werden
-        if ("updates".equals(children[i].getName()))
+        // Plugins und Updates koennen jederzeit neu installiert werden.
+        if (isActiveContentDirectory(children[i].getName()))
           continue;
-        if ("plugins".equals(children[i].getName()))
-          continue;
+        // Nicht mitsichern, falls das Benutzerverzeichnis direkt eine Ext-Partition ist.
         if ("lost+found".equals(children[i].getName()))
           continue;
         if (children[i].getCanonicalFile().equals(dir.getCanonicalFile()))
@@ -388,58 +574,27 @@ public class BackupEngine
       }
     }
   }
+
+  /**
+   * Prueft, dass alle Eintraege innerhalb des Zielverzeichnisses bleiben.
+   * @param zip das wiederherzustellende Backup.
+   * @param targetDirectory das Zielverzeichnis.
+   * @throws IOException wenn ein Eintrag das Zielverzeichnis verlaesst.
+   */
+  static void validateRestore(ZipFile zip, File targetDirectory) throws IOException
+  {
+    ZipFileValidator.validate(zip,targetDirectory);
+  }
+
+  /**
+   * Resolves a portable ZIP entry to the canonical extraction destination.
+   * @param entry ZIP entry to resolve.
+   * @param targetDirectory extraction root.
+   * @return canonical extraction destination.
+   * @throws IOException if the name is unsafe or leaves the extraction root.
+   */
+  private static Path getRestorePath(ZipEntry entry, File targetDirectory) throws IOException
+  {
+    return ZipFileValidator.resolve(entry,targetDirectory);
+  }
 }
-
-
-/**********************************************************************
- * $Log: BackupEngine.java,v $
- * Revision 1.13  2010/11/17 15:39:37  willuhn
- * @C "lost+found" nicht mit sichern, falls das Benutzerverzeichnis direkt eine Ext-Partition ist
- *
- * Revision 1.12  2009/10/29 12:40:08  willuhn
- * @C Verzeichnisse "plugins" und "deploy" nicht mitsichern
- *
- * Revision 1.11  2008/12/17 01:05:42  willuhn
- * @N Deployment von heruntergeladenen in "DeployService" verschoben. Dann geschieht das Entpacken erst beim naechsten Start. Da zu dem Zeitpunkt der Classloader die Dateien noch nicht geladen hat, kann eine ggf. vorhandene vorherige Installation geloescht werden
- * @C FileUtil.deleteRecursive
- *
- * Revision 1.10  2008/07/21 11:15:06  willuhn
- * @B Beim Rotieren der Backups blieb eins zuwenig uebrig
- *
- * Revision 1.9  2008/03/11 12:12:56  willuhn
- * @B getBackups() matchte auch auf Dateien, die nicht mit "jameica-backup*" begannen
- *
- * Revision 1.8  2008/03/11 10:23:42  willuhn
- * @N Sofortiges Shutdown bei Aktivierung eines Backup-Restore. Soll verhindern, dass der User nach Auswahl eines wiederherzustellenden Backups noch Aenderungen am Datenbestand vornehmen kann
- *
- * Revision 1.7  2008/03/11 01:02:41  willuhn
- * @N Hilfetext
- * @B Verzaehler beim Loeschen alter Backups (es wurde eins zu wenig geloescht)
- *
- * Revision 1.6  2008/03/11 00:13:08  willuhn
- * @N Backup scharf geschaltet
- *
- * Revision 1.5  2008/03/07 17:30:15  willuhn
- * @N Splash-Screen-Ausgaben auch ins Log schreiben
- * @B Fehler im Dateformat des Backup (12- statt 24h-Uhr)
- *
- * Revision 1.4  2008/03/07 16:31:49  willuhn
- * @N Implementierung eines Shutdown-Splashscreens zur Anzeige des Backup-Fortschritts
- *
- * Revision 1.3  2008/03/07 01:36:27  willuhn
- * @N ZipCreator
- * @N Erster Code fuer Erstellung des Backups
- *
- * Revision 1.2  2008/03/03 09:43:54  willuhn
- * @N DateUtil-Patch von Heiner
- * @N Weiterer Code fuer das Backup-System
- *
- * Revision 1.1  2008/02/29 19:02:31  willuhn
- * @N Weiterer Code fuer Backup-System
- *
- * Revision 1.1  2008/02/29 01:12:30  willuhn
- * @N Erster Code fuer neues Backup-System
- * @N DirectoryInput
- * @B Fixes an FileInput, TextInput
- *
- **********************************************************************/

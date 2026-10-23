@@ -238,16 +238,13 @@ public class HttpTransport implements Transport
       
       URL prev = curr;
       loc = URLDecoder.decode(loc, "UTF-8");
-      curr = new URL(this.url, loc); // fuer relative Location-Header
-      
-      // Wir akzeptieren die Umleitung nur dann, wenn der Hostname identisch geblieben ist.
-      // Umleitungen auf andere Server akzeptieren wir aus Sicherheitsgruenden nicht
-      String s1 = this.url.getHost();
-      String s2 = curr.getHost();
-      if (!StringUtils.equalsIgnoreCase(s1,s2))
+      curr = new URL(prev, loc); // fuer relative Location-Header
+
+      // Protokoll, Host und effektiver Port muessen identisch bleiben.
+      if (!isSameOrigin(this.url,curr))
       {
-        Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Umleitung von {0} auf {1} aus Sicherheitsgründen nicht erlaubt",s1,s2),StatusBarMessage.TYPE_ERROR));
-        throw new SecurityException("got http redirect with change to another host, not permitted for security reasons [source: " + s1 + ", target: " + s2 + "]");
+        Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Umleitung von {0} auf {1} aus Sicherheitsgründen nicht erlaubt",this.url.toString(),curr.toString()),StatusBarMessage.TYPE_ERROR));
+        throw new SecurityException("got cross-origin HTTP redirect, not permitted for security reasons [source: " + this.url + ", target: " + curr + "]");
       }
       
       // naechster Versuch.
@@ -255,6 +252,23 @@ public class HttpTransport implements Transport
     }
     
     throw new IOException("too many redirects for url: " + this.url);
+  }
+
+  /** Checks protocol, host and effective port of two HTTP origins. */
+  static boolean isSameOrigin(URL first, URL second)
+  {
+    if (first == null || second == null)
+      return false;
+    if (!StringUtils.equalsIgnoreCase(first.getProtocol(),second.getProtocol()))
+      return false;
+    if (!StringUtils.equalsIgnoreCase(first.getHost(),second.getHost()))
+      return false;
+    return effectivePort(first) == effectivePort(second);
+  }
+
+  private static int effectivePort(URL url)
+  {
+    return url.getPort() >= 0 ? url.getPort() : url.getDefaultPort();
   }
 
   /**

@@ -67,22 +67,38 @@ import de.willuhn.util.Session;
 public class RepositoryService implements Bootable
 {
   private final static int ERRORCOUNT_MAX = 5;
+
+  /**
+   * Side-effect-free repository defaults for consumers that must not initialize this service.
+   */
+  public final static class Defaults
+  {
+    /** The system repository. */
+    public final static String SYSTEM_REPOSITORY = "https://www.willuhn.de/products/jameica/updates";
+
+    /** Additional repositories shipped with Jameica. */
+    public final static String[] WELL_KNOWN =
+    {
+      "https://www.willuhn.de/products/jameica/updates/extensions",
+      "https://openjverein.github.io/jameica-repository",
+      "https://www.open4me.de/hibiscus/",
+      "https://hibiscus.tvbrowser.org/"
+    };
+
+    private Defaults()
+    {
+    }
+  }
   
   /**
    * Die URL des System-Repository.
    */
-  public final static String SYSTEM_REPOSITORY = "https://www.willuhn.de/products/jameica/updates";
+  public final static String SYSTEM_REPOSITORY = Defaults.SYSTEM_REPOSITORY;
   
   /**
    * Liste von bekannten Repositories, die wir mit ausliefern, die der User aber wieder loeschen kann
    */
-  public final static String[] WELL_KNOWN =
-  {
-    "https://www.willuhn.de/products/jameica/updates/extensions",
-    "https://openjverein.github.io/jameica-repository",
-    "https://www.open4me.de/hibiscus/",
-    "https://hibiscus.tvbrowser.org/"
-  };
+  public final static String[] WELL_KNOWN = Defaults.WELL_KNOWN;
 
   private final static de.willuhn.jameica.system.Settings settings = new de.willuhn.jameica.system.Settings(RepositoryService.class);
 

@@ -24,5 +24,7 @@
 		<string>1.0</string>
 	<key>NSPrincipalClass</key>
 		<string>NSApplication</string>
+  <key>NSCameraUsageDescription</key>
+    <string>Berechtigung zum Scannen von QR-Codes.</string>
 </dict>
 </plist>

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.datasource.BeanUtil;
@@ -173,6 +174,14 @@ public abstract class AbstractTablePart implements Part
         }
       }
     }
+  }
+  
+  /**
+   * Wird aufgerufen, wenn ein Select stattfand.
+   * @param event das Event.
+   */
+  public void handleSelect(Event event)
+  {
   }
   
   /**

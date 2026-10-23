@@ -20,6 +20,8 @@ import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.AbstractControl;
 import de.willuhn.jameica.gui.AbstractView;
+import de.willuhn.jameica.gui.GUI;
+import de.willuhn.jameica.gui.NavigationTreeSettingsAction;
 import de.willuhn.jameica.gui.Part;
 import de.willuhn.jameica.gui.dialogs.YesNoDialog;
 import de.willuhn.jameica.gui.input.CheckboxInput;
@@ -29,8 +31,10 @@ import de.willuhn.jameica.gui.input.IntegerInput;
 import de.willuhn.jameica.gui.input.SelectInput;
 import de.willuhn.jameica.gui.input.TextInput;
 import de.willuhn.jameica.gui.internal.parts.CertificateList;
+import de.willuhn.jameica.gui.internal.parts.IconBarSettingsPart;
 import de.willuhn.jameica.gui.internal.parts.PluginDetailPart.Type;
 import de.willuhn.jameica.gui.internal.parts.PluginListPart;
+import de.willuhn.jameica.gui.parts.Button;
 import de.willuhn.jameica.gui.parts.TablePart;
 import de.willuhn.jameica.gui.util.Color;
 import de.willuhn.jameica.messaging.PluginCacheMessageConsumer;
@@ -79,6 +83,9 @@ public class SettingsControl extends AbstractControl
   private CheckboxInput randomSplash;
   private CheckboxInput systray;
   private CheckboxInput minimizeToSystray;
+  private CheckboxInput navigationVisible;
+  private Button navigationConfig;
+  private IconBarSettingsPart iconBarSettings;
 	
   /**
    * ct.
@@ -391,6 +398,54 @@ public class SettingsControl extends AbstractControl
   }
 
   /**
+   * Liefert die Einstellungen fuer die Symbolleiste.
+   * @return Einstellungen fuer die Symbolleiste.
+   */
+  public IconBarSettingsPart getIconBarSettings()
+  {
+    if (this.iconBarSettings != null)
+      return this.iconBarSettings;
+    this.iconBarSettings = new IconBarSettingsPart();
+    return this.iconBarSettings;
+  }
+
+  /**
+   * Liefert die Einstellung fuer die Sichtbarkeit der Navigation.
+   * @return Checkbox, die im aktivierten Zustand die Navigation anzeigt.
+   */
+  public CheckboxInput getNavigationVisible()
+  {
+    if (this.navigationVisible != null)
+      return this.navigationVisible;
+    boolean visible = !Customizing.SETTINGS.getBoolean("application.hidenavigation",false);
+    this.navigationVisible = new CheckboxInput(visible);
+    
+    final Listener l = new Listener() {
+      @Override
+      public void handleEvent(Event event)
+      {
+        getNavigationConfig().setEnabled(((Boolean)navigationVisible.getValue()).booleanValue());
+      }
+    };
+    l.handleEvent(null);
+    this.navigationVisible.addListener(l);
+    return this.navigationVisible;
+  }
+  
+  /**
+   * Liefert den Config-Button für die Navigation.
+   * @return der Config-Button.
+   */
+  public Button getNavigationConfig()
+  {
+    if (this.navigationConfig != null)
+      return this.navigationConfig;
+    
+    this.navigationConfig = new Button(i18n.tr("Navigation anpassen..."),new NavigationTreeSettingsAction(),null,false,"document-properties.png");
+    return this.navigationConfig;
+  }
+
+  /**
    * Speichert die Einstellungen.
    */
   public void handleStore()
@@ -441,6 +496,10 @@ public class SettingsControl extends AbstractControl
       final SystrayService systray = Application.getBootLoader().getBootable(SystrayService.class);
       systray.setEnabled(((Boolean)getSystray().getValue()).booleanValue());
       systray.setMinimizeToSystray(((Boolean)getMinimizeToSystray().getValue()).booleanValue());
+      boolean navigationVisible = ((Boolean)getNavigationVisible().getValue()).booleanValue();
+      Customizing.SETTINGS.setAttribute("application.hidenavigation",!navigationVisible);
+      GUI.toggleNavigation();
+      getIconBarSettings().apply();
       
       Application.getMessagingFactory().sendSyncMessage(new SettingsChangedMessage());
       Application.getMessagingFactory().sendMessage(new StatusBarMessage(Application.getI18n().tr("Einstellungen gespeichert."),StatusBarMessage.TYPE_SUCCESS));
@@ -477,6 +536,9 @@ public class SettingsControl extends AbstractControl
 			Color.SUCCESS.reset();
 			Color.LINK.reset();
 			Color.LINK_ACTIVE.reset();
+      Customizing.SETTINGS.setAttribute("application.hidenavigation",false);
+      GUI.toggleNavigation();
+      NavigationTreeSettingsAction.reset();
       Application.getConfig().setRmiPort(Config.RMI_DEFAULT_PORT);
       Application.getConfig().setLoglevel(Level.INFO.getName());
       Application.getConfig().setRmiSSL(true);

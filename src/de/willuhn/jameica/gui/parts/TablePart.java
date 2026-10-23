@@ -106,6 +106,7 @@ public class TablePart extends AbstractTablePart
   //////////////////////////////////////////////////////////
   // Flags
   private boolean enabled               = true;
+  private boolean sortable              = true;
   //////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////
@@ -621,16 +622,19 @@ public class TablePart extends AbstractTablePart
       
       
       // Sortierung
-      final int p = i;
-      col.addListener(SWT.Selection, new Listener() {
-        public void handleEvent(Event e)
-        {
-          // Wenn wir vorher schonmal nach dieser Spalte
-          // sortiert haben, kehren wir die Sortierung um
-          direction = !(direction && p == sortedBy);
-          orderBy(p);
-        }
-      });
+      if (this.sortable)
+      {
+        final int p = i;
+        col.addListener(SWT.Selection, new Listener() {
+          public void handleEvent(Event e)
+          {
+            // Wenn wir vorher schonmal nach dieser Spalte
+            // sortiert haben, kehren wir die Sortierung um
+            direction = !(direction && p == sortedBy);
+            orderBy(p);
+          }
+        });
+      }
 
 
       // Wenn Ausrichtung explizit angegeben, dann nehmen wir die
@@ -714,43 +718,7 @@ public class TablePart extends AbstractTablePart
     table.addListener(SWT.Selection, new Listener() {
       public void handleEvent(Event event)
       {
-        int listeners = selectionListeners.size();
-
-        // Weder Listener noch Menu. Nichts zu tun.
-        if (listeners == 0 && menu == null)
-          return;
-
-        // Aktuelle Auswahl ermitteln
-        event.data = getSelection();
-        
-        // Dem Menu Bescheid sagen, wenn ein oder mehrere Elemente markiert wurden
-        if (menu != null)
-          menu.setCurrentObject(event.data);
-
-        // Wenn wir keine Listener haben, koennen wir hier aufhoren
-        if (listeners == 0)
-          return;
-
-        // Wenn die Tabelle checkable ist, loesen wir das Event
-        // nur dann aus, wenn der User auf die Checkbox geklickt hat.
-        // Es wuerde sonst doppelt ausgeloest werden, einmal mit event.detail=0
-        // (Markierung der Zeile) und dann nochmal mit event.detail=SWT.CHECK
-        // Status-Aenderung der Checkbox:
-        if (checkable && event.detail != SWT.CHECK)
-          return;
-
-        // Die Selection-Listeners ausfuehren
-        for (Listener l:selectionListeners)
-        {
-          try
-          {
-            l.handleEvent(event);
-          }
-          catch (Throwable t)
-          {
-            Logger.error("error while executing listener, skipping",t);
-          }
-        }
+        handleSelect(event);
       }
     });
     
@@ -990,6 +958,52 @@ public class TablePart extends AbstractTablePart
     this.temp.clear();
     
     this.featureEvent(Feature.Event.PAINT,null);
+  }
+  
+  /**
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#handleSelect(org.eclipse.swt.widgets.Event)
+   */
+  @Override
+  public void handleSelect(Event event)
+  {
+    super.handleSelect(event);
+    int listeners = selectionListeners.size();
+
+    // Weder Listener noch Menu. Nichts zu tun.
+    if (listeners == 0 && menu == null)
+      return;
+
+    // Aktuelle Auswahl ermitteln
+    event.data = getSelection();
+    
+    // Dem Menu Bescheid sagen, wenn ein oder mehrere Elemente markiert wurden
+    if (menu != null)
+      menu.setCurrentObject(event.data);
+
+    // Wenn wir keine Listener haben, koennen wir hier aufhoren
+    if (listeners == 0)
+      return;
+
+    // Wenn die Tabelle checkable ist, loesen wir das Event
+    // nur dann aus, wenn der User auf die Checkbox geklickt hat.
+    // Es wuerde sonst doppelt ausgeloest werden, einmal mit event.detail=0
+    // (Markierung der Zeile) und dann nochmal mit event.detail=SWT.CHECK
+    // Status-Aenderung der Checkbox:
+    if (checkable && event.detail != SWT.CHECK)
+      return;
+
+    // Die Selection-Listeners ausfuehren
+    for (Listener l:selectionListeners)
+    {
+      try
+      {
+        l.handleEvent(event);
+      }
+      catch (Throwable t)
+      {
+        Logger.error("error while executing listener, skipping",t);
+      }
+    }
   }
   
   @Override
@@ -1286,6 +1300,15 @@ public class TablePart extends AbstractTablePart
   }
   
   /**
+   * Legt fest, ob die Tabelle per Klick auf die Spalten sortiert werden kann.
+   * @param sortable true, wenn sortierbar.
+   */
+  public void setSortable(boolean sortable)
+  {
+    this.sortable = sortable;
+  }
+  
+  /**
    * Liefert den Collator fuer die Sortierung.
    * @return der Collator fuer die Sortierung.
    */
@@ -1344,17 +1367,34 @@ public class TablePart extends AbstractTablePart
     table.removeAll();
 
     // Und schreiben sie sortiert neu
-    Item sort = null;
-    for (int i=0;i<l.size();++i)
+    try
     {
-      sort = l.get(i);
-      final TableItem item = new TableItem(table,SWT.NONE,i);
-      item.setData(sort.data);
-      item.setText(textTable.get(sort.data));
-      if (tableFormatter != null)
-        tableFormatter.format(item);
+      List<?> checkedItems = null;
+      
+      // nur ermitteln, wenn wir sie wirklich brauchen
+      if (checkable)
+        checkedItems = getItems();
+
+      Item sort = null;
+      for (int i=0;i<l.size();++i)
+      {
+        sort = l.get(i);
+        final TableItem item = new TableItem(table,SWT.NONE,i);
+        item.setData(sort.data);
+        item.setText(textTable.get(sort.data));
+        if (tableFormatter != null)
+          tableFormatter.format(item);
+      }
+      
+      // Aktivierte Checkboxen wiederherstellen
+      if (checkedItems != null)
+        setChecked(checkedItems.toArray(), true);
+      
+    } catch (RemoteException e)
+    {
+      Logger.error("Fehler beim Sortieren");
     }
-    
+
     if (selection != null)
     {
       if (selection instanceof Object[])

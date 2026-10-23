@@ -1,11 +1,11 @@
 ###########################################################################
 # Jameica                                                                 #
 #                                                                         #
-# Copyright (c) 2024 Olaf Willuhn                                         #
+# Copyright (c) 2026 Olaf Willuhn                                         #
 # All rights reserved.                                                    #
 #                                                                         #
 # This software is copyrighted work licensed under the terms of the       #
-# Jameica License.  Please consult the file "LICENSE" for details.        #
+# Jameica License. Please consult the file "LICENSE" for details.         #
 #                                                                         #
 ###########################################################################
 
@@ -20,7 +20,7 @@ Hinweis:
 ###########################################################################
 
 - Java 17 oder hoeher
-  Gib "java -version" an einer Shell (Windows: Eingabeaufforderung)
+  Gib "java -version" in einer Shell (Windows: Eingabeaufforderung)
   ein, um die Version zu ueberpruefen.
 
   Java kannst du von https://adoptium.net herunterladen.
@@ -32,7 +32,7 @@ Hinweis:
 1) Kopiere den Inhalt dieser ZIP-Datei in ein Verzeichnis deiner Wahl.
    z.Bsp.:
    Windows:     "C:\Progamme\jameica"
-   Linux/MacOS: "/opt/jameica"
+   Linux/macOS: "/opt/jameica"
 
 2) Wechsle in das Programm-Verzeichnis und starte es mit:
 
@@ -42,8 +42,8 @@ Hinweis:
    Windows (32 Bit) :    "jameica-win32.exe"
    Windows (64 Bit) :    "jameica-win64.exe"
 
-   Mac OS X (64 Bit):    "./jameica-macos64.sh"
-   Mac OS X (ARM 64):    "./jameica-macos-aarch64.sh"
+   macOS (64 Bit)   :    "./jameica-macos64.sh"
+   macOS (ARM 64)   :    "./jameica-macos-aarch64.sh"
 
    OpenBSD          :    "./jameica-openbsd.sh"
 
@@ -84,7 +84,7 @@ Klicke im Menu auf "Datei->Einstellungen->Plugins", waehle dort unter
 -p <Passwort>, --password=<Passwort>
   Ueber diesen Parameter kann das Master-Passwort ueber einen Startparameter
   uebergeben werden. Dies kann zum Beispiel genutzt werden, wenn Jameica
-  im Server-Modus automatisch beim Booten des Betriebssystem gestartet
+  im Server-Modus automatisch beim Booten des Betriebssystems gestartet
   werden soll und keine Benutzerinteraktion moeglich ist.
   WICHTIG: Bitte stelle sicher, dass das Passwort hierbei nicht
   fuer Dritte zugaenglich wird.

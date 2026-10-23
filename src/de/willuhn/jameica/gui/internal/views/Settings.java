@@ -116,7 +116,7 @@ public class Settings extends AbstractView implements Extendable
     /////////////////////////////////////////////////////////////////
 		// Farb-Einstellungen
 
-    TabGroup lnfGroup = new TabGroup(getTabFolder(),i18n.tr("Look and Feel"));
+    TabGroup lnfGroup = new TabGroup(getTabFolder(),i18n.tr("Look and Feel"),true);
     lnfGroup.addLabelPair(i18n.tr("Hintergrundfarbe von Pflichtfeldern"),control.getColorMandatoryBG());
     lnfGroup.addCheckbox(control.getLabelMandatory(),i18n.tr("Auch den Text vor diesen Pflichtfeldern (Label) hervorheben"));
     lnfGroup.addSeparator();
@@ -130,6 +130,15 @@ public class Settings extends AbstractView implements Extendable
     lnfGroup.addHeadline(i18n.tr("System-Tray Symbol"));
     lnfGroup.addInput(control.getSystray());
     lnfGroup.addInput(control.getMinimizeToSystray());
+
+    lnfGroup.addHeadline(i18n.tr("Navigation"));
+    
+    lnfGroup.addCheckbox(control.getNavigationVisible(),i18n.tr("Navigation anzeigen"));
+    final SimpleContainer c = new SimpleContainer(lnfGroup.getComposite(),false,1);
+    control.getNavigationConfig().paint(c.getComposite());
+
+    lnfGroup.addHeadline(i18n.tr("Symbolleiste"));
+    lnfGroup.addPart(control.getIconBarSettings());
 
     //
 		/////////////////////////////////////////////////////////////////

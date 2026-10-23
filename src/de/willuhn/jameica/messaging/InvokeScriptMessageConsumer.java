@@ -61,7 +61,7 @@ public class InvokeScriptMessageConsumer implements MessageConsumer
     ScriptEngine engine = service.getEngine();
     if (engine == null)
     {
-      msg.setData(new ApplicationException(i18n.tr("Die installierte Java-Version enthält keine JavaScript-Unterstützung (RhinoScript)")));
+      msg.setData(new ApplicationException(i18n.tr("Die installierte Java-Version enthält keine JavaScript-Unterstützung")));
       return;
     }
     

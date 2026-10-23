@@ -100,6 +100,7 @@ public class GUI implements ApplicationController
     private SashForm sash                = null;
     private Navigation navi              = null;
     private Menu menu                    = null;
+    private IconBar iconBar              = null;
     private View view                    = null;
     private StatusBar statusBar          = null;
     private SashForm left                = null;
@@ -200,6 +201,21 @@ public class GUI implements ApplicationController
       catch (Exception e)
       {
         Logger.error("error while loading menu, skipping",e);
+      }
+      //
+      ////////////////////////////////////////////////////////////////////////
+
+      ////////////////////////////////////////////////////////////////////////
+      // init IconBar
+      Logger.info("adding icon bar");
+      try
+      {
+        iconBar = new IconBar();
+        iconBar.paint(getShell());
+      }
+      catch (Exception e)
+      {
+        Logger.error("error while loading icon bar, skipping",e);
       }
       //
       ////////////////////////////////////////////////////////////////////////
@@ -310,8 +326,8 @@ public class GUI implements ApplicationController
         }
         try
         {
-          menu.add(mf.getMenu());
-          navi.add(mf.getNavigation());
+          menu.add(mf);
+          navi.add(mf);
         }
         catch (Throwable t)
         {
@@ -320,6 +336,11 @@ public class GUI implements ApplicationController
       }
       //
       ////////////////////////////////////////////////////////////////////////
+
+      navi.filter.finishInitialLoading();
+
+      if (iconBar != null)
+        iconBar.redraw();
 
       ////////////////////////////////////////////////////////////////////////
       // launch gui
@@ -507,6 +528,15 @@ public class GUI implements ApplicationController
   public static Menu getMenu()
   {
     return gui.menu;
+  }
+
+  /**
+   * Liefert die Symbolleiste.
+   * @return Symbolleiste.
+   */
+  public static IconBar getIconBar()
+  {
+    return gui.iconBar;
   }
 
   /**

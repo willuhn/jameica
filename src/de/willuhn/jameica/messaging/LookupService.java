@@ -171,6 +171,24 @@ public class LookupService implements MessageConsumer
     if (name == null || name.length() == 0)
       return null;
 
+    if (ArchiveServerEndpoint.isTcpLookup(name))
+    {
+      try
+      {
+        String endpoint = resolveTcpLookup(name,Application.getConfig().getArchiveServer());
+        if (endpoint != null)
+          Logger.warn("returning explicitly configured archive server without multicast discovery: " + endpoint);
+        else
+          Logger.warn("refusing insecure or unconfigured plaintext TCP lookup: " + name);
+        return endpoint;
+      }
+      catch (Exception e)
+      {
+        Logger.warn("refusing invalid explicitly configured archive server: " + e.getMessage());
+        return null;
+      }
+    }
+
     Logger.info("performing multicast lookup for service name: " + name);
     ServerLookup s = null;
     try
@@ -219,6 +237,18 @@ public class LookupService implements MessageConsumer
     Logger.info("no server found for service name: " + name);
     return null;
   }
+
+  /**
+   * Resolves the legacy compatibility lookup without creating a multicast client.
+   * Kept separate so the no-discovery boundary can be regression-tested.
+   * @param name lookup name.
+   * @param configured explicitly configured archive endpoint.
+   * @return configured endpoint or {@code null}.
+   */
+  static String resolveTcpLookup(String name, String configured)
+  {
+    return ArchiveServerEndpoint.resolveLookup(name,configured);
+  }
   
   /**
    * Fuehrt ein Lookup nach Nummern-Servern im Netz durch.
@@ -251,6 +281,9 @@ public class LookupService implements MessageConsumer
     @Override
     public void received(DatagramPacket packet) throws IOException
     {
+      if (ArchiveServerEndpoint.isTcpLookup(this.name))
+        return;
+
       InetAddress sender = packet.getAddress();
       InetAddress self   = InetAddress.getLocalHost();
       if (sender.equals(self))

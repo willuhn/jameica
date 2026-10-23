@@ -435,7 +435,7 @@ public final class PluginLoader
         {
           Class c = manifest.getClassLoader().load(ext[i].getClassname());
           BeanService beanService = Application.getBootLoader().getBootable(BeanService.class);
-          ExtensionRegistry.register((Extension) beanService.get(c), ext[i].getExtendableIDs());
+          ExtensionRegistry.register((Extension) beanService.get(c), ext[i].getExtendableIDs(), manifest.getName());
           Logger.info("  register " + c.getName());
         }
         catch (Exception e)

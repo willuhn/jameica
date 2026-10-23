@@ -102,6 +102,16 @@ public final class Config
   }
 
   /**
+   * Liefert Servername und Port eines ggf. explizit konfigurierten Archiv-Servers.
+   * Der zugehoerige Legacy-Transport ist weder verschluesselt noch authentifiziert.
+   * @return Servername und Port des Archiv-Servers im Format "hostname:port" oder {@code null}.
+   */
+  public String getArchiveServer()
+  {
+    return settings.getString("jameica.system.archive.server",null);
+  }
+
+  /**
    * Liefert den fuer die lokale RMI-Registry zu verwendenden TCP-Port.
    * @return Nummer des TCP-Ports.
    */

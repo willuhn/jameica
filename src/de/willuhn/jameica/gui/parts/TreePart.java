@@ -300,50 +300,7 @@ public class TreePart extends AbstractTablePart
     this.tree.addListener(SWT.Selection, new Listener() {
       public void handleEvent(Event event)
       {
-        int listeners = selectionListeners.size();
-
-        // Weder Listener noch Menu. Nichts zu tun.
-        if (listeners == 0 && menu == null)
-          return;
-
-        // Aktuelle Auswahl ermitteln
-        event.data = getSelection();
-
-        // Dem Menu Bescheid sagen, wenn ein oder mehrere Elemente markiert wurden
-        if (menu != null)
-          menu.setCurrentObject(event.data);
-
-        // Wenn wir keine Listener haben, koennen wir hier aufhoren
-        if (listeners == 0)
-          return;
-
-        // Wir setzen noch ein Flag, in dem der Aufrufer erkennt,
-        // ob die Checkbox gesetzt ist.
-        if (checkable && event.detail == SWT.CHECK)
-        {
-          TreeItem[] items = tree.getSelection();
-          if (items != null && items.length > 0)
-          {
-            event.detail = items[0].getChecked() ? 1 : 0;
-          }
-        }
-        else
-        {
-          event.detail = -1;
-        }
-        
-        // Noch die Selection-Listeners
-        for (Listener l:selectionListeners)
-        {
-          try
-          {
-            l.handleEvent(event);
-          }
-          catch (Throwable t)
-          {
-            Logger.error("error while executing listener, skipping",t);
-          }
-        }
+        handleSelect(event);
       }
     });
     
@@ -502,6 +459,59 @@ public class TreePart extends AbstractTablePart
     restoreState();
     
     this.featureEvent(Feature.Event.PAINT,null);
+  }
+  
+  /**
+   * @see de.willuhn.jameica.gui.parts.AbstractTablePart#handleSelect(org.eclipse.swt.widgets.Event)
+   */
+  @Override
+  public void handleSelect(Event event)
+  {
+    super.handleSelect(event);
+    int listeners = selectionListeners.size();
+
+    // Weder Listener noch Menu. Nichts zu tun.
+    if (listeners == 0 && menu == null)
+      return;
+
+    // Aktuelle Auswahl ermitteln
+    event.data = getSelection();
+
+    // Dem Menu Bescheid sagen, wenn ein oder mehrere Elemente markiert wurden
+    if (menu != null)
+      menu.setCurrentObject(event.data);
+
+    // Wenn wir keine Listener haben, koennen wir hier aufhoren
+    if (listeners == 0)
+      return;
+
+    // Wir setzen noch ein Flag, in dem der Aufrufer erkennt,
+    // ob die Checkbox gesetzt ist.
+    if (checkable && event.detail == SWT.CHECK)
+    {
+      TreeItem[] items = tree.getSelection();
+      if (items != null && items.length > 0)
+      {
+        event.detail = items[0].getChecked() ? 1 : 0;
+      }
+    }
+    else
+    {
+      event.detail = -1;
+    }
+    
+    // Noch die Selection-Listeners
+    for (Listener l:selectionListeners)
+    {
+      try
+      {
+        l.handleEvent(event);
+      }
+      catch (Throwable t)
+      {
+        Logger.error("error while executing listener, skipping",t);
+      }
+    }
   }
 
   private void orderBy(int index){

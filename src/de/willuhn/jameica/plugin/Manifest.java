@@ -26,6 +26,7 @@ import de.willuhn.jameica.gui.NavigationItemXml;
 import de.willuhn.jameica.plugin.PluginSource.Type;
 import de.willuhn.jameica.services.PluginSourceService;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.util.SafeXMLParser;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.I18N;
@@ -33,7 +34,6 @@ import de.willuhn.util.MultipleClassLoader;
 import net.n3.nanoxml.IXMLElement;
 import net.n3.nanoxml.IXMLParser;
 import net.n3.nanoxml.StdXMLReader;
-import net.n3.nanoxml.XMLParserFactory;
 
 /**
  * Enthaelt die Manifest-Informationen des Plugins aus plugin.xml.
@@ -127,7 +127,7 @@ public class Manifest implements Comparable
    */
   private void read(InputStream is) throws Exception
   {
-    IXMLParser parser = XMLParserFactory.createDefaultXMLParser();
+    IXMLParser parser = new SafeXMLParser();
     parser.setReader(new StdXMLReader(is));
     root = (IXMLElement) parser.parse();
   }

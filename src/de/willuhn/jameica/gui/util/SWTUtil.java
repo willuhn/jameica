@@ -350,6 +350,8 @@ public class SWTUtil {
       {
         String sub = path != null ? path + File.separator : "";
         File file = new File(sub + filename);
+        if (!file.isFile() || !file.canRead())
+          file = new File(new File(Application.getConfig().getWorkDir(),"img"),sub + filename);
         if (file.isFile() && file.canRead())
           is = new BufferedInputStream(new FileInputStream(file));
       }

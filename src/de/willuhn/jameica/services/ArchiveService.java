@@ -16,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -26,7 +27,7 @@ import de.willuhn.boot.BootLoader;
 import de.willuhn.boot.Bootable;
 import de.willuhn.boot.SkipServiceException;
 import de.willuhn.io.IOUtil;
-import de.willuhn.jameica.messaging.LookupService;
+import de.willuhn.jameica.messaging.ArchiveServerEndpoint;
 import de.willuhn.jameica.messaging.Message;
 import de.willuhn.jameica.messaging.MessageConsumer;
 import de.willuhn.jameica.messaging.QueryMessage;
@@ -35,10 +36,9 @@ import de.willuhn.logging.Logger;
 
 /**
  * Ein Archiv-Service, der Daten an eine andere Jameica-Instanz senden kann,
- * auf der das Plugin "jameica.messaging" installiert ist. Da diese andere
- * Jameica-Instanz via Multicast-Lookup automatisch im LAN gefunden wird,
- * kann man auf diese Weise einen konfigurationsfreien Archiv-Server aufsetzen
- * und Dokumente einfach via QueryMessage an den Server senden. 
+ * auf der das Plugin "jameica.messaging" installiert ist. Der entfernte
+ * Archiv-Server muss explizit per Konfiguration hinterlegt werden. Der
+ * verwendete Legacy-Transport ist weder verschluesselt noch authentifiziert.
  * 
  * Falls auf dem lokalen System bereits das Plugin "jameica.messaging" installiert
  * ist, schaltet Jameica automatisch in lokale Zustellung um. In dem Fall wird
@@ -116,6 +116,9 @@ import de.willuhn.logging.Logger;
  */
 public class ArchiveService implements Bootable
 {
+  private static final int CONNECT_TIMEOUT_MILLIS = 10000;
+  private static final int READ_TIMEOUT_MILLIS = 30000;
+
   private String host = null;
   private int port    = -1;
   private boolean enabled = false;
@@ -138,8 +141,7 @@ public class ArchiveService implements Bootable
   
   /**
    * Liefert true, wenn der Archive-Service verfügbar ist, weil entweder lokal das Plugin
-   * jameica.messaging installiert ist oder aber im LAN eine Instanz per Multicast-Lookup
-   * gefunden wurde.
+   * jameica.messaging installiert oder ein entfernter Archiv-Server explizit konfiguriert ist.
    * @return true, wenn der Archive-Service verfügbar ist.
    */
   public boolean isEnabled()
@@ -166,19 +168,13 @@ public class ArchiveService implements Bootable
     
     try
     {
-      // Wir checken, ob ein Archiv-Server verfuegbar ist
-      String uri = LookupService.lookup("tcp:de.willuhn.jameica.messaging.Plugin.connector.tcp");
-      if (uri != null)
+      InetSocketAddress endpoint = ArchiveServerEndpoint.parse(Application.getConfig().getArchiveServer());
+      if (endpoint != null)
       {
-        int colon = uri.indexOf(':');
-        if (colon != -1)
-        {
-          // Jepp, wir haben eine URI
-          this.host = uri.substring(0,colon);
-          this.port = Integer.parseInt(uri.substring(colon+1));
-          Logger.info("remote jameica.messaging available on " + this.host + ":" + this.port);
-          this.enabled = true;
-        }
+        this.host = endpoint.getHostString();
+        this.port = endpoint.getPort();
+        Logger.warn("using explicitly configured archive server without transport encryption or authentication: " + this.host + ":" + this.port);
+        this.enabled = true;
       }
     }
     catch (Exception e)
@@ -236,7 +232,10 @@ public class ArchiveService implements Bootable
     
     try
     {
-      return new Socket(host,port);
+      Socket socket = new Socket();
+      socket.connect(new InetSocketAddress(host,port),CONNECT_TIMEOUT_MILLIS);
+      socket.setSoTimeout(READ_TIMEOUT_MILLIS);
+      return socket;
     }
     catch (Exception e)
     {

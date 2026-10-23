@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>true</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>jameica-win-aarch64.jar</jar>
+  <outfile>C:\work\git\jameica\build\jameica-win-aarch64.exe</outfile>
+  <errTitle>Bitte installieren Sie Java.</errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>https://adoptium.net/de/</downloadUrl>
+  <supportUrl></supportUrl>
+  <stayAlive>false</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
+  <manifest></manifest>
+  <icon>C:\work\git\hibiscus\icons\hibiscus.ico</icon>
+  <jre>
+    <path>jre-winaarch64</path>
+    <requiresJdk>false</requiresJdk>
+    <requires64Bit>true</requires64Bit>
+    <minVersion></minVersion>
+    <maxVersion></maxVersion>
+    <opt>-Xmx512m -Xss64m -Djava.net.preferIPv4Stack=true -Dswt.autoScale=quarter</opt>
+  </jre>
+  <versionInfo>
+    <fileVersion>2.14.0.0</fileVersion>
+    <txtFileVersion>2.14.0</txtFileVersion>
+    <fileDescription>Jameica</fileDescription>
+    <copyright>Olaf Willuhn</copyright>
+    <productVersion>2.14.0.0</productVersion>
+    <txtProductVersion>2.14.0</txtProductVersion>
+    <productName>Jameica</productName>
+    <companyName>Olaf Willuhn</companyName>
+    <internalName>jameica-win-aarch64</internalName>
+    <originalFilename>jameica-win-aarch64.exe</originalFilename>
+    <trademarks></trademarks>
+    <language>GERMAN</language>
+  </versionInfo>
+</launch4jConfig>

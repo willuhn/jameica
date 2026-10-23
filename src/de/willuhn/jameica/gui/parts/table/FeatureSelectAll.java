@@ -86,7 +86,12 @@ public class FeatureSelectAll implements Feature
             final Tree t = (Tree) control;
             t.selectAll();
           }
+          
           ctx.part.featureEvent(Feature.Event.REFRESH,null);
+          
+          // Aus irgend einem mir unbekannten Grund löst CTRL+A in SWT neuerdings selbst kein Selection-Event mehr aus.
+          // Deswegen rufen wir das letzt manuell auf.
+          ctx.part.handleSelect(event);
         }
       }
     };

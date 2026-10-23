@@ -113,9 +113,9 @@ public class ClassService implements Bootable
       Logger.info("using private classloader for plugin " + manifest.getName());
       // Eigenen Classloader fuer das Plugin erstellen
       mycl = new MultipleClassLoader();
+      mycl.setParent(Application.getClassLoader());
       mycl.setName("loader." + manifest.getName());
       Logger.info("  adding system classloader");
-      mycl.addClassloader(Application.getClassLoader());
       
       // Jetzt muessen wir uns noch die Classloader der Dependency-Plugins holen
       // und dem aktuellen Plugin hinzufuegen. Damit kennt das Plugin dann:
@@ -128,12 +128,18 @@ public class ClassService implements Bootable
       if (deps != null && deps.length > 0)
       {
         Logger.info("  adding depending classloaders");
-        List<Manifest> plugins = Application.getPluginLoader().getInstalledManifests();
+        List<Manifest> plugins = Application.getPluginLoader().getManifests();
         for (int i=0;i<plugins.size();++i)
         {
           Manifest mf = plugins.get(i);
           if (mf == null || manifest.getName().equals(mf.getName())) // sind wir selbst
             continue;
+          
+          // Plugin ist shared und damit im oben hinzugefügten Jameica-Classloader bereits enthalten
+          // Wir wuerden hier sonst unnoetig eine weitere Instanz dieses Classloaders hinzufuegen
+          if (mf.isShared())
+            continue;
+          
           for (int k=0;k<deps.length;++k)
           {
             if (deps[k].getName().equals(mf.getName()) && mf.isLoaded())
@@ -309,43 +315,8 @@ public class ClassService implements Bootable
     }
     catch (Throwable t)
     {
-      Logger.error("error while loading class " + classname,t);
+      Logger.error("error while loading class " + classname + " via " + cl.getName(),t);
     }
   }
 
 }
-
-
-/**********************************************************************
- * $Log: ClassService.java,v $
- * Revision 1.9  2012/03/28 22:28:07  willuhn
- * @N Einfuehrung eines neuen Interfaces "Plugin", welches von "AbstractPlugin" implementiert wird. Es dient dazu, kuenftig auch Jameica-Plugins zu unterstuetzen, die selbst gar keinen eigenen Java-Code mitbringen sondern nur ein Manifest ("plugin.xml") und z.Bsp. Jars oder JS-Dateien. Plugin-Autoren muessen lediglich darauf achten, dass die Jameica-Funktionen, die bisher ein Object vom Typ "AbstractPlugin" zuruecklieferten, jetzt eines vom Typ "Plugin" liefern.
- * @C "getClassloader()" verschoben von "plugin.getRessources().getClassloader()" zu "manifest.getClassloader()" - der Zugriffsweg ist kuerzer. Die alte Variante existiert weiterhin, ist jedoch als deprecated markiert.
- *
- * Revision 1.8  2011-07-18 16:31:00  willuhn
- * @N Name fuer den Classloader vergebbar
- *
- * Revision 1.7  2011-05-31 16:39:04  willuhn
- * @N Funktionen zum Installieren/Deinstallieren von Plugins direkt in der GUI unter Datei->Einstellungen->Plugins
- *
- * Revision 1.6  2010-09-10 11:34:52  willuhn
- * @C Klassen im bin-Verzeichnis nur noch finden, wenn das "bin" der direkte Unterordner ist. Fuehrte sonst zu unnoetigen Fehlermeldungen, wenn Jameica in einem Pfad installiert ist, der "/bin/" enthaelt
- *
- * Revision 1.5  2010/06/01 21:35:21  willuhn
- * @N Geladene Jars im Log alphabetisch ausgeben - das ist besser lesbar
- *
- * Revision 1.4  2008/12/17 01:05:41  willuhn
- * @N Deployment von heruntergeladenen in "DeployService" verschoben. Dann geschieht das Entpacken erst beim naechsten Start. Da zu dem Zeitpunkt der Classloader die Dateien noch nicht geladen hat, kann eine ggf. vorhandene vorherige Installation geloescht werden
- * @C FileUtil.deleteRecursive
- *
- * Revision 1.3  2008/08/31 23:07:10  willuhn
- * @N Erster GUI-Code fuer die Suche
- *
- * Revision 1.2  2008/08/27 14:41:17  willuhn
- * @N Angabe der Versionsnummer von abhaengigen Plugins oder der Jameica RT
- *
- * Revision 1.1  2008/02/13 01:04:34  willuhn
- * @N Jameica auf neuen Bootloader umgestellt
- * @C Markus' Aenderungen RMI-Registrierung uebernommen
- *
- **********************************************************************/

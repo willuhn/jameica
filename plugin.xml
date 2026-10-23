@@ -17,6 +17,7 @@
       <item id="jameica.menu.bookmarks"         name="&amp;Lesezeichen..."             shortcut="CTRL+L"         icon="starred.png"             action="de.willuhn.jameica.gui.internal.action.BookmarkSearch" />
       <item id="jameica.menu.back"              name="&amp;Zurück"                     shortcut="ALT+ARROW_LEFT" icon="go-previous.png"         action="de.willuhn.jameica.gui.internal.action.Back" />
       <item id="jameica.menu.navigation.toggle" name="&amp;Navigation ein-/ausblenden" shortcut="ALT+N"          icon="view-fullscreen.png"     action="de.willuhn.jameica.gui.internal.action.NavigationToggle" />
+      <item id="jameica.menu.iconbar.toggle"    name="&amp;Symbolleiste ein-/ausblenden"                        icon="view-fullscreen.png"     action="de.willuhn.jameica.gui.internal.action.IconBarToggle" />
       <item name="-" />
       <item id="jameica.menu.settings"       name="&amp;Einstellungen"              shortcut="CTRL+E"         icon="document-properties.png" action="de.willuhn.jameica.gui.internal.action.Settings" />
       <item id="jameica.menu.backups"        name="&amp;Backups verwalten"                                    icon="document-save.png"       action="de.willuhn.jameica.gui.internal.action.Backup" />
