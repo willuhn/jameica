@@ -21,13 +21,18 @@ public class MigrateDB
   private static BackgroundTask task;
 
   /**
-   * Migriert eine Datenbank von einer Connection zu einer neuen Connection.
-   * ACHTUNG: im target muss bereits die gleiche Tabellenstruktur wie in source hergestellt sein!
+   * Migriert eine Datenbank von einer Connection zu einer neuen Connection. ACHTUNG: im target muss bereits die gleiche Tabellenstruktur wie in source
+   * hergestellt sein!
+   * 
    * @param source
    * @param target
+   * @param finish
+   *          Funktion die nach der Auführung aufgerufen wird, auch bei Misserfolg
+   * @param sucsess
+   *          Funktion die bei Erfolg ausgeführt wird
    * @throws ApplicationException
    */
-  public static void migrate(Connection source, Connection target) throws ApplicationException
+  public static void migrate(Connection source, Connection target, Runnable finish, Runnable sucsess) throws ApplicationException
   {
     task = new BackgroundTask() {
 
@@ -54,15 +59,20 @@ public class MigrateDB
               stmt.execute("SET REFERENTIAL_INTEGRITY TRUE");
             }
           }
-
           monitor.setStatusText("Migration erfolgreich abgeschlossen");
           monitor.setPercentComplete(100);
           monitor.setStatus(ProgressMonitor.STATUS_DONE);
+          
+          sucsess.run();
+
         } catch (SQLException e)
         {
           monitor.setStatus(ProgressMonitor.STATUS_ERROR);
           Logger.error("Fehler bei der Migration", e);
           throw new ApplicationException("Fehler bei der Migration: " + e.getMessage());
+        }
+        finally{
+          finish.run();
         }
       }
 
