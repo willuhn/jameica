@@ -9,12 +9,9 @@
  **********************************************************************/
 package de.willuhn.jameica.security;
 
-import java.beans.XMLDecoder;
-import java.beans.XMLEncoder;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -22,6 +19,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -30,6 +30,7 @@ import de.willuhn.jameica.security.crypto.Engine;
 import de.willuhn.jameica.security.crypto.RSAEngine;
 import de.willuhn.jameica.system.Application;
 import de.willuhn.logging.Logger;
+import de.willuhn.util.ApplicationException;
 
 /**
  * Liefert eine Art Brieftasche, ueber die andere Klassen Daten
@@ -52,13 +53,21 @@ import de.willuhn.logging.Logger;
  *   // Auslesen des Passwortes "geheim".
  *   String password = wallet.getString("passwort");
  * }</pre>
+ *
+ * <p>Gespeichert werden koennen einfache Werte (Strings, Zahlen, Boolean, Datum),
+ * Byte- und Character-Arrays, die gaengigen Collections und Maps, {@link Login},
+ * Reminder sowie JavaBeans und Enums aus dem eigenen Code installierter Plugins.
+ * Beans werden ueber ihre Properties gespeichert und benoetigen einen oeffentlichen
+ * Standard-Konstruktor. Wallets im alten XMLEncoder-Format werden weiterhin gelesen
+ * und beim naechsten Speichern in das neue Format ueberfuehrt.</p>
  */
 public final class Wallet
 {
 
 	private Class clazz 	       = null;
-	private Hashtable<String, Serializable>	serialized = new Hashtable<String, Serializable>();
+	private volatile Hashtable<String, Serializable>	serialized = new Hashtable<String, Serializable>();
 	private Engine engine        = new RSAEngine();
+	private WalletTypes types    = null;
   
   /**
 	 * ct.
@@ -79,6 +88,7 @@ public final class Wallet
   public Wallet(Class clazz, Engine engine) throws Exception
   {
     this.clazz = clazz;
+    this.types = WalletTypes.forWallet(clazz);
     this.setEngine(engine);
     Logger.debug("creating wallet " + clazz.getName() + " via " + this.engine.getClass().getSimpleName());
     read();
@@ -101,24 +111,25 @@ public final class Wallet
    * oder {@code null} wenn der Wert geloescht werden soll.
    * @throws Exception
    */
-  public void set(String alias, Serializable data) throws Exception
+  public synchronized void set(String alias, Serializable data) throws Exception
 	{
 		if (alias == null)
 		{
 			Logger.warn("alias cannot be null");
 			return;
 		}
+		Hashtable<String,Serializable> candidate = new Hashtable<String,Serializable>(this.serialized);
 		if (data == null)
 		{
 			Logger.debug("removing key " + alias);
-			this.serialized.remove(alias);
+			candidate.remove(alias);
 		}
 		else
 		{
 			Logger.debug("storing key " + alias);
-			this.serialized.put(alias,data);
+			candidate.put(alias,data);
 		}
-		write();
+		this.serialized = write(candidate);
 	}
 	
   /**
@@ -127,7 +138,7 @@ public final class Wallet
    * @return der geloeschte Wert hinter dem Alias.
    * @throws Exception
    */
-  public Serializable delete(String alias) throws Exception
+  public synchronized Serializable delete(String alias) throws Exception
   {
     if (alias == null)
     {
@@ -135,8 +146,9 @@ public final class Wallet
       return null;
     }
     Logger.debug("removing key " + alias);
-    Serializable s = this.serialized.remove(alias);
-    write();
+    Hashtable<String,Serializable> candidate = new Hashtable<String,Serializable>(this.serialized);
+    Serializable s = candidate.remove(alias);
+    this.serialized = write(candidate);
     return s;
   }
 
@@ -149,13 +161,14 @@ public final class Wallet
    */
   public synchronized void deleteAll(String aliasPrefix) throws Exception
 	{
+		Hashtable<String,Serializable> candidate = new Hashtable<String,Serializable>(this.serialized);
 		if (aliasPrefix == null || aliasPrefix.length() == 0)
 		{
-			this.serialized.clear();
+			candidate.clear();
 		}
 		else
 		{
-	    Enumeration<String> e = this.serialized.keys();
+	    Enumeration<String> e = candidate.keys();
 	    String s = null;
 	    while (e.hasMoreElements())
 	    {
@@ -163,11 +176,11 @@ public final class Wallet
 	      if (s != null && s.startsWith(aliasPrefix))
 	      {
 	        Logger.debug("removing key " + s);
-	        this.serialized.remove(s);
+	        candidate.remove(s);
 	      }
 	    }
 		}
-		write();
+		this.serialized = write(candidate);
 	}
   
   /**
@@ -229,10 +242,7 @@ public final class Wallet
    */
   private synchronized void read() throws Exception
   {
-    synchronized(serialized)
-    {
-      read(getFilename());
-    }
+    this.serialized = read(getFilename());
   }
 
   /**
@@ -240,15 +250,14 @@ public final class Wallet
 	 * @param file einzulesende Datei.
    * @throws Exception
    */
-  private synchronized void read(String file) throws Exception
+  private Hashtable<String,Serializable> read(String file) throws Exception
 	{
     File f = new File(file);
     
     if (!f.exists())
     {
       // Wallet existiert noch nicht. Dann erstellen wir ein neues
-      this.serialized = new Hashtable<String, Serializable>();
-      return;
+      return new Hashtable<String, Serializable>();
     }
 
     InputStream is = null;
@@ -259,17 +268,19 @@ public final class Wallet
       is = new BufferedInputStream(new FileInputStream(f));
 
       // Einlesen und entschluesseln
-      ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
+      WalletFormat.Buffer bos = new WalletFormat.Buffer();
       this.engine.decrypt(is,bos);
 
       Logger.debug("deserializing wallet");
-      ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-      XMLDecoder xml = new XMLDecoder(bis);
-      this.serialized = (Hashtable) xml.readObject();
-      xml.close();
+      Hashtable<String,Serializable> result = WalletFormat.read(bos.toByteArray(),this.types);
       Logger.debug("reading wallet done");
-      return;
+      return result;
+    }
+    catch (Exception e)
+    {
+      // Die Datei bleibt in jedem Fall unveraendert liegen.
+      Logger.error("unable to read wallet file " + f.getAbsolutePath() + ", file left unchanged",e);
+      throw new ApplicationException(Application.getI18n().tr("Wallet-Datei {0} kann nicht gelesen werden. Die Datei wurde nicht verändert. Fehler: {1}",f.getAbsolutePath(),e.getMessage()));
     }
     finally
     {
@@ -298,61 +309,53 @@ public final class Wallet
    * Speichert die Daten.
    * @throws Exception
    */
-  private synchronized void write() throws Exception
+  private Hashtable<String,Serializable> write(Hashtable<String,Serializable> candidate) throws Exception
 	{
-    synchronized(serialized)
+    File file = new File(getFilename());
+    if (candidate.size() == 0)
     {
-      File file = new File(getFilename());
-      if (serialized.size() == 0 && file.exists())
+      if (file.exists())
       {
         Logger.info("deleting wallet file " + getFilename());
-        if (file.delete())
-          Logger.debug("wallet deleted");
-        return;
+        if (!file.delete())
+          throw new IOException("unable to delete wallet file");
+        Logger.debug("wallet deleted");
       }
-      
-      Logger.debug("writing wallet file " + getFilename() + " via " + this.engine.getClass().getSimpleName());
-      // Wir schreiben die Daten erstmal in eine Temp-Datei
-      // und kopieren sie danach.
-      // BUGZILLA 25 http://www.willuhn.de/bugzilla/show_bug.cgi?id=25
-      File directory  = file.getAbsoluteFile().getParentFile();
-      String prefix   = file.getName() + "_";
-      File tempfile   = File.createTempFile(prefix,"",directory);
+      return candidate;
+    }
 
-      // Objekt serialisieren
-      ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
+    Logger.debug("writing wallet file " + getFilename() + " via " + this.engine.getClass().getSimpleName());
+    File directory = file.getAbsoluteFile().getParentFile();
+    File tempfile = File.createTempFile(file.getName() + "_","",directory);
+    boolean replaced = false;
+    try
+    {
       Logger.debug("serializing wallet");
-      
-      // BUGZILLA 109 http://www.willuhn.de/bugzilla/show_bug.cgi?id=109
-      // Wir speichern nur noch im neuen XML-Format
-      XMLEncoder xml = new XMLEncoder(bos);
-      xml.writeObject(this.serialized);
-      xml.close();
-      
-      ByteArrayInputStream bis    = new ByteArrayInputStream(bos.toByteArray());
-      OutputStream os             = new BufferedOutputStream(new FileOutputStream(tempfile));
-
-      this.engine.encrypt(bis,os);
-
-      // Wir koennen das Flushen und Schliessen nicht im finally() machen,
-      // weil wir _nach_ dem Schliessen noch die Datei umbenennen wollen.
-      // Das Umbenennen wuerde sonst _vorher_ passieren.
-      os.flush();
-      os.close();
+      byte[] encoded = WalletFormat.write(candidate,this.types);
+      try (InputStream input = new ByteArrayInputStream(encoded);
+           OutputStream output = new BufferedOutputStream(new FileOutputStream(tempfile)))
+      {
+        this.engine.encrypt(input,output);
+      }
 
       Logger.debug("test if readable");
-      if (!tempfile.exists())
-        throw new IOException("unable to save wallet file");
-      read(tempfile.getAbsolutePath());
-      
-      // Nur wenn das Einlesen klappt, benennen wir die Datei um.
-      Logger.debug("renaming temp file");
-      
-      // OK, Schreiben war erfolgreich. Jetzt kopieren wir die Temp-Datei rueber.
-      file.delete();
-      tempfile.renameTo(file);
+      Hashtable<String,Serializable> verified = read(tempfile.getAbsolutePath());
+      try
+      {
+        Files.move(tempfile.toPath(),file.toPath(),StandardCopyOption.ATOMIC_MOVE,StandardCopyOption.REPLACE_EXISTING);
+      }
+      catch (AtomicMoveNotSupportedException e)
+      {
+        Files.move(tempfile.toPath(),file.toPath(),StandardCopyOption.REPLACE_EXISTING);
+      }
+      replaced = true;
       Logger.debug("writing wallet done");
+      return verified;
+    }
+    finally
+    {
+      if (!replaced && tempfile.exists() && !tempfile.delete())
+        Logger.warn("unable to remove incomplete wallet file " + tempfile.getAbsolutePath());
     }
 	}
   

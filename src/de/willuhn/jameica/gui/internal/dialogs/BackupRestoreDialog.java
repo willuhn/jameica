@@ -40,7 +40,7 @@ public class BackupRestoreDialog extends AbstractDialog
   {
     super(position);
     this.backup = backup;
-    this.setSize(470,400);
+    this.setSize(470,450);
     this.setTitle(Application.getI18n().tr("Backup wiederherstellen?"));
   }
 
@@ -74,6 +74,8 @@ public class BackupRestoreDialog extends AbstractDialog
     container.addHeadline(Application.getI18n().tr("Achtung"));
     container.addText(Application.getI18n().tr("Sind Sie sicher, dass Sie dieses Backup wiederherstellen möchten?\n" +
           "Die Anwendung wird daraufhin beendet, die Wiederherstellung erfolgt automatisch beim nächsten Start."),true);
+    container.addText(Application.getI18n().tr("Stellen Sie nur Backups wieder her, die Sie selbst erstellt haben oder deren Herkunft Sie vertrauen. " +
+          "Ein manipuliertes Backup aus unbekannter Quelle kann Ihre Daten verändern oder Schadsoftware enthalten."),true,Color.ERROR);
 
     ButtonArea buttons = container.createButtonArea(2);
     buttons.addButton(Application.getI18n().tr("Ja, Backup wiederherstellen"),new Action() {
