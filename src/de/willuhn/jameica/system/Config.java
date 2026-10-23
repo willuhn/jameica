@@ -828,17 +828,4 @@ public final class Config
   {
     return StringUtils.trimToNull(settings.getString("jameica.system.i18n.untranslated.dir",null));
   }
-  
-  /**
-   * Liefert true, wenn die Migration mit dem angegebenen Namen aktiv ist.
-   * @param s der Name der Migration.
-   * @return true, wenn sie aktiv ist.
-   */
-  public boolean getMigration(String s)
-  {
-    if (s == null || !s.startsWith("migration-"))
-      return false;
-    
-    return settings.getBoolean(s,false);
-  }
 }
