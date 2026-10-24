@@ -8,7 +8,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
@@ -43,10 +48,18 @@ public class MigrateDB
       {
         try
         {
+          boolean mysql = isMySql(target);
+
           // ForeignKeys vorübergehend abschalten
           try (Statement stmt = target.createStatement())
           {
-            stmt.execute("SET REFERENTIAL_INTEGRITY FALSE");
+            if (mysql)
+            {
+              stmt.execute("SET FOREIGN_KEY_CHECKS=0");
+            } else
+            {
+              stmt.execute("SET REFERENTIAL_INTEGRITY FALSE");
+            }
           }
 
           try
@@ -56,13 +69,19 @@ public class MigrateDB
           {
             try (Statement stmt = target.createStatement())
             {
-              stmt.execute("SET REFERENTIAL_INTEGRITY TRUE");
+              if (mysql)
+              {
+                stmt.execute("SET FOREIGN_KEY_CHECKS=1");
+              } else
+              {
+                stmt.execute("SET REFERENTIAL_INTEGRITY TRUE");
+              }
             }
           }
           monitor.setStatusText("Migration erfolgreich abgeschlossen");
           monitor.setPercentComplete(100);
           monitor.setStatus(ProgressMonitor.STATUS_DONE);
-          
+
           sucsess.run();
 
         } catch (SQLException e)
@@ -70,8 +89,8 @@ public class MigrateDB
           monitor.setStatus(ProgressMonitor.STATUS_ERROR);
           Logger.error("Fehler bei der Migration", e);
           throw new ApplicationException("Fehler bei der Migration: " + e.getMessage());
-        }
-        finally{
+        } finally
+        {
           finish.run();
         }
       }
@@ -93,7 +112,6 @@ public class MigrateDB
 
   private static void copyAllTables(Connection source, Connection target, ProgressMonitor monitor) throws SQLException, ApplicationException
   {
-    List<String> tables = getTables(source);
 
     boolean originalAutoCommit = target.getAutoCommit();
 
@@ -101,40 +119,47 @@ public class MigrateDB
     {
       target.setAutoCommit(false);
 
-      for (String table : tables)
+      for (Entry<String, String> entry : getTableMapping(source, target).entrySet())
       {
         if (task.isInterrupted())
         {
           throw new ApplicationException("Abgebrochen");
         }
-        monitor.setStatusText("Kopiere Tabelle: " + table);
+        String sourceTable = entry.getKey();
+        String targetTable = entry.getValue();
 
-        List<String> sourceColumns = getColumns(source, table);
+        monitor.setStatusText("Kopiere Tabelle: " + sourceTable);
 
-        List<String> targetColumns = getColumns(target, table);
+        List<String> sourceColumns = getColumns(source, sourceTable);
 
-        if (!sourceColumns.equals(targetColumns))
+        List<String> targetColumns = getColumns(target, targetTable);
+
+        if (!sourceColumns.stream().map(s -> s.toLowerCase()).collect(Collectors.toSet())
+            .equals(targetColumns.stream().map(s -> s.toLowerCase()).collect(Collectors.toSet())))
         {
-          throw new SQLException("Spaltenabweichung bei Tabelle " + table + "\nQuelle: " + sourceColumns + "\nZiel: " + targetColumns);
+          throw new SQLException("Spaltenabweichung bei Tabelle " + sourceTable + "\nQuelle: " + sourceColumns + "\nZiel: " + targetColumns);
         }
 
-        long sourceCount = countRows(source, table);
-        int removedCount = emptyTable(target, table);
+        long sourceCount = countRows(source, sourceTable);
+        int removedCount = emptyTable(target, targetTable);
         if (removedCount > 0)
         {
-          monitor.setStatusText("                  " + removedCount + " initiale Datensätze aus neuer Tabelle " + table + " gelöscht");
+          monitor.setStatusText("                  " + removedCount + " initiale Datensätze aus neuer Tabelle " + targetTable + " gelöscht");
         }
-        long copiedCount = copyTable(source, target, table, sourceColumns);
+        long copiedCount = copyTable(source, target, sourceTable, targetTable, sourceColumns);
 
         if (sourceCount != copiedCount)
         {
-          throw new SQLException("Zeilenanzahl stimmt nicht für " + table + ": Quelle=" + sourceCount + ", kopiert=" + copiedCount);
+          throw new SQLException("Zeilenanzahl stimmt nicht für " + sourceTable + ": Quelle=" + sourceCount + ", kopiert=" + copiedCount);
         }
 
         monitor.addPercentComplete(5);
-        monitor.setStatusText("                  " + table + "  " + copiedCount + " Datensätze kopiert");
+        monitor.setStatusText("                  " + sourceTable + "  " + copiedCount + " Datensätze kopiert");
 
-        resetIdentityColumns(target, monitor, table);
+        if (!isMySql(target))
+        {
+          resetIdentityColumns(target, monitor, targetTable);
+        }
       }
 
       target.commit();
@@ -148,12 +173,41 @@ public class MigrateDB
     }
   }
 
+  // Map mit allen Tabellennamen. Key=name bei Source, Value=Name bei Target
+  private static Map<String, String> getTableMapping(Connection source, Connection target) throws SQLException
+  {
+    Map<String, String> targetTables = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+
+    for (String table : getTables(target))
+    {
+      targetTables.put(table, table);
+    }
+
+    Map<String, String> mapping = new LinkedHashMap<>();
+
+    for (String sourceTable : getTables(source))
+    {
+      String targetTable = targetTables.get(sourceTable);
+
+      if (targetTable == null)
+      {
+        throw new SQLException("Tabelle in der Zieldatenbank nicht gefunden: " + sourceTable);
+      }
+
+      mapping.put(sourceTable, targetTable);
+    }
+
+    return mapping;
+  }
+
   private static List<String> getTables(Connection connection) throws SQLException
   {
 
     List<String> result = new ArrayList<>();
 
     DatabaseMetaData meta = connection.getMetaData();
+
+    boolean mysql = isMySql(connection);
 
     try (ResultSet rs = meta.getTables(connection.getCatalog(), null, "%", new String[] { "TABLE" }))
     {
@@ -163,13 +217,13 @@ public class MigrateDB
         String schema = rs.getString("TABLE_SCHEM");
         String name = rs.getString("TABLE_NAME");
 
-        if (schema == null || name == null)
+        if (name == null)
         {
           continue;
         }
 
         // Nur Tabellen des Anwendungsschemas übernehmen.
-        if ("PUBLIC".equalsIgnoreCase(schema))
+        if (mysql || "PUBLIC".equalsIgnoreCase(schema))
         {
           result.add(name);
         }
@@ -182,7 +236,6 @@ public class MigrateDB
 
   private static List<String> getColumns(Connection connection, String table) throws SQLException
   {
-
     List<String> result = new ArrayList<>();
 
     DatabaseMetaData meta = connection.getMetaData();
@@ -199,7 +252,7 @@ public class MigrateDB
 
   private static long countRows(Connection connection, String table) throws SQLException
   {
-    String sql = "SELECT COUNT(*) FROM " + quote(table);
+    String sql = "SELECT COUNT(*) FROM " + table;
 
     try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql))
     {
@@ -210,7 +263,7 @@ public class MigrateDB
 
   private static int emptyTable(Connection connection, String table) throws SQLException
   {
-    String sql = "DELETE FROM " + quote(table);
+    String sql = "DELETE FROM " + table;
 
     try (Statement stmt = connection.createStatement();)
     {
@@ -218,20 +271,20 @@ public class MigrateDB
     }
   }
 
-  private static long copyTable(Connection source, Connection target, String table, List<String> columns) throws SQLException
+  private static long copyTable(Connection source, Connection target, String tableSource, String tableTarget, List<String> columns) throws SQLException
   {
     if (columns.isEmpty())
     {
-      throw new SQLException("Keine Spalten gefunden: " + table);
+      throw new SQLException("Keine Spalten gefunden: " + tableSource);
     }
 
-    String columnList = String.join(", ", columns.stream().map(MigrateDB::quote).toArray(String[]::new));
+    String columnList = String.join(", ", columns);
 
     String placeholders = String.join(", ", Collections.nCopies(columns.size(), "?"));
 
-    String selectSql = "SELECT " + columnList + " FROM " + quote(table);
+    String selectSql = "SELECT " + columnList + " FROM " + tableSource;
 
-    String insertSql = "INSERT INTO " + quote(table) + " (" + columnList + ") VALUES (" + placeholders + ")";
+    String insertSql = "INSERT INTO " + tableTarget + " (" + columnList + ") VALUES (" + placeholders + ")";
 
     long copied = 0;
     int batchSize = 0;
@@ -288,7 +341,7 @@ public class MigrateDB
 
         long nextId;
 
-        String sql = "SELECT COALESCE(MAX(" + quote(column) + "), 0) + 1 FROM " + quote(table);
+        String sql = "SELECT COALESCE(MAX(" + column + "), 0) + 1 FROM " + table;
 
         try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql))
         {
@@ -296,7 +349,7 @@ public class MigrateDB
           nextId = rs.getLong(1);
         }
 
-        String alter = "ALTER TABLE " + quote(table) + " ALTER COLUMN " + quote(column) + " RESTART WITH " + nextId;
+        String alter = "ALTER TABLE " + table + " ALTER COLUMN " + column + " RESTART WITH " + nextId;
 
         try (Statement stmt = connection.createStatement())
         {
@@ -308,9 +361,13 @@ public class MigrateDB
     }
   }
 
-  private static String quote(String identifier)
+  private static boolean isMySql(Connection connection) throws SQLException
   {
-    return "\"" + identifier.replace("\"", "\"\"") + "\"";
+    String product = connection.getMetaData().getDatabaseProductName();
+    if (product == null)
+    {
+      return false;
+    }
+    return product.toLowerCase().contains("mysql") || product.toLowerCase().contains("mariadb");
   }
-
 }
