@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import de.willuhn.jameica.gui.internal.parts.BackgroundTaskMonitor;
 import de.willuhn.logging.Logger;
 import de.willuhn.util.ApplicationException;
 import de.willuhn.util.ProgressMonitor;
@@ -23,91 +24,62 @@ public class MigrateDB
 {
   private static final int BATCH_SIZE = 500;
 
-  private static BackgroundTask task;
-
   /**
    * Migriert eine Datenbank von einer Connection zu einer neuen Connection. ACHTUNG: im target muss bereits die gleiche Tabellenstruktur wie in source
    * hergestellt sein!
    * 
    * @param source
    * @param target
-   * @param finish
-   *          Funktion die nach der Auführung aufgerufen wird, auch bei Misserfolg
-   * @param sucsess
-   *          Funktion die bei Erfolg ausgeführt wird
+   * @param monitor
    * @throws ApplicationException
    */
-  public static void migrate(Connection source, Connection target, Runnable finish, Runnable sucsess) throws ApplicationException
+  public static void migrate(Connection source, Connection target, ProgressMonitor monitor) throws ApplicationException
   {
-    task = new BackgroundTask() {
+    try
+    {
+      boolean mysql = isMySql(target);
 
-      private boolean intrrupt = false;
-
-      @Override
-      public void run(ProgressMonitor monitor) throws ApplicationException
+      if (monitor == null)
       {
-        try
+        monitor = new BackgroundTaskMonitor();
+      }
+      // ForeignKeys vorübergehend abschalten
+      try (Statement stmt = target.createStatement())
+      {
+        if (mysql)
         {
-          boolean mysql = isMySql(target);
-
-          // ForeignKeys vorübergehend abschalten
-          try (Statement stmt = target.createStatement())
-          {
-            if (mysql)
-            {
-              stmt.execute("SET FOREIGN_KEY_CHECKS=0");
-            } else
-            {
-              stmt.execute("SET REFERENTIAL_INTEGRITY FALSE");
-            }
-          }
-
-          try
-          {
-            copyAllTables(source, target, monitor);
-          } finally
-          {
-            try (Statement stmt = target.createStatement())
-            {
-              if (mysql)
-              {
-                stmt.execute("SET FOREIGN_KEY_CHECKS=1");
-              } else
-              {
-                stmt.execute("SET REFERENTIAL_INTEGRITY TRUE");
-              }
-            }
-          }
-          monitor.setStatusText("Migration erfolgreich abgeschlossen");
-          monitor.setPercentComplete(100);
-          monitor.setStatus(ProgressMonitor.STATUS_DONE);
-
-          sucsess.run();
-
-        } catch (SQLException e)
+          stmt.execute("SET FOREIGN_KEY_CHECKS=0");
+        } else
         {
-          monitor.setStatus(ProgressMonitor.STATUS_ERROR);
-          Logger.error("Fehler bei der Migration", e);
-          throw new ApplicationException("Fehler bei der Migration: " + e.getMessage());
-        } finally
-        {
-          finish.run();
+          stmt.execute("SET REFERENTIAL_INTEGRITY FALSE");
         }
       }
 
-      @Override
-      public boolean isInterrupted()
+      try
       {
-        return intrrupt;
-      }
-
-      @Override
-      public void interrupt()
+        copyAllTables(source, target, monitor);
+      } finally
       {
-        intrrupt = true;
+        try (Statement stmt = target.createStatement())
+        {
+          if (mysql)
+          {
+            stmt.execute("SET FOREIGN_KEY_CHECKS=1");
+          } else
+          {
+            stmt.execute("SET REFERENTIAL_INTEGRITY TRUE");
+          }
+        }
       }
-    };
-    Application.getController().start(task);
+      monitor.setStatusText("Migration erfolgreich abgeschlossen");
+      monitor.setPercentComplete(100);
+      monitor.setStatus(ProgressMonitor.STATUS_DONE);
+    } catch (SQLException e)
+    {
+      monitor.setStatus(ProgressMonitor.STATUS_ERROR);
+      Logger.error("Fehler bei der Migration", e);
+      throw new ApplicationException("Fehler bei der Migration: " + e.getMessage());
+    }
   }
 
   private static void copyAllTables(Connection source, Connection target, ProgressMonitor monitor) throws SQLException, ApplicationException
@@ -121,10 +93,6 @@ public class MigrateDB
 
       for (Entry<String, String> entry : getTableMapping(source, target).entrySet())
       {
-        if (task.isInterrupted())
-        {
-          throw new ApplicationException("Abgebrochen");
-        }
         String sourceTable = entry.getKey();
         String targetTable = entry.getValue();
 
@@ -323,7 +291,6 @@ public class MigrateDB
 
   private static void resetIdentityColumns(Connection connection, ProgressMonitor monitor, String table) throws SQLException
   {
-
     DatabaseMetaData meta = connection.getMetaData();
 
     try (ResultSet columns = meta.getColumns(connection.getCatalog(), "PUBLIC", table, "%"))
