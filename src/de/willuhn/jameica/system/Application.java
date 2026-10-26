@@ -73,7 +73,7 @@ public final class Application {
 
 
     // Wir nehmen grundsaetzlich unseren eigenen Classloader.
-    MultipleClassLoader cl = new MigratingMultipleClassLoader();
+    MultipleClassLoader cl = new MultipleClassLoader();
     cl.setName("loader.jameica");
     cl.addClassloader(Application.class.getClassLoader());
 
