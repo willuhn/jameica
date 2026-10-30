@@ -10,6 +10,7 @@
 
 package de.willuhn.jameica.services;
 
+import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import de.willuhn.jameica.plugin.Dependency;
 import de.willuhn.jameica.plugin.Manifest;
 import de.willuhn.jameica.plugin.Version;
 import de.willuhn.jameica.system.Application;
+import de.willuhn.jameica.transport.Transport;
 import de.willuhn.jameica.update.PluginData;
 import de.willuhn.jameica.update.Repository;
 import de.willuhn.jameica.update.ResolverResult;
@@ -51,6 +53,11 @@ import de.willuhn.util.ProgressMonitor;
 public class UpdateService implements Bootable
 {
   private final static de.willuhn.jameica.system.Settings settings = new de.willuhn.jameica.system.Settings(UpdateService.class);
+
+  /**
+   * URL, unter der die jeweils aktuelle Jameica-Versionsnummer als Plain-Text veroeffentlicht wird.
+   */
+  private final static String URL_VERSION_CURRENT = "https://www.willuhn.de/products/jameica/releases/version-current";
 
   private Timer timer = null;
   private Worker worker = null;
@@ -133,7 +140,7 @@ public class UpdateService implements Bootable
    */
   public int getUpdateInterval()
   {
-    return settings.getInt("update.check.days",7);
+    return settings.getInt("update.check.days",30);
   }
   
   /**
@@ -156,7 +163,7 @@ public class UpdateService implements Bootable
    */
   public boolean getUpdateCheck()
   {
-    return settings.getBoolean("update.check",false);
+    return settings.getBoolean("update.check",true);
   }
 
   /**
@@ -198,7 +205,79 @@ public class UpdateService implements Bootable
   {
     settings.setAttribute("update.install",b);
   }
-  
+
+  /**
+   * Liefert die beim letzten Check ermittelte neuere Jameica-Version, sofern eine
+   * solche bekannt und tatsaechlich noch neuer als die aktuell laufende Instanz ist.
+   * @return die verfuegbare Jameica-Version oder NULL, wenn keine neuere Version
+   * bekannt ist.
+   */
+  public Version getJameicaUpdate()
+  {
+    String s = settings.getString("jameica.version.available",null);
+    if (s == null)
+      return null;
+
+    Version available = new Version(s);
+
+    Manifest mf = Application.getManifest();
+    Version current = mf != null ? mf.getVersion() : null;
+    if (current == null)
+    {
+      Logger.warn("unable to determine current jameica version");
+      return null;
+    }
+
+    // Laeuft bereits die ermittelte (oder eine noch neuere) Version - z.Bsp. weil
+    // der User das Update inzwischen manuell installiert hat.
+    if (available.compareTo(current) <= 0)
+      return null;
+
+    return available;
+  }
+
+  /**
+   * Prueft, ob fuer Jameica selbst (nicht fuer die Plugins) eine neuere Version
+   * veroeffentlicht wurde und speichert das Ergebnis in den Settings.
+   * Jameica kann sich im laufenden Betrieb nicht selbst aktualisieren. Der User
+   * wird daher lediglich per Box auf der Startseite ueber die neue Version
+   * informiert und muss sie manuell installieren.
+   */
+  private void checkJameicaVersion()
+  {
+    try
+    {
+      Manifest mf = Application.getManifest();
+      Version current = mf != null ? mf.getVersion() : null;
+      if (current == null)
+      {
+        Logger.warn("unable to determine current jameica version, skipping jameica update check");
+        return;
+      }
+
+      Logger.info("checking for new jameica version via " + URL_VERSION_CURRENT);
+
+      TransportService service = Application.getBootLoader().getBootable(TransportService.class);
+      Transport t = service.getTransport(new URL(URL_VERSION_CURRENT));
+      ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      t.get(bos,null);
+
+      String s = StringUtils.trimToNull(bos.toString("ISO-8859-1"));
+      if (s == null)
+      {
+        Logger.warn("unable to determine current jameica version from " + URL_VERSION_CURRENT);
+        return;
+      }
+
+      Version available = new Version(s);
+      Logger.info("jameica version. current: " + current + ", available: " + available);
+      settings.setAttribute("jameica.version.available",available.toString());
+    }
+    catch (Exception e)
+    {
+      Logger.error("unable to check for new jameica version",e);
+    }
+  }
 
   /**
    * Sucht nach Updates fuer die installierten Plugins und liefert sie zurueck.
@@ -379,7 +458,11 @@ public class UpdateService implements Bootable
         return;
       }
       Logger.info("last check was " + (lastRun == 0L ? "<never>" : "on " + new Date(lastRun)));
-      
+
+      // Pruefen, ob fuer Jameica selbst eine neuere Version veroeffentlicht wurde. Das machen
+      // wir unabhaengig davon, ob und wieviele Plugins installiert sind.
+      checkJameicaVersion();
+
       try
       {
         if (Application.getPluginLoader().getInstalledPlugins().size() == 0)
