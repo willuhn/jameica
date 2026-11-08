@@ -17,6 +17,7 @@ import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Listener;
 
 import de.willuhn.jameica.gui.Action;
@@ -116,6 +117,19 @@ public class FeatureShortcut implements Feature
           {
             public void handleEvent(org.eclipse.swt.widgets.Event event)
             {
+              // Display-Filter sehen Tastendrücke aus allen Controls.
+              // Nur reagieren, wenn der Tastendruck aus dieser Tabelle
+              // oder einem ihrer Child-Controls stammt.
+              if (!(event.widget instanceof Control))
+                return;
+              Control source = (Control) event.widget;
+              while (source != null && source != ctx.control)
+              {
+                source = source.getParent();
+              }
+              if (source == null)
+                return;
+              
               // Im Event kommen immer die Klein-Buchstaben an. Wir muessen unseren
               // natural-key also vorher in einen Klein-Buchstaben umwandeln, damit der Vergleich klappt
               char c = (char) shortcut.getNaturalKey();
