@@ -44,7 +44,6 @@ import javax.xml.transform.sax.SAXSource;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
@@ -189,16 +188,9 @@ final class WalletFormat
   {
     final XMLReader reader = createParserFactory().newSAXParser().getXMLReader();
     
-    try
-    {
-      reader.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD,"");
-      reader.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA,"");
-      reader.setProperty(ELEMENT_ATTRIBUTE_LIMIT,"16");
-    }
-    catch (SAXNotRecognizedException e)
-    {
-      Logger.write(Level.WARN,"xml property not supported: " + e.getMessage(),e);
-    }
+    setXmlProperty(reader,XMLConstants.ACCESS_EXTERNAL_DTD,"");
+    setXmlProperty(reader,XMLConstants.ACCESS_EXTERNAL_SCHEMA,"");
+    setXmlProperty(reader,ELEMENT_ATTRIBUTE_LIMIT,"16");
     
     final LimitHandler handler = new LimitHandler();
     reader.setContentHandler(handler);
@@ -207,6 +199,24 @@ final class WalletFormat
     reader.setProperty("http://xml.org/sax/properties/lexical-handler",handler);
     reader.parse(new InputSource(new ByteArrayInputStream(xml)));
     return handler.root;
+  }
+  
+  /**
+   * Versucht, ein Property bei dem XML-Reader zu setzen, toleriert aber, wenn das fehlschlägt.
+   * @param reader der Reader.
+   * @param name der Name des Propertey.
+   * @param value der Wert des Property.
+   */
+  private static void setXmlProperty(XMLReader reader, String name, String value)
+  {
+    try
+    {
+      reader.setProperty(name,value);
+    }
+    catch (Exception ex)
+    {
+      Logger.write(Level.WARN,"xml feature not supported: " + ex.getMessage(),ex);
+    }
   }
 
   /**

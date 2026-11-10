@@ -36,6 +36,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import de.willuhn.logging.Level;
+import de.willuhn.logging.Logger;
+
 /**
  * Liest Wallets im alten Format des {@link java.beans.XMLEncoder}, ohne den
  * {@link java.beans.XMLDecoder} zu verwenden.
@@ -66,15 +69,25 @@ final class WalletLegacyReader
   static Hashtable<String,Serializable> read(byte[] xml, WalletTypes types) throws Exception
   {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING,true);
-    factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl",true);
-    factory.setFeature("http://xml.org/sax/features/external-general-entities",false);
-    factory.setFeature("http://xml.org/sax/features/external-parameter-entities",false);
-    factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd",false);
-    factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD,"");
-    factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA,"");
-    factory.setExpandEntityReferences(false);
-    factory.setXIncludeAware(false);
+
+    setXmlFeature(factory,XMLConstants.FEATURE_SECURE_PROCESSING,true);
+    setXmlFeature(factory,"http://apache.org/xml/features/disallow-doctype-decl",true);
+    setXmlFeature(factory,"http://xml.org/sax/features/external-general-entities",false);
+    setXmlFeature(factory,"http://xml.org/sax/features/external-parameter-entities",false);
+    setXmlFeature(factory,"http://apache.org/xml/features/nonvalidating/load-external-dtd",false);
+    setXmlAttribute(factory,XMLConstants.ACCESS_EXTERNAL_DTD,"");
+    setXmlAttribute(factory,XMLConstants.ACCESS_EXTERNAL_SCHEMA,"");
+
+    try
+    {
+      factory.setExpandEntityReferences(false);
+      factory.setXIncludeAware(false);
+    }
+    catch (Exception ex)
+    {
+      Logger.write(Level.WARN,"xml feature not supported: " + ex.getMessage(),ex);
+    }
+    
     DocumentBuilder builder = factory.newDocumentBuilder();
     builder.setEntityResolver((publicId,systemId) -> { throw new SAXException("external entities are disabled"); });
     Document document = builder.parse(new ByteArrayInputStream(xml));
@@ -93,6 +106,42 @@ final class WalletLegacyReader
     for (Map.Entry<?,?> e:((Hashtable<?,?>) o).entrySet())
       WalletFormat.put(result,e.getKey(),e.getValue());
     return result;
+  }
+  
+  /**
+   * Versucht, ein Feature in der XML Document-Builder Factory zu setzen, toleriert aber, wenn das fehlschlägt.
+   * @param factory die Factory.
+   * @param name der Name des Feature.
+   * @param enabled der Wert.
+   */
+  private static void setXmlFeature(DocumentBuilderFactory factory, String name, boolean enabled)
+  {
+    try
+    {
+      factory.setFeature(name,enabled);
+    }
+    catch (Exception ex)
+    {
+      Logger.write(Level.WARN,"xml feature not supported: " + ex.getMessage(),ex);
+    }
+  }
+  
+  /**
+   * Versucht, ein Attribut in der XML Document-Builder Factory zu setzen, toleriert aber, wenn das fehlschlägt.
+   * @param factory die Factory.
+   * @param name der Name des Attributs.
+   * @param value der Wert.
+   */
+  private static void setXmlAttribute(DocumentBuilderFactory factory, String name, String value)
+  {
+    try
+    {
+      factory.setAttribute(name,value);
+    }
+    catch (Exception ex)
+    {
+      Logger.write(Level.WARN,"xml attribute not supported: " + ex.getMessage(),ex);
+    }
   }
 
   /**
