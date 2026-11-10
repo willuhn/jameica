@@ -44,9 +44,13 @@ import javax.xml.transform.sax.SAXSource;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
+
+import de.willuhn.logging.Level;
+import de.willuhn.logging.Logger;
 
 /**
  * Dateiformat der Wallets.
@@ -183,11 +187,20 @@ final class WalletFormat
    */
   private static String preflight(byte[] xml) throws Exception
   {
-    XMLReader reader = createParserFactory().newSAXParser().getXMLReader();
-    reader.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD,"");
-    reader.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA,"");
-    reader.setProperty(ELEMENT_ATTRIBUTE_LIMIT,"16");
-    LimitHandler handler = new LimitHandler();
+    final XMLReader reader = createParserFactory().newSAXParser().getXMLReader();
+    
+    try
+    {
+      reader.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD,"");
+      reader.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA,"");
+      reader.setProperty(ELEMENT_ATTRIBUTE_LIMIT,"16");
+    }
+    catch (SAXNotRecognizedException e)
+    {
+      Logger.write(Level.WARN,"xml property not supported: " + e.getMessage(),e);
+    }
+    
+    final LimitHandler handler = new LimitHandler();
     reader.setContentHandler(handler);
     reader.setErrorHandler(handler);
     reader.setEntityResolver(handler);
