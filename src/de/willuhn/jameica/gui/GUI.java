@@ -471,6 +471,7 @@ public class GUI implements ApplicationController
         // BUGZILLA 1688 - Unbind fehlgeschlagen. View wieder in History tun.
         Logger.info("unbind() failed while trying to start previous view, restoring history entry");
         gui.history.push(entry);
+        gui.skipHistory = false;
       }
       
       /**
